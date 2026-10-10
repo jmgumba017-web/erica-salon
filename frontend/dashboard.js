@@ -32,6 +32,9 @@ let searchTimer;
 let allServices = [];
 let allStaff = [];
 let allServicesForStaff = [];
+let currentScheduleStaffId = null;
+let currentSchedules = [];
+let currentBlocked = [];
 
 // ============================================
 // LOAD STATS
@@ -62,6 +65,7 @@ async function loadStats() {
 // ============================================
 async function loadAppointments() {
   const list = document.getElementById('appointmentsList');
+  if (!list) return;
   list.innerHTML = Skeleton.list(3);
 
   try {
@@ -193,10 +197,7 @@ function debounceSearch() {
 }
 
 // ============================================
-// ACTIONS
-// ============================================
-// ============================================
-// ACTIONS
+// ACTIONS — CONFIRM
 // ============================================
 async function confirmAppt(id) {
   const result = await Confirm.show({
@@ -224,12 +225,64 @@ async function confirmAppt(id) {
       Toast.error(data.message);
     }
   } catch (err) {
+    console.error('❌ Confirm error:', err);
     Toast.error('Network error. Please try again.');
   }
 }
 
+// ============================================
+// ACTIONS — CANCEL
+// ============================================
+async function cancelAppt(id) {
+  const result = await Confirm.show({
+    title: 'Cancel Appointment?',
+    message: 'Please provide a reason for cancelling.',
+    confirmText: 'Yes, Cancel',
+    cancelText: 'Go Back',
+    type: 'danger',
+    requireReason: true,
+    reasonPlaceholder: 'Reason for cancellation...'
+  });
+
+  if (!result || !result.confirmed) return;
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/appointments/${id}/cancel`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ reason: result.reason })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      Toast.success('Appointment cancelled!');
+      loadStats();
+      loadAppointments();
+    } else {
+      Toast.error(data.message);
+    }
+  } catch (err) {
+    console.error('❌ Cancel error:', err);
+    Toast.error('Network error. Please try again.');
+  }
+}
+
+// ============================================
+// ACTIONS — COMPLETE
+// ============================================
 async function completeAppt(id) {
-  if (!confirm('Mark this appointment as completed?')) return;
+  const result = await Confirm.show({
+    title: 'Mark as Completed?',
+    message: 'This will mark the appointment as completed.',
+    confirmText: 'Yes, Complete',
+    cancelText: 'Go Back',
+    type: 'success'
+  });
+
+  if (!result) return;
 
   try {
     const res = await fetch(`${API_URL}/api/admin/appointments/${id}/complete`, {
@@ -239,14 +292,15 @@ async function completeAppt(id) {
     const data = await res.json();
 
     if (data.success) {
-      alert('✅ Appointment completed!');
+      Toast.success('Appointment completed!');
       loadStats();
       loadAppointments();
     } else {
-      alert('❌ ' + data.message);
+      Toast.error(data.message);
     }
   } catch (err) {
-    alert('⚠️ Network error');
+    console.error('❌ Complete error:', err);
+    Toast.error('Network error. Please try again.');
   }
 }
 
@@ -266,6 +320,8 @@ function switchTab(tabName) {
     loadStaff();
   } else if (tabName === 'reports') {
     loadReports('all', document.querySelector('#tab-reports .filter-btn:last-child'));
+  } else if (tabName === 'schedules') {
+    loadScheduleStaffDropdown();
   }
 }
 
@@ -310,12 +366,8 @@ async function loadServices() {
 
 function renderServiceRow(s) {
   const categoryIcons = {
-    'Hair': '💇',
-    'Nails': '💅',
-    'Skin': '✨',
-    'Body': '💆',
-    'Makeup': '💄',
-    'Lashes & Brows': '👁️'
+    'Hair': '💇', 'Nails': '💅', 'Skin': '✨',
+    'Body': '💆', 'Makeup': '💄', 'Lashes & Brows': '👁️'
   };
 
   return `
@@ -369,7 +421,8 @@ function openServiceModal(service = null) {
 }
 
 function closeServiceModal() {
-  document.getElementById('serviceModal').classList.remove('show');
+  const modal = document.getElementById('serviceModal');
+  if (modal) modal.classList.remove('show');
 }
 
 function editService(id) {
@@ -506,7 +559,7 @@ function renderStaffRow(s) {
   return `
     <div class="staff-row ${s.status === 'Inactive' ? 'inactive' : ''}">
       <div class="staff-info">
-        <img src="${photo}" alt="${s.name}" class="staff-avatar">
+        <img src="${photo}" alt="${s.name}" class="staff-avatar" onerror="this.src='image/erica.jpg'">
         <div style="flex: 1;">
           <div class="staff-name-row">
             ${s.name}
@@ -571,8 +624,10 @@ async function openStaffModal(staff = null) {
 }
 
 function closeStaffModal() {
-  document.getElementById('staffModal').classList.remove('show');
-  document.getElementById('staffPassword').required = false;
+  const modal = document.getElementById('staffModal');
+  if (modal) modal.classList.remove('show');
+  const pwd = document.getElementById('staffPassword');
+  if (pwd) pwd.required = false;
 }
 
 async function loadServicesForStaffDropdown() {
@@ -731,7 +786,6 @@ async function loadReports(range = 'all', btn = null) {
 function renderReports(data) {
   const { summary, topServices, topStaff, revenueTrend, categoryBreakdown } = data;
 
-  // SUMMARY
   document.getElementById('repTotal').textContent = summary.totalAppointments;
   document.getElementById('repCompleted').textContent = summary.completedAppointments;
   document.getElementById('repCancelled').textContent = summary.cancelledAppointments;
@@ -871,13 +925,10 @@ document.addEventListener('keydown', (e) => {
     closeStaffModal();
   }
 });
+
 // ============================================
 // STAFF SCHEDULES MANAGEMENT
 // ============================================
-let currentScheduleStaffId = null;
-let currentSchedules = [];
-let currentBlocked = [];
-
 async function loadScheduleStaffDropdown() {
   const select = document.getElementById('scheduleStaffSelect');
   if (!select) return;
@@ -945,7 +996,6 @@ async function loadSchedulesForStaff() {
 function renderSchedules() {
   const content = document.getElementById('scheduleContent');
 
-  // Sort by date
   const sortedSchedules = [...currentSchedules].sort((a, b) => a.date.localeCompare(b.date));
   const sortedBlocked = [...currentBlocked].sort((a, b) => {
     if (a.date !== b.date) return a.date.localeCompare(b.date);
@@ -959,9 +1009,6 @@ function renderSchedules() {
         <div class="schedule-actions">
           <button class="filter-btn" onclick="openScheduleModal()">
             <i class="fa-solid fa-plus"></i> Add Schedule
-          </button>
-          <button class="filter-btn" onclick="generateWeekSchedule()">
-            <i class="fa-solid fa-calendar-week"></i> Generate Week
           </button>
         </div>
       </div>
@@ -1088,7 +1135,8 @@ function openScheduleModal(schedule = null) {
 }
 
 function closeScheduleModal() {
-  document.getElementById('scheduleModal').classList.remove('show');
+  const modal = document.getElementById('scheduleModal');
+  if (modal) modal.classList.remove('show');
 }
 
 function editSchedule(id) {
@@ -1108,7 +1156,6 @@ document.getElementById('scheduleForm').addEventListener('submit', async (e) => 
     status: document.getElementById('schStatus').value
   };
 
-  // For Day Off, override times
   if (data.status === 'Day Off') {
     data.startTime = '00:00';
     data.endTime = '00:00';
@@ -1176,25 +1223,6 @@ async function deleteSchedule(id) {
     Toast.error('Network error. Please try again.');
   }
 }
-// ============================================
-// GENERATE WEEK SCHEDULE
-// ============================================
-async function generateWeekSchedule() {
-  // Use a modal instead of prompt
-  const result = await Confirm.show({
-    title: 'Generate Week Schedule',
-    message: 'This will create a schedule for Monday to Saturday (Sunday off).',
-    confirmText: 'Generate',
-    type: 'info'
-  });
-
-  if (!result) return;
-
-  const startDateStr = new Date().toISOString().split('T')[0];
-  const start = new Date(startDateStr + 'T00:00:00');
-  const schedules = [];
-  // ... rest of logic
-}
 
 // ============================================
 // BLOCKED TIME MODAL
@@ -1228,7 +1256,8 @@ function openBlockedModal(blocked = null) {
 }
 
 function closeBlockedModal() {
-  document.getElementById('blockedModal').classList.remove('show');
+  const modal = document.getElementById('blockedModal');
+  if (modal) modal.classList.remove('show');
 }
 
 function editBlocked(id) {
