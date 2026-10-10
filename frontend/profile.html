@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile — Erica Salon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="register.css">
+<link rel="stylesheet" href="appointment.css">
+<link rel="stylesheet" href="ui.css">
+<link rel="stylesheet" href="text-scale.css">
+
+    <style>
+        .profile-container {
+            max-width: 700px;
+            padding: 50px 45px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid var(--light-pink);
+            margin-bottom: 30px;
+        }
+
+        .profile-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--burgundy), #c2185b);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            flex-shrink: 0;
+            box-shadow: 0 6px 20px rgba(167, 13, 64, 0.25);
+        }
+
+        .profile-info h2 {
+            margin: 0 0 5px 0;
+            text-align: left;
+        }
+
+        .profile-info p {
+            margin: 0;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .profile-role {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--light-pink);
+            color: var(--burgundy);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--light-pink);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--burgundy);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            color: var(--burgundy);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0e0e2;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f9f0f2;
+            font-size: 14px;
+        }
+
+        .info-row span {
+            color: #999;
+        }
+
+        .info-row strong {
+            color: var(--dark);
+        }
+
+        .form-row {
+            margin-bottom: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-info h2 {
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0e0e2;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: 0.25s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+        }
+
+        .tab:hover {
+            color: var(--burgundy);
+        }
+
+        .tab.active {
+            color: var(--burgundy);
+            border-bottom-color: var(--burgundy);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="homepage.html" class="top-logo">
+                <img src="image/logo.jpg" alt="Erica Salon Logo">
+                <div class="logo-text">
+                    <div class="logo-name">Erica Salon</div>
+                    <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
+                </div>
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="homepage.html">Home</a>
+                <a href="calendar.html">Book</a>
+                <a href="history.html">My Appointments</a>
+                <a href="payments.html">Payments</a>
+            </nav>
+            <div class="social-icons">
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="dropdown-user">
+                                <span class="dropdown-name" id="dropdownName">Guest</span>
+                                <span class="dropdown-email" id="dropdownEmail">guest@email.com</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fa-solid fa-user-circle"></i><span>Show Profile</span>
+                        </a>
+                        <a href="history.html" class="dropdown-item">
+                            <i class="fa-solid fa-clock-rotate-left"></i><span>My Appointments</span>
+                        </a>
+                        <a href="payments.html" class="dropdown-item">
+                            <i class="fa-solid fa-receipt"></i><span>Payment History</span>
+                        </a>
+                        <a href="settings.html" class="dropdown-item">
+                            <i class="fa-solid fa-gear"></i><span>Settings</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logoutBtn" class="dropdown-item logout">
+                            <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button class="menu-button" id="menuButton" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="login-wrapper">
+        <div class="login-container profile-container">
+
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h2 id="profileName">Loading...</h2>
+                    <p id="profileEmail">loading@email.com</p>
+                    <span class="profile-role" id="profileRole">Customer</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalVisits">0</div>
+                    <div class="stat-label">Visits</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalSpent">₱0</div>
+                    <div class="stat-label">Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="memberSince">—</div>
+                    <div class="stat-label">Member Since</div>
+                </div>
+            </div>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('info')">
+                    <i class="fa-solid fa-user"></i> Info
+                </button>
+                <button class="tab" onclick="switchTab('edit')">
+                    <i class="fa-solid fa-pen"></i> Edit
+                </button>
+                <button class="tab" onclick="switchTab('password')">
+                    <i class="fa-solid fa-lock"></i> Password
+                </button>
+            </div>
+
+            <!-- TAB: Info -->
+            <div id="tab-info" class="tab-content active">
+                <h3 class="section-title">Personal Information</h3>
+                <div class="info-row">
+                    <span>👤 Full Name</span>
+                    <strong id="infoName">—</strong>
+                </div>
+                <div class="info-row">
+                    <span>📧 Email</span>
+                    <strong id="infoEmail">—</strong>
+                </div>
+                <div class="info-row">
+                    <span>📱 Contact Number</span>
+                    <strong id="infoContact">—</strong>
+                </div>
+                <div class="info-row">
+                    <span>🎭 Role</span>
+                    <strong id="infoRole">—</strong>
+                </div>
+                <div class="info-row">
+                    <span>📅 Member Since</span>
+                    <strong id="infoCreated">—</strong>
+                </div>
+                <div class="info-row">
+                    <span>🕐 Last Login</span>
+                    <strong id="infoLastLogin">—</strong>
+                </div>
+                <div class="info-row">
+                    <span>📝 Notes</span>
+                    <strong id="infoNotes">—</strong>
+                </div>
+            </div>
+
+            <!-- TAB: Edit -->
+            <div id="tab-edit" class="tab-content">
+                <h3 class="section-title">Update Profile</h3>
+                <form id="editForm">
+                    <div class="input-group">
+                        <label for="editName"><i class="fa-solid fa-user"></i> Full Name</label>
+                        <input type="text" id="editName" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="editContact"><i class="fa-solid fa-phone"></i> Contact Number</label>
+                        <input type="tel" id="editContact">
+                    </div>
+                    <div class="input-group">
+                        <label for="editNotes"><i class="fa-solid fa-comment"></i> Notes (allergies, preferences)</label>
+                        <textarea id="editNotes" placeholder="Halimbawa: Allergic sa certain nail polish..."></textarea>
+                    </div>
+                    <button type="submit" class="button login-btn">
+                        <i class="fa-solid fa-save"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+
+            <!-- TAB: Password -->
+            <div id="tab-password" class="tab-content">
+                <h3 class="section-title">Change Password</h3>
+                <form id="passwordForm">
+                    <div class="input-group">
+                        <label for="currentPassword"><i class="fa-solid fa-lock"></i> Current Password</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="newPassword"><i class="fa-solid fa-lock"></i> New Password</label>
+                        <input type="password" id="newPassword" required minlength="6">
+                    </div>
+                    <div class="input-group">
+                        <label for="confirmPassword"><i class="fa-solid fa-lock"></i> Confirm New Password</label>
+                        <input type="password" id="confirmPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="button login-btn">
+                        <i class="fa-solid fa-key"></i> Change Password
+                    </button>
+                </form>
+            </div>
+
+            <p class="signup-link" style="margin-top:30px;">
+                <a href="homepage.html">← Back to Home</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">Erica Salon</div>
+        <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>
+    </footer>
+
+    <script src="profile.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>

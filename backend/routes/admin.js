@@ -1,0 +1,438 @@
+const router = require('express').Router();
+const { Appointment, AppointmentService, Customer, Payment, User, AppointmentHistory, Staff } = require('../models');
+const auth = require('../middleware/auth');
+const adminOnly = require('../middleware/adminOnly');
+const { sendAppointmentConfirmedEmail, sendCancellationEmail } = require('../utils/emailService');
+
+// All admin routes require auth + admin role
+router.use(auth);
+router.use(adminOnly);
+
+// ============================================
+// GET /api/admin/stats
+// Dashboard statistics
+// ============================================
+router.get('/stats', async (req, res) => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+
+    const [
+      totalAppointments,
+      pendingAppointments,
+      confirmedAppointments,
+      todayAppointments,
+      totalCustomers,
+      totalStaff,
+      totalRevenue,
+      pendingBalance
+    ] = await Promise.all([
+      Appointment.countDocuments(),
+      Appointment.countDocuments({ status: 'Pending' }),
+      Appointment.countDocuments({ status: 'Confirmed' }),
+      Appointment.countDocuments({ appointmentDate: today }),
+      Customer.countDocuments(),
+      User.countDocuments({ role: 'Staff', status: 'Active' }),
+      Payment.aggregate([
+        { $match: { paymentStatus: 'Paid' } },
+        { $group: { _id: null, total: { $sum: '$amount' } } }
+      ]),
+      Appointment.aggregate([
+        { $match: { status: { $in: ['Pending', 'Confirmed', 'In Progress'] } } },
+        { $group: { _id: null, total: { $sum: '$remainingBalance' } } }
+      ])
+    ]);
+
+    res.json({
+      success: true,
+      stats: {
+        totalAppointments,
+        pendingAppointments,
+        confirmedAppointments,
+        todayAppointments,
+        totalCustomers,
+        totalStaff,
+        totalRevenue: totalRevenue[0]?.total || 0,
+        pendingBalance: pendingBalance[0]?.total || 0
+      }
+    });
+
+  } catch (err) {
+    console.error('❌ Stats error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ============================================
+// GET /api/admin/appointments
+// Get all appointments (with filters)
+// ============================================
+router.get('/appointments', async (req, res) => {
+  try {
+    const { status, date, search } = req.query;
+
+    let query = {};
+
+    if (status && status !== 'all') {
+      query.status = status;
+    }
+
+    if (date) {
+      query.appointmentDate = date;
+    }
+
+    const appointments = await Appointment.find(query)
+      .populate('customerId', 'name email contactNumber')
+      .sort({ appointmentDate: -1, appointmentTime: -1 })
+      .limit(200);
+
+    // Get services for each
+    const withServices = await Promise.all(
+      appointments.map(async (appt) => {
+        const services = await AppointmentService.find({ appointmentId: appt._id })
+          .populate('serviceId', 'serviceName category price duration')
+          .populate('staffId', 'name specialization');
+        return { ...appt.toObject(), services };
+      })
+    );
+
+    // Filter by search (customer name)
+    let filtered = withServices;
+    if (search) {
+      const s = search.toLowerCase();
+      filtered = withServices.filter(a =>
+        a.customerId?.name?.toLowerCase().includes(s) ||
+        a.customerId?.email?.toLowerCase().includes(s)
+      );
+    }
+
+    res.json({
+      success: true,
+      count: filtered.length,
+      appointments: filtered
+    });
+
+  } catch (err) {
+    console.error('❌ Get appointments error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ============================================
+// PUT /api/admin/appointments/:id/confirm
+// Confirm an appointment
+// ============================================
+router.put('/appointments/:id/confirm', async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+
+    if (appointment.status === 'Confirmed') {
+      return res.status(400).json({ success: false, message: 'Already confirmed' });
+    }
+
+    if (['Cancelled', 'Completed', 'In Progress'].includes(appointment.status)) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot confirm ${appointment.status.toLowerCase()} appointment`
+      });
+    }
+
+    const oldStatus = appointment.status;
+    appointment.status = 'Confirmed';
+    await appointment.save();
+
+    // Log history
+    await AppointmentHistory.create({
+      appointmentId: appointment._id,
+      action: 'Confirmed',
+      oldStatus,
+      newStatus: 'Confirmed',
+      changedBy: req.user.id,
+      reason: 'Confirmed by admin'
+    });
+
+        // ===== SEND EMAIL =====
+    const customer = await Customer.findById(appointment.customerId);
+    if (customer && customer.email) {
+      sendAppointmentConfirmedEmail(customer.email, customer.name, appointment)
+        .catch(err => console.error('Email error:', err.message));
+    }
+
+    res.json({
+      success: true,
+      message: 'Appointment confirmed!',
+      appointment
+    });
+
+  } catch (err) {
+    console.error('❌ Confirm error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ============================================
+// PUT /api/admin/appointments/:id/cancel
+// Cancel an appointment (admin)
+// ============================================
+router.put('/appointments/:id/cancel', async (req, res) => {
+  try {
+    const { reason } = req.body;
+
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+
+    if (appointment.status === 'Cancelled') {
+      return res.status(400).json({ success: false, message: 'Already cancelled' });
+    }
+
+    if (appointment.status === 'Completed') {
+      return res.status(400).json({ success: false, message: 'Cannot cancel completed appointment' });
+    }
+
+    const oldStatus = appointment.status;
+    appointment.status = 'Cancelled';
+    appointment.cancelReason = reason || 'Cancelled by admin';
+    await appointment.save();
+
+    await AppointmentHistory.create({
+      appointmentId: appointment._id,
+      action: 'Cancelled',
+      oldStatus,
+      newStatus: 'Cancelled',
+      changedBy: req.user.id,
+      reason: reason || 'Cancelled by admin'
+    });
+
+    // ===== SEND EMAIL =====
+    const customer = await Customer.findById(appointment.customerId);
+    if (customer && customer.email) {
+      sendAppointmentConfirmedEmail(customer.email, customer.name, appointment)
+        .catch(err => console.error('Email error:', err.message));
+    }
+
+    res.json({
+      success: true,
+      message: 'Appointment cancelled',
+      appointment
+    });
+
+  } catch (err) {
+    console.error('❌ Cancel error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ============================================
+// PUT /api/admin/appointments/:id/complete
+// Mark as completed
+// ============================================
+router.put('/appointments/:id/complete', async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+
+    const oldStatus = appointment.status;
+    appointment.status = 'Completed';
+    await appointment.save();
+
+    // Update customer stats
+    const customer = await Customer.findById(appointment.customerId);
+    if (customer) {
+      customer.totalVisits = (customer.totalVisits || 0) + 1;
+      customer.totalSpent = (customer.totalSpent || 0) + appointment.totalAmount;
+      customer.lastVisit = new Date();
+      await customer.save();
+    }
+
+    await AppointmentHistory.create({
+      appointmentId: appointment._id,
+      action: 'Completed',
+      oldStatus,
+      newStatus: 'Completed',
+      changedBy: req.user.id,
+      reason: 'Marked complete by admin'
+    });
+
+    res.json({
+      success: true,
+      message: 'Appointment completed',
+      appointment
+    });
+
+  } catch (err) {
+    console.error('❌ Complete error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ============================================
+// GET /api/admin/reports
+// Get comprehensive reports (with date range)
+// ============================================
+router.get('/reports', async (req, res) => {
+  try {
+    const { range, startDate, endDate } = req.query;
+
+    // Compute date range
+    let dateFilter = {};
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+
+    if (range === 'today') {
+      dateFilter = { appointmentDate: todayStr };
+    } else if (range === 'week') {
+      const weekAgo = new Date(today);
+      weekAgo.setDate(today.getDate() - 7);
+      dateFilter = { appointmentDate: { $gte: weekAgo.toISOString().split('T')[0] } };
+    } else if (range === 'month') {
+      const monthAgo = new Date(today);
+      monthAgo.setMonth(today.getMonth() - 1);
+      dateFilter = { appointmentDate: { $gte: monthAgo.toISOString().split('T')[0] } };
+    } else if (range === 'custom' && startDate && endDate) {
+      dateFilter = { appointmentDate: { $gte: startDate, $lte: endDate } };
+    } else {
+      // All time
+      dateFilter = {};
+    }
+
+    // ===== 1. OVERALL STATS =====
+    const appointments = await Appointment.find(dateFilter)
+      .populate('customerId', 'name email');
+
+    const completedAppointments = appointments.filter(a => a.status === 'Completed');
+    const cancelledAppointments = appointments.filter(a => a.status === 'Cancelled');
+    const pendingAppointments = appointments.filter(a => a.status === 'Pending');
+    const confirmedAppointments = appointments.filter(a => a.status === 'Confirmed');
+
+    // Revenue from completed appointments
+    const totalRevenue = completedAppointments.reduce((sum, a) => sum + a.totalAmount, 0);
+    const totalPaid = completedAppointments.reduce((sum, a) => sum + (a.totalAmount - a.remainingBalance), 0);
+    const pendingBalance = appointments
+      .filter(a => !['Cancelled', 'Completed'].includes(a.status))
+      .reduce((sum, a) => sum + a.remainingBalance, 0);
+
+    // ===== 2. TOP SERVICES =====
+    // Get all appointmentServices for the filtered appointments
+    const appointmentIds = appointments.map(a => a._id);
+    const appointmentServices = await AppointmentService.find({
+      appointmentId: { $in: appointmentIds }
+    }).populate('serviceId', 'serviceName category price');
+
+    // Group by service
+    const serviceStats = {};
+    appointmentServices.forEach(as => {
+      if (!as.serviceId) return;
+      const svcName = as.serviceId.serviceName;
+      if (!serviceStats[svcName]) {
+        serviceStats[svcName] = {
+          name: svcName,
+          category: as.serviceId.category,
+          count: 0,
+          revenue: 0
+        };
+      }
+      serviceStats[svcName].count += 1;
+      serviceStats[svcName].revenue += as.price;
+    });
+
+    const topServices = Object.values(serviceStats)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // ===== 3. TOP STAFF =====
+    const staffStats = {};
+    for (const as of appointmentServices) {
+      if (!as.staffId) continue;
+      const staff = await Staff.findById(as.staffId);
+      if (!staff) continue;
+
+      const staffName = staff.name;
+      if (!staffStats[staffName]) {
+        staffStats[staffName] = {
+          name: staffName,
+          specialization: staff.specialization?.[0] || 'Staff',
+          count: 0,
+          revenue: 0
+        };
+      }
+      staffStats[staffName].count += 1;
+      staffStats[staffName].revenue += as.price;
+    }
+
+    const topStaff = Object.values(staffStats)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // ===== 4. REVENUE TREND (last 7 days) =====
+    const revenueTrend = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+
+      const dayAppts = completedAppointments.filter(a => a.appointmentDate === dateStr);
+      const dayRevenue = dayAppts.reduce((sum, a) => sum + a.totalAmount, 0);
+
+      revenueTrend.push({
+        date: dateStr,
+        day: d.toLocaleDateString('en-PH', { weekday: 'short' }),
+        revenue: dayRevenue,
+        appointments: dayAppts.length
+      });
+    }
+
+    // ===== 5. CATEGORY BREAKDOWN =====
+    const categoryStats = {};
+    appointmentServices.forEach(as => {
+      if (!as.serviceId) return;
+      const cat = as.serviceId.category;
+      if (!categoryStats[cat]) {
+        categoryStats[cat] = { category: cat, count: 0, revenue: 0 };
+      }
+      categoryStats[cat].count += 1;
+      categoryStats[cat].revenue += as.price;
+    });
+
+    const categoryBreakdown = Object.values(categoryStats)
+      .sort((a, b) => b.count - a.count);
+
+    // ===== RESPONSE =====
+    res.json({
+      success: true,
+      range: range || 'all',
+      summary: {
+        totalAppointments: appointments.length,
+        completedAppointments: completedAppointments.length,
+        cancelledAppointments: cancelledAppointments.length,
+        pendingAppointments: pendingAppointments.length,
+        confirmedAppointments: confirmedAppointments.length,
+        totalRevenue,
+        totalPaid,
+        pendingBalance,
+        averagePerAppointment: completedAppointments.length > 0
+          ? totalRevenue / completedAppointments.length
+          : 0
+      },
+      topServices,
+      topStaff,
+      revenueTrend,
+      categoryBreakdown
+    });
+
+  } catch (err) {
+    console.error('❌ Reports error:', err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+});
+
+module.exports = router;
+

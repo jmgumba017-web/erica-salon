@@ -1,0 +1,427 @@
+/* ============================================
+   ERICA SALON — Global UI Library
+   ============================================ */
+
+/* ===== TOAST NOTIFICATIONS ===== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    min-width: 300px;
+    max-width: 400px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.toast-success .toast-icon { background: #28a745; }
+.toast-error .toast-icon { background: #dc3545; }
+.toast-warning .toast-icon { background: #ffc107; color: #856404; }
+.toast-info .toast-icon { background: #17a2b8; }
+
+.toast-message {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2c1810;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 14px;
+    transition: 0.2s;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-close:hover {
+    background: #f0e0e2;
+    color: #a70d40;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    animation: toastProgress linear forwards;
+}
+
+.toast-success .toast-progress { background: #28a745; }
+.toast-error .toast-progress { background: #dc3545; }
+.toast-warning .toast-progress { background: #ffc107; }
+.toast-info .toast-progress { background: #17a2b8; }
+
+@keyframes toastProgress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+/* ===== CONFIRM MODAL ===== */
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99998;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.confirm-overlay.show {
+    opacity: 1;
+}
+
+.confirm-modal {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.confirm-overlay.show .confirm-modal {
+    transform: scale(1);
+}
+
+.confirm-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 20px;
+    color: white;
+}
+
+.confirm-icon-warning { background: linear-gradient(135deg, #ffc107, #ff9800); }
+.confirm-icon-danger { background: linear-gradient(135deg, #dc3545, #c82333); }
+.confirm-icon-info { background: linear-gradient(135deg, #17a2b8, #138496); }
+.confirm-icon-success { background: linear-gradient(135deg, #28a745, #1e7e34); }
+
+.confirm-modal h3 {
+    margin: 0 0 10px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: #2c1810;
+}
+
+.confirm-modal p {
+    margin: 0 0 20px 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.confirm-reason {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e6d6d8;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 20px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.confirm-reason:focus {
+    border-color: #a70d40;
+    box-shadow: 0 0 0 3px rgba(167, 13, 64, 0.1);
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.confirm-actions button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-cancel {
+    background: #f0e0e2;
+    color: #2c1810;
+}
+
+.btn-cancel:hover {
+    background: #e6d6d8;
+}
+
+.btn-confirm {
+    background: #a70d40;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background: #7e0930;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(167, 13, 64, 0.3);
+}
+
+.btn-confirm.btn-warning {
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #856404;
+}
+
+.btn-confirm.btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+.btn-confirm.btn-info {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    color: white;
+}
+
+.btn-confirm.btn-success {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: white;
+}
+
+/* ===== SKELETON LOADERS ===== */
+.skeleton-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 12px rgba(167, 13, 64, 0.06);
+}
+
+.skeleton-line {
+    height: 16px;
+    background: linear-gradient(90deg, #f0e0e2 25%, #f8eeee 50%, #f0e0e2 75%);
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.skeleton-line-lg { height: 24px; width: 70%; }
+.skeleton-line-md { height: 16px; width: 90%; }
+.skeleton-line-sm { height: 12px; width: 50%; }
+
+.skeleton-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, #f0e0e2 25%, #f8eeee 50%, #f0e0e2 75%);
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+.skeleton-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.skeleton-row .skeleton-line {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+@keyframes skeletonLoading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ===== PAGE TRANSITIONS ===== */
+body {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+body.page-loaded {
+    opacity: 1;
+}
+
+/* ===== IMPROVED BUTTONS ===== */
+.button,
+button.button {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.button:active {
+    transform: scale(0.98);
+}
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.button:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* ===== IMPROVED CARDS ===== */
+.appointment-card,
+.service-row,
+.staff-row,
+.payment-card,
+.report-card,
+.stat-card {
+    transition: all 0.3s ease;
+}
+
+.appointment-card:hover,
+.payment-card:hover,
+.report-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(167, 13, 64, 0.12);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(167, 13, 64, 0.15);
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 700px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+
+    .toast {
+        min-width: auto;
+        max-width: 100%;
+        font-size: 13px;
+    }
+
+    .confirm-modal {
+        padding: 24px;
+    }
+
+    .confirm-actions {
+        flex-direction: column;
+    }
+
+    .confirm-actions button {
+        width: 100%;
+    }
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f8eeee;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e6d6d8;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a70d40;
+}
+
+/* ===== FOCUS STATES ===== */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(167, 13, 64, 0.4);
+    outline-offset: 2px;
+}
+
+/* ===== SMOOTH TRANSITIONS ===== */
+* {
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+input, select, textarea, button {
+    transition: all 0.2s !important;
+}

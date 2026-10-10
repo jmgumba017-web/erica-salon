@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard — Erica Salon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="appointment.css">
+    <link rel="stylesheet" href="ui.css">
+    <link rel="stylesheet" href="text-scale.css">
+
+    <style>
+        .dashboard-container {
+            max-width: 1000px;
+            padding: 40px 30px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .dashboard-header h2 {
+            margin: 0;
+            text-align: left;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            color: var(--burgundy);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(167, 13, 64, 0.08);
+            border-left: 4px solid var(--burgundy);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--burgundy);
+        }
+
+        .staff-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0e0e2;
+        }
+
+        .staff-tab {
+            padding: 14px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: 0.25s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .staff-tab:hover { color: var(--burgundy); }
+        .staff-tab.active {
+            color: var(--burgundy);
+            border-bottom-color: var(--burgundy);
+        }
+
+        .staff-tab-content { display: none; }
+        .staff-tab-content.active { display: block; }
+
+        .appt-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 12px rgba(167, 13, 64, 0.06);
+            border-left: 4px solid #ddd;
+        }
+
+        .appt-card.status-Pending { border-left-color: #ffc107; }
+        .appt-card.status-Confirmed { border-left-color: #17a2b8; }
+        .appt-card.status-Completed { border-left-color: #28a745; }
+
+        .appt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .appt-customer {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--dark);
+        }
+
+        .appt-contact {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .appt-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-Pending { background: #fff3cd; color: #856404; }
+        .status-Confirmed { background: #d1ecf1; color: #0c5460; }
+        .status-Completed { background: #d4edda; color: #155724; }
+
+        .appt-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            padding: 12px;
+            background: var(--light-pink);
+            border-radius: 8px;
+        }
+
+        .appt-services li {
+            list-style: none;
+            padding: 5px 0;
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .service-complete-btn {
+            padding: 6px 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .service-complete-btn:hover {
+            background: #1e7e34;
+            transform: scale(1.05);
+        }
+
+        .service-complete-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            color: #f0e0e2;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            background: var(--burgundy);
+            color: white;
+            transition: 0.25s;
+        }
+
+        .filter-btn.inactive {
+            background: #ddd;
+            color: #666;
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="homepage.html" class="top-logo">
+                <img src="image/logo.jpg" alt="Erica Salon Logo">
+                <div class="logo-text">
+                    <div class="logo-name">Erica Salon</div>
+                    <span class="logo-subtitle">Staff Panel</span>
+                </div>
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="staff-dashboard.html" style="color: var(--burgundy); font-weight: 700;">My Dashboard</a>
+                <a href="homepage.html">Homepage</a>
+            </nav>
+            <div class="social-icons">
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="profileBtn">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="dropdown-user">
+                                <span class="dropdown-name" id="dropdownName">Staff</span>
+                                <span class="dropdown-email" id="dropdownEmail">staff@erica.com</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fa-solid fa-user-circle"></i><span>Show Profile</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logoutBtn" class="dropdown-item logout">
+                            <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button class="menu-button" id="menuButton">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+
+        <div class="dashboard-header">
+            <div>
+                <div class="script-title">Staff</div>
+                <h2>My Dashboard</h2>
+            </div>
+            <p style="color:#999;">Hello, <strong id="staffName">Staff</strong>! 👋</p>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Assigned</div>
+                <div class="stat-value" id="statTotal">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Today</div>
+                <div class="stat-value" id="statToday" style="color:#ffc107;">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="statPending" style="color:#17a2b8;">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value" id="statCompleted" style="color:#28a745;">—</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="staff-tabs">
+            <button class="staff-tab active" onclick="switchStaffTab('upcoming')">
+                <i class="fa-solid fa-clock"></i> Upcoming
+            </button>
+            <button class="staff-tab" onclick="switchStaffTab('completed')">
+                <i class="fa-solid fa-check-circle"></i> Completed
+            </button>
+            <button class="staff-tab" onclick="switchStaffTab('all')">
+                <i class="fa-solid fa-list"></i> All
+            </button>
+        </div>
+
+        <!-- TAB: UPCOMING -->
+        <div id="stafftab-upcoming" class="staff-tab-content active">
+            <div id="upcomingList">
+                <div class="loading">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading appointments...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: COMPLETED -->
+        <div id="stafftab-completed" class="staff-tab-content">
+            <div id="completedList">
+                <div class="loading">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: ALL -->
+        <div id="stafftab-all" class="staff-tab-content">
+            <div id="allList">
+                <div class="loading">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">Erica Salon</div>
+        <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>
+    </footer>
+
+    <script src="staff-dashboard.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>

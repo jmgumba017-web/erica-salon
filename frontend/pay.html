@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment — Erica Salon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="appointment.css">
+    <link rel="stylesheet" href="ui.css">
+    <link rel="stylesheet" href="text-scale.css">
+
+    <style>
+        .payment-container {
+            max-width: 520px;
+            padding: 50px 45px;
+        }
+
+        .appointment-summary {
+            background: var(--light-pink);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid var(--burgundy);
+            margin-top: 10px;
+            padding-top: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--burgundy);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            border: 2px solid #e6d6d8;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.25s;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .payment-method:hover {
+            border-color: var(--burgundy);
+        }
+
+        .payment-method input {
+            display: none;
+        }
+
+        .payment-method input:checked + span {
+            color: var(--burgundy);
+        }
+
+        .payment-method:has(input:checked) {
+            border-color: var(--burgundy);
+            background: var(--light-pink);
+            box-shadow: 0 0 0 3px rgba(167, 13, 64, 0.1);
+        }
+        
+    /* ... existing styles ... */
+    
+    /* ✅ GCash QR Section */
+    .gcash-qr-section {
+        display: none;
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 2px dashed #0ea5e9;
+        border-radius: 14px;
+        margin-top: 15px;
+    }
+    
+    .gcash-qr-section.show {
+        display: block;
+    }
+    
+    .gcash-qr-section h4 {
+        color: #0c4a6e;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .gcash-qr-section img {
+        max-width: 220px;
+        width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin: 15px 0;
+    }
+    
+    .gcash-qr-section .gcash-account {
+        font-size: 14px;
+        color: #0c4a6e;
+        font-weight: 600;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 8px;
+        display: inline-block;
+        margin-top: 5px;
+    }
+    
+    /* ✅ Receipt Upload */
+    .receipt-upload {
+        border: 2px dashed #e6d6d8;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.25s;
+        background: #fafafa;
+        margin-top: 8px;
+    }
+    
+    .receipt-upload:hover {
+        border-color: var(--burgundy);
+        background: var(--light-pink);
+    }
+    
+    .receipt-upload input[type="file"] {
+        display: none;
+    }
+    
+    .receipt-upload i {
+        font-size: 32px;
+        color: var(--burgundy);
+        margin-bottom: 8px;
+        display: block;
+    }
+    
+    .receipt-upload p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: var(--dark);
+        font-weight: 600;
+    }
+    
+    .receipt-upload .hint {
+        font-size: 12px;
+        color: #999;
+        font-weight: 400;
+    }
+    
+    .receipt-preview {
+        display: none;
+        margin-top: 15px;
+        text-align: center;
+        position: relative;
+    }
+    
+    .receipt-preview.show {
+        display: block;
+    }
+    
+    .receipt-preview img {
+        max-width: 100%;
+        max-height: 250px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(167, 13, 64, 0.15);
+    }
+    
+    .receipt-preview .remove-btn {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #dc3545;
+        color: white;
+        border: 2px solid white;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .receipt-preview .remove-btn:hover {
+        background: #a71d2a;
+    }
+
+    </style>
+</head>
+<body class="login-page">
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="homepage.html" class="top-logo">
+                <img src="image/logo.jpg" alt="Erica Salon Logo">
+                <div class="logo-text">
+                    <div class="logo-name">Erica Salon</div>
+                    <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
+                </div>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="homepage.html">Home</a>
+                <a href="calendar.html">Book</a>
+                <a href="history.html">My Appointments</a>
+            </nav>
+
+            <div class="social-icons">
+                <!-- PROFILE DROPDOWN -->
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
+
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="dropdown-user">
+                                <span class="dropdown-name" id="dropdownName">Guest</span>
+                                <span class="dropdown-email" id="dropdownEmail">guest@email.com</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fa-solid fa-user-circle"></i><span>Show Profile</span>
+                        </a>
+                        <a href="history.html" class="dropdown-item">
+                            <i class="fa-solid fa-clock-rotate-left"></i><span>My Appointments</span>
+                        </a>
+                        <a href="payments.html" class="dropdown-item">
+                            <i class="fa-solid fa-receipt"></i><span>Payment History</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logoutBtn" class="dropdown-item logout">
+                            <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <button class="menu-button" id="menuButton" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="login-wrapper">
+        <div class="login-container payment-container">
+
+     <div class="appointment-header">
+    <div class="script-title" id="pageScriptTitle">Payment</div>
+    <h2 id="pageTitle">Complete Your Payment</h2>
+    <p class="login-subtitle" id="pageSubtitle">Bayaran ang balance ng appointment mo ✨</p>
+</div>
+            <div id="appointmentSummary">
+                <p style="text-align:center; color:#999;">Loading appointment...</p>
+            </div>
+
+            <form id="paymentForm" style="display: none;">
+
+                <div class="input-group">
+                    <label for="amount">
+                        <i class="fa-solid fa-peso-sign"></i> Amount to Pay
+                    </label>
+                    <input type="number" id="amount" placeholder="Enter amount" required min="1">
+                </div>
+
+                <div class="input-group">
+                    <label>
+                        <i class="fa-solid fa-wallet"></i> Payment Method
+                    </label>
+                   <div class="payment-methods">
+    <label class="payment-method">
+        <input type="radio" name="paymentMethod" value="Cash" checked>
+        <div class="method-content">
+            <i class="fa-solid fa-money-bill-wave"></i>
+            <span>Cash</span>
+        </div>
+    </label>
+    <label class="payment-method">
+        <input type="radio" name="paymentMethod" value="GCash">
+        <div class="method-content">
+            <i class="fa-solid fa-mobile-screen"></i>
+            <span>GCash</span>
+        </div>
+    </label>
+    <label class="payment-method">
+        <input type="radio" name="paymentMethod" value="Maya">
+        <div class="method-content">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+            <span>Maya</span>
+        </div>
+    </label>
+</div>
+
+<!-- ✅ GCASH QR CODE SECTION -->
+<div class="gcash-qr-section" id="gcashQrSection">
+    <h4><i class="fa-solid fa-qrcode"></i> Scan to Pay via GCash</h4>
+    <p style="font-size: 13px; color: #666; margin: 5px 0;">
+        I-scan ang QR code na ito gamit ang GCash app
+    </p>
+    
+    <!-- ⚠️ PALITAN ITO NG QR CODE IMAGE MO -->
+     <img src="image/gcash-qr.png" alt="GCash QR Code" id="gcashQrImage">
+   <span id="gcashAccountName">Erica Salon</span>
+<strong id="gcashAccountNumber">0927 317 9191</strong>
+    
+    <div class="gcash-account">
+        <i class="fa-solid fa-user"></i> 
+        <span id="gcashAccountName">Erica Salon</span>
+        <br>
+        <i class="fa-solid fa-phone"></i> 
+        <strong id="gcashAccountNumber">0927 317 9191</strong>
+    </div>
+    
+    <p style="font-size: 12px; color: #999; margin-top: 15px;">
+        Pagkatapos magbayad, i-upload ang receipt sa ibaba ⬇️
+    </p>
+</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="referenceNumber">
+                        <i class="fa-solid fa-hashtag"></i> Reference Number (optional)
+                    </label>
+                    <input type="text" id="referenceNumber" placeholder="GCash/Maya reference #">
+                </div>
+
+               <!-- ✅ RECEIPT UPLOAD -->
+<div class="input-group">
+    <label>
+        <i class="fa-solid fa-receipt"></i> Upload Receipt
+    </label>
+    
+    <label class="receipt-upload" for="receiptInput">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <p>I-click para mag-upload ng receipt</p>
+        <span class="hint">JPG, PNG, o PDF (max 5MB)</span>
+        <input 
+            type="file" 
+            id="receiptInput" 
+            accept="image/*,.pdf"
+        >
+    </label>
+    
+    <div class="receipt-preview" id="receiptPreview">
+        <img id="receiptImage" src="" alt="Receipt Preview">
+        <button type="button" class="remove-btn" id="removeReceipt" title="Remove">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <p style="margin-top: 8px; font-size: 12px; color: #28a745;">
+            <i class="fa-solid fa-check-circle"></i> 
+            <span id="receiptFileName">receipt.jpg</span>
+        </p>
+    </div>
+</div>
+
+                <button type="submit" class="button login-btn" id="payBtn">
+                    <i class="fa-solid fa-credit-card"></i> Confirm Payment
+                </button>
+            </form>
+
+            <p class="signup-link" style="margin-top:20px;">
+                <a href="history.html">← Back to My Appointments</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">Erica Salon</div>
+        <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>
+    </footer>
+
+    <script src="ui.js"></script>
+<script src="payment.js"></script>
+
+<script>
+    // ===== PROFILE DROPDOWN =====
+    document.addEventListener('DOMContentLoaded', function() {
+        const profileBtn = document.getElementById('profileBtn');
+        const profileDropdown = document.getElementById('profileDropdown');
+
+        if (profileBtn && profileDropdown) {
+            profileBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                profileDropdown.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+                    profileDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (confirm('Logout?')) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    });
+ 
+
+   
+// ============================================
+// GCASH QR + RECEIPT UPLOAD LOGIC
+// ============================================
+
+// ✅ Show/Hide GCash QR Code
+const gcashQrSection = document.getElementById('gcashQrSection');
+const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+
+paymentRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        if (e.target.value === 'GCash') {
+            gcashQrSection.classList.add('show');
+        } else {
+            gcashQrSection.classList.remove('show');
+        }
+    });
+});
+
+// ✅ Receipt Upload
+const receiptInput = document.getElementById('receiptInput');
+const receiptPreview = document.getElementById('receiptPreview');
+const receiptImage = document.getElementById('receiptImage');
+const receiptFileName = document.getElementById('receiptFileName');
+const removeReceiptBtn = document.getElementById('removeReceipt');
+
+let selectedReceipt = null;
+
+receiptInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    // ✅ Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('❌ Max file size is 5MB');
+        receiptInput.value = '';
+        return;
+    }
+    
+    // ✅ Check file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'application/pdf'];
+    if (!validTypes.includes(file.type)) {
+        alert('❌ Only JPG, PNG, or PDF allowed');
+        receiptInput.value = '';
+        return;
+    }
+    
+    selectedReceipt = file;
+    receiptFileName.textContent = file.name;
+    
+    // ✅ Preview kung image
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            receiptImage.src = event.target.result;
+            receiptImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // PDF — walang preview
+        receiptImage.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" x="50" text-anchor="middle" font-size="14">PDF</text></svg>';
+    }
+    
+    receiptPreview.classList.add('show');
+});
+
+removeReceiptBtn.addEventListener('click', () => {
+    selectedReceipt = null;
+    receiptInput.value = '';
+    receiptPreview.classList.remove('show');
+    receiptImage.src = '';
+});
+
+// ✅ Expose sa payment.js
+window.getSelectedReceipt = () => selectedReceipt;
+
+    // ============================================
+// CHECK PAYMENT TYPE (Down Payment vs Balance)
+// ============================================
+const urlParams = new URLSearchParams(window.location.search);
+const paymentTypeParam = urlParams.get('type');
+
+if (paymentTypeParam === 'downpayment') {
+  document.getElementById('pageScriptTitle').textContent = 'Down Payment';
+  document.getElementById('pageTitle').textContent = 'Down Payment Required';
+  document.getElementById('pageSubtitle').textContent = 'First-time customers need to pay 50% down payment ✨';
+}
+</script>
+</body>
+</html>

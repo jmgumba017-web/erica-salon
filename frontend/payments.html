@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment — Erica Salon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="appointment.css">
+    <link rel="stylesheet" href="ui.css">
+    <link rel="stylesheet" href="text-scale.css">
+</head>
+<body class="login-page appointment-page">
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="homepage.html" class="top-logo">
+                <img src="image/logo.jpg" alt="Erica Salon Logo">
+                <div class="logo-text">
+                    <div class="logo-name">Erica Salon</div>
+                    <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
+                </div>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="homepage.html">Home</a>
+                <a href="calendar.html">Book</a>
+                <a href="history.html">My Appointments</a>
+                <a href="payments.html">Payments</a>
+            </nav>
+
+            <div class="social-icons">
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
+
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="dropdown-user">
+                                <span class="dropdown-name" id="dropdownName">Guest</span>
+                                <span class="dropdown-email" id="dropdownEmail">guest@email.com</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fa-solid fa-user-circle"></i><span>Show Profile</span>
+                        </a>
+                        <a href="history.html" class="dropdown-item">
+                            <i class="fa-solid fa-clock-rotate-left"></i><span>My Appointments</span>
+                        </a>
+                        <a href="payments.html" class="dropdown-item">
+                            <i class="fa-solid fa-receipt"></i><span>Payment History</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logoutBtn" class="dropdown-item logout">
+                            <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <button class="menu-button" id="menuButton" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ===== PAYMENT LAYOUT WITH SIDEBAR ===== -->
+    <main class="appointment-layout">
+
+        <!-- LEFT SIDE — SIDEBAR -->
+        <aside class="appointment-sidebar">
+            <div class="sidebar-content">
+
+                <!-- Payment Summary Card -->
+                <div class="sidebar-card summary-card">
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <h3>Payment Summary</h3>
+                    <div class="summary-item">
+                        <span>📅 Date:</span>
+                        <strong id="sidebarDate">—</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>⏰ Time:</span>
+                        <strong id="sidebarTime">—</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>💰 Total:</span>
+                        <strong id="sidebarTotal">—</strong>
+                    </div>
+                    <div class="summary-item">
+                        <span>✅ Paid:</span>
+                        <strong id="sidebarPaid" style="color: #28a745;">—</strong>
+                    </div>
+                    <div class="summary-item" style="border-top: 2px solid var(--burgundy); padding-top: 12px; margin-top: 8px;">
+                        <span>⚠️ Balance:</span>
+                        <strong id="sidebarBalance" style="color: #dc3545; font-size: 16px;">—</strong>
+                    </div>
+                </div>
+
+                <!-- Payment Methods Info -->
+                <div class="sidebar-card tips-card">
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-credit-card"></i>
+                    </div>
+                    <h3>Payment Methods</h3>
+                    <ul class="tips-list">
+                        <li>
+                            <i class="fa-solid fa-money-bill-wave" style="background: #d4edda; color: #155724;"></i>
+                            <span>Cash</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-mobile-screen" style="background: #d1ecf1; color: #0c5460;"></i>
+                            <span>GCash / Maya</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-credit-card" style="background: #fff3cd; color: #856404;"></i>
+                            <span>Credit / Debit Card</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Security Card -->
+                <div class="sidebar-card contact-card">
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <h3>100% Secure</h3>
+                    <p>Lahat ng payments ay secure at encrypted.</p>
+                </div>
+
+                <!-- Help Card -->
+                <div class="sidebar-card contact-card">
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3>Need Help?</h3>
+                    <p>Call us for payment issues</p>
+                    <a href="tel:+639273179191" class="contact-btn">
+                        <i class="fa-solid fa-phone"></i> 0927 317 9191
+                    </a>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- RIGHT SIDE — PAYMENT FORM -->
+        <div class="appointment-main">
+
+            <div class="login-container payment-container">
+
+                <!-- Header -->
+                <div class="appointment-header">
+                    <div class="script-title">Payment</div>
+                    <h2>Complete Your Payment</h2>
+                    <p class="login-subtitle">Bayaran ang balance ng appointment mo ✨</p>
+                </div>
+
+                <!-- Appointment Summary -->
+                <div id="appointmentSummary">
+                    <p style="text-align:center; color:#999; padding: 20px;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Loading appointment...
+                    </p>
+                </div>
+
+                <!-- Payment Form -->
+                <form id="paymentForm" style="display: none;">
+
+                    <!-- STEP 1: AMOUNT -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <span class="step-badge">1</span>
+                            <h4>Amount to Pay</h4>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="amount">
+                                <i class="fa-solid fa-peso-sign"></i> Amount
+                            </label>
+                            <input type="number" id="amount" placeholder="Enter amount" required min="1">
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: PAYMENT METHOD -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <span class="step-badge">2</span>
+                            <h4>Payment Method</h4>
+                        </div>
+
+                        <div class="payment-methods">
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="Cash" checked>
+                                <div class="method-content">
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                    <span>Cash</span>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="GCash">
+                                <div class="method-content">
+                                    <i class="fa-solid fa-mobile-screen"></i>
+                                    <span>GCash</span>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="Maya">
+                                <div class="method-content">
+                                    <i class="fa-solid fa-mobile-screen-button"></i>
+                                    <span>Maya</span>
+                                </div>
+                            </label>
+                            <label class="payment-method">
+                                <input type="radio" name="paymentMethod" value="Card">
+                                <div class="method-content">
+                                    <i class="fa-solid fa-credit-card"></i>
+                                    <span>Card</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: REFERENCE -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <span class="step-badge">3</span>
+                            <h4>Payment Details</h4>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="referenceNumber">
+                                <i class="fa-solid fa-hashtag"></i> Reference Number (optional)
+                            </label>
+                            <input type="text" id="referenceNumber" placeholder="GCash/Maya reference #">
+                        </div>
+
+                        <div class="input-group">
+                            <label for="notes">
+                                <i class="fa-solid fa-comment"></i> Notes (optional)
+                            </label>
+                            <textarea id="notes" placeholder="Any notes..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT -->
+                    <button type="submit" class="button login-btn confirm-booking-btn" id="payBtn">
+                        <i class="fa-solid fa-lock"></i> Confirm Payment
+                    </button>
+                </form>
+
+                <p class="signup-link" style="margin-top:25px;">
+                    <a href="history.html">
+                        <i class="fa-solid fa-arrow-left"></i> Back to My Appointments
+                    </a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">Erica Salon</div>
+        <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>
+    </footer>
+
+    <script src="ui.js"></script>
+    <script>
+        // Mobile menu
+        const menuButton = document.getElementById("menuButton");
+        const navLinks = document.getElementById("navLinks");
+        if (menuButton && navLinks) {
+            menuButton.addEventListener("click", function () {
+                navLinks.classList.toggle("active");
+            });
+        }
+
+        // Profile dropdown
+        const profileBtn = document.getElementById("profileBtn");
+        const profileDropdown = document.getElementById("profileDropdown");
+
+        if (profileBtn && profileDropdown) {
+            profileBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                profileDropdown.classList.toggle("show");
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+                    profileDropdown.classList.remove("show");
+                }
+            });
+        }
+
+        // User info
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.name) {
+            const dn = document.getElementById('dropdownName');
+            const de = document.getElementById('dropdownEmail');
+            if (dn) dn.textContent = user.name;
+            if (de) de.textContent = user.email;
+        }
+
+        // Logout
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (confirm('Logout?')) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+    </script>
+
+    <script src="payment.js"></script>
+</body>
+</html>

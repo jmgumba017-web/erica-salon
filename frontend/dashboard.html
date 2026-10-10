@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Erica Salon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="appointment.css">
+    <link rel="stylesheet" href="ui.css">
+    
+
+    <style>
+        .dashboard-container {
+            max-width: 1200px;
+            padding: 40px 30px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .dashboard-header h2 {
+            margin: 0;
+            text-align: left;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            color: var(--burgundy);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(167, 13, 64, 0.08);
+            border-left: 4px solid var(--burgundy);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--burgundy);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 10px 14px;
+            border: 1px solid #e6d6d8;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            background: var(--burgundy);
+            color: white;
+            transition: 0.25s;
+        }
+
+        .filter-btn:hover { background: #8b0a34; }
+        .filter-btn.active {
+            background: var(--burgundy);
+            box-shadow: 0 0 0 3px rgba(167, 13, 64, 0.2);
+        }
+        .filter-btn.inactive { background: #ddd; color: #666; }
+
+        /* Appointment Cards */
+        .appointment-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 12px rgba(167, 13, 64, 0.06);
+            border-left: 4px solid #ddd;
+        }
+
+        .appointment-card.status-Pending { border-left-color: #ffc107; }
+        .appointment-card.status-Confirmed { border-left-color: #17a2b8; }
+        .appointment-card.status-Completed { border-left-color: #28a745; }
+        .appointment-card.status-Cancelled { border-left-color: #dc3545; }
+        .appointment-card.status-InProgress { border-left-color: #007bff; }
+
+        .appt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .appt-customer { font-weight: 700; font-size: 16px; color: var(--dark); }
+        .appt-contact { font-size: 13px; color: #999; }
+
+        .appt-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-Pending { background: #fff3cd; color: #856404; }
+        .status-Confirmed { background: #d1ecf1; color: #0c5460; }
+        .status-Completed { background: #d4edda; color: #155724; }
+        .status-Cancelled { background: #f8d7da; color: #721c24; }
+        .status-InProgress { background: #cce5ff; color: #004085; }
+
+        .appt-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            padding: 12px;
+            background: var(--light-pink);
+            border-radius: 8px;
+        }
+
+        .appt-details strong { color: var(--dark); }
+
+        .appt-services { margin-bottom: 15px; font-size: 13px; color: #666; }
+        .appt-services li { list-style: none; padding: 4px 0; }
+
+        .appt-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .action-btn {
+            padding: 9px 16px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-confirm { background: #17a2b8; color: white; }
+        .btn-cancel { background: #dc3545; color: white; }
+        .btn-complete { background: #28a745; color: white; }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            color: #f0e0e2;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        /* ===== DASHBOARD TABS ===== */
+        .dash-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0e0e2;
+        }
+
+        .dash-tab {
+            padding: 14px 24px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: 0.25s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dash-tab:hover { color: var(--burgundy); }
+
+        .dash-tab.active {
+            color: var(--burgundy);
+            border-bottom-color: var(--burgundy);
+        }
+
+        .dash-tab-content { display: none; }
+        .dash-tab-content.active { display: block; }
+
+        /* ===== SERVICES / STAFF SECTIONS ===== */
+        .services-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .services-header h3 {
+            margin: 0 0 5px 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            color: var(--burgundy);
+        }
+
+        .service-row, .staff-row {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 12px rgba(167, 13, 64, 0.06);
+            border-left: 4px solid var(--burgundy);
+            flex-wrap: wrap;
+        }
+
+        .service-row.inactive, .staff-row.inactive {
+            opacity: 0.6;
+            border-left-color: #ccc;
+        }
+
+        .service-info { flex: 1; min-width: 200px; }
+
+        .service-name {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .service-meta {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .service-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--light-pink);
+            color: var(--burgundy);
+        }
+
+        .service-actions { display: flex; gap: 8px; }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.25s;
+        }
+
+        .icon-btn.edit { background: #d1ecf1; color: #0c5460; }
+        .icon-btn.edit:hover { background: #0c5460; color: white; }
+
+        .icon-btn.delete { background: #f8d7da; color: #721c24; }
+        .icon-btn.delete:hover { background: #721c24; color: white; }
+
+        /* Staff specific */
+        .staff-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--light-pink);
+            flex-shrink: 0;
+        }
+
+        .staff-info {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .staff-name-row {
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .staff-meta {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+
+        .staff-services-list {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .staff-status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .staff-status-Available { background: #d4edda; color: #155724; }
+        .staff-status-OnLeave { background: #fff3cd; color: #856404; }
+        .staff-status-Inactive { background: #f8d7da; color: #721c24; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0e0e2;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            color: var(--burgundy);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 22px;
+            color: #999;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .modal-close:hover { color: var(--burgundy); transform: rotate(90deg); }
+
+        /* ===== REPORTS ===== */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 2px 12px rgba(167, 13, 64, 0.06);
+        }
+
+        .report-card h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            color: var(--burgundy);
+            margin: 0 0 18px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0e0e2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .report-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f9f0f2;
+            font-size: 14px;
+            gap: 10px;
+        }
+
+        .report-item:last-child { border-bottom: none; }
+
+        .report-item-info { flex: 1; min-width: 0; }
+
+        .report-item-name {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 14px;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .report-item-meta { font-size: 12px; color: #999; }
+
+        .report-item-value { text-align: right; flex-shrink: 0; }
+
+        .report-item-count {
+            font-weight: 700;
+            color: var(--burgundy);
+            font-size: 16px;
+        }
+
+        .report-item-revenue {
+            font-size: 12px;
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .rank-1 { background: #ffd700; color: #856404; }
+        .rank-2 { background: #c0c0c0; color: #333; }
+        .rank-3 { background: #cd7f32; color: white; }
+        .rank-other { background: #f0e0e2; color: var(--burgundy); }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 8px;
+            height: 200px;
+            padding: 20px 0;
+            border-bottom: 2px solid #f0e0e2;
+        }
+
+        .chart-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 50px;
+            background: linear-gradient(180deg, var(--burgundy), #c2185b);
+            border-radius: 6px 6px 0 0;
+            min-height: 4px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover { opacity: 0.8; transform: scaleY(1.02); }
+
+        .chart-bar-value {
+            font-size: 10px;
+            color: var(--burgundy);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .chart-bar-label { font-size: 11px; color: #999; font-weight: 600; }
+
+        .category-bar-wrapper { padding: 10px 0; }
+
+        .category-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .category-bar-track {
+            background: #f0e0e2;
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .category-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--burgundy), #c2185b);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        /* ===== SCHEDULE ===== */
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.schedule-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background: var(--light-pink);
+    border-radius: 10px;
+}
+
+.schedule-header-bar h4 {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--burgundy);
+}
+
+.schedule-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.schedule-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(167, 13, 64, 0.06);
+}
+
+.schedule-section h5 {
+    margin: 0 0 15px 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--burgundy);
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0e0e2;
+}
+
+.schedule-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border-left: 3px solid var(--burgundy);
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.schedule-item.blocked {
+    border-left-color: #dc3545;
+    background: #fff5f5;
+}
+
+.schedule-item.dayoff {
+    border-left-color: #6c757d;
+    background: #f8f9fa;
+}
+
+.schedule-item-info {
+    flex: 1;
+    min-width: 150px;
+}
+
+.schedule-item-date {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.schedule-item-time {
+    font-size: 13px;
+    color: #666;
+}
+
+.schedule-item-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-left: 6px;
+}
+
+.badge-available { background: #d4edda; color: #155724; }
+.badge-dayoff { background: #e2e3e5; color: #383d41; }
+.badge-halfday { background: #fff3cd; color: #856404; }
+.badge-blocked { background: #f8d7da; color: #721c24; }
+
+/* Modal for weekly schedule */
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.day-column {
+    border: 1px solid #e6d6d8;
+    border-radius: 8px;
+    padding: 10px;
+    background: white;
+    text-align: center;
+}
+
+.day-column.active {
+    background: var(--light-pink);
+    border-color: var(--burgundy);
+}
+
+.day-column h6 {
+    margin: 0 0 10px 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dark);
+    text-transform: uppercase;
+}
+
+.day-column input[type="time"] {
+    width: 100%;
+    padding: 6px;
+    font-size: 11px;
+    margin-bottom: 6px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.day-column label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+@media (max-width: 700px) {
+    .week-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+    </style>
+</head>
+    <!-- SCHEDULE MODAL (Add/Edit) -->
+    <div id="scheduleModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="scheduleModalTitle">Add Schedule</h3>
+                <button class="modal-close" onclick="closeScheduleModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="scheduleForm">
+                <input type="hidden" id="scheduleId">
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-calendar"></i> Date</label>
+                    <input type="date" id="schDate" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-clock"></i> Start Time</label>
+                    <input type="time" id="schStart" value="09:00" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-clock"></i> End Time</label>
+                    <input type="time" id="schEnd" value="18:00" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-toggle-on"></i> Status</label>
+                    <select id="schStatus">
+                        <option value="Available">✅ Available</option>
+                        <option value="Half Day">⏰ Half Day</option>
+                        <option value="Day Off">🏖️ Day Off</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="button login-btn" id="schSubmitBtn">
+                    <i class="fa-solid fa-save"></i> Save Schedule
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- BLOCKED MODAL -->
+    <div id="blockedModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="blockedModalTitle">Block Time</h3>
+                <button class="modal-close" onclick="closeBlockedModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="blockedForm">
+                <input type="hidden" id="blockedId">
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-calendar"></i> Date</label>
+                    <input type="date" id="blkDate" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-clock"></i> Start Time</label>
+                    <input type="time" id="blkStart" value="12:00" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-clock"></i> End Time</label>
+                    <input type="time" id="blkEnd" value="13:00" required>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-circle-info"></i> Reason</label>
+                    <select id="blkReason" required>
+                        <option value="Lunch Break">🍽️ Lunch Break</option>
+                        <option value="Meeting">📞 Meeting</option>
+                        <option value="Training">📚 Training</option>
+                        <option value="Personal">👤 Personal</option>
+                        <option value="Emergency">🚨 Emergency</option>
+                        <option value="Other">📝 Other</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fa-solid fa-comment"></i> Notes (optional)</label>
+                    <textarea id="blkNotes" placeholder="Additional notes..."></textarea>
+                </div>
+
+                <button type="submit" class="button login-btn" id="blkSubmitBtn">
+                    <i class="fa-solid fa-ban"></i> Block Time
+                </button>
+            </form>
+        </div>
+    </div>
+<body class="login-page">
+
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="homepage.html" class="top-logo">
+                <img src="image/logo.jpg" alt="Erica Salon Logo">
+                <div class="logo-text">
+                    <div class="logo-name">Erica Salon</div>
+                    <span class="logo-subtitle">Admin Panel</span>
+                </div>
+            </a>
+            <nav class="nav-links" id="navLinks">
+                <a href="dashboard.html" style="color: var(--burgundy); font-weight: 700;">Dashboard</a>
+                <a href="homepage.html">Homepage</a>
+            </nav>
+            <div class="social-icons">
+                <div class="profile-wrapper">
+                    <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar"><i class="fa-solid fa-user"></i></div>
+                            <div class="dropdown-user">
+                                <span class="dropdown-name" id="dropdownName">Admin</span>
+                                <span class="dropdown-email" id="dropdownEmail">admin@erica.com</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <i class="fa-solid fa-user-circle"></i><span>Show Profile</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" id="logoutBtn" class="dropdown-item logout">
+                            <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <button class="menu-button" id="menuButton" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-container">
+
+        <div class="dashboard-header">
+            <div>
+                <div class="script-title">Admin</div>
+                <h2>Dashboard</h2>
+            </div>
+            <p style="color:#999;">Welcome back, <strong id="adminName">Admin</strong>!</p>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-label">Total Appointments</div>
+                <div class="stat-value" id="statTotal">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value" id="statPending" style="color:#ffc107;">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Confirmed</div>
+                <div class="stat-value" id="statConfirmed" style="color:#17a2b8;">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Today</div>
+                <div class="stat-value" id="statToday">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value" id="statRevenue" style="font-size:24px;">₱—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pending Balance</div>
+                <div class="stat-value" id="statBalance" style="font-size:24px; color:#dc3545;">₱—</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="dash-tabs">
+            <button class="dash-tab active" onclick="switchTab('appointments')">
+                <i class="fa-solid fa-calendar-check"></i> Appointments
+            </button>
+            <button class="dash-tab" onclick="switchTab('services')">
+                <i class="fa-solid fa-spa"></i> Services
+            </button>
+            <button class="dash-tab" onclick="switchTab('staff')">
+                <i class="fa-solid fa-users"></i> Staff
+            </button>
+              <button class="dash-tab" onclick="switchTab('schedules')">
+                <i class="fa-solid fa-clock"></i> Schedules
+            </button>
+            <button class="dash-tab" onclick="switchTab('reports')">
+                <i class="fa-solid fa-chart-line"></i> Reports
+            </button>
+        </div>
+
+        <!-- TAB: APPOINTMENTS -->
+        <div id="tab-appointments" class="dash-tab-content active">
+            <div class="filters">
+                <button class="filter-btn" data-status="all" onclick="filterStatus('all', this)">All</button>
+                <button class="filter-btn inactive" data-status="Pending" onclick="filterStatus('Pending', this)">Pending</button>
+                <button class="filter-btn inactive" data-status="Confirmed" onclick="filterStatus('Confirmed', this)">Confirmed</button>
+                <button class="filter-btn inactive" data-status="Completed" onclick="filterStatus('Completed', this)">Completed</button>
+                <button class="filter-btn inactive" data-status="Cancelled" onclick="filterStatus('Cancelled', this)">Cancelled</button>
+                <input type="date" id="filterDate" onchange="loadAppointments()">
+                <button class="filter-btn" onclick="document.getElementById('filterDate').value=''; loadAppointments()">Clear Date</button>
+                <input type="text" id="filterSearch" placeholder="Search customer..." oninput="debounceSearch()">
+            </div>
+
+            <div id="appointmentsList">
+                <div class="loading">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading appointments...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: SERVICES -->
+        <div id="tab-services" class="dash-tab-content">
+            <div class="services-header">
+                <div>
+                    <h3>Manage Services</h3>
+                    <p style="color:#999; font-size:14px; margin:0;">Add, edit, or delete services</p>
+                </div>
+                <button class="filter-btn" onclick="openServiceModal()">
+                    <i class="fa-solid fa-plus"></i> Add Service
+                </button>
+            </div>
+
+            <div id="servicesList">
+                <div class="loading">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading services...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: STAFF -->
+        <div id="tab-staff" class="dash-tab-content">
+            <div class="services-header">
+                <div>
+                    <h3>Manage Staff</h3>
+                    <p style="color:#999; font-size:14px; margin:0;">Add, edit, or delete staff members</p>
+                </div>
+                <button class="filter-btn" onclick="openStaffModal()">
+                    <i class="fa-solid fa-plus"></i> Add Staff
+                </button>
+            </div>
+
+            <div id="staffList">
+                <div class="loading">
+                    <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                    <p>Loading staff...</p>
+                </div>
+            </div>
+        </div>
+                <!-- TAB: SCHEDULES -->
+        <div id="tab-schedules" class="dash-tab-content">
+            <div class="services-header">
+                <div>
+                    <h3>Staff Schedules</h3>
+                    <p style="color:#999; font-size:14px; margin:0;">Set working hours and blocked times</p>
+                </div>
+            </div>
+
+            <!-- Staff Selector -->
+            <div class="input-group" style="max-width: 400px;">
+                <label><i class="fa-solid fa-users"></i> Pumili ng Staff</label>
+                <select id="scheduleStaffSelect" onchange="loadSchedulesForStaff()">
+                    <option value="">Loading staff...</option>
+                </select>
+            </div>
+
+            <div id="scheduleContent">
+                <div class="empty-state">
+                    <i class="fa-solid fa-calendar"></i>
+                    <h3>Pumili ng Staff</h3>
+                    <p>Piliin ang staff para makita ang schedule</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: REPORTS -->
+        <div id="tab-reports" class="dash-tab-content">
+            <div class="services-header">
+                <div>
+                    <h3>Business Reports</h3>
+                    <p style="color:#999; font-size:14px; margin:0;">Analytics at insights ng salon</p>
+                </div>
+                <div class="filters" style="margin:0;">
+                    <button class="filter-btn" onclick="loadReports('today', this)">Today</button>
+                    <button class="filter-btn inactive" onclick="loadReports('week', this)">This Week</button>
+                    <button class="filter-btn inactive" onclick="loadReports('month', this)">This Month</button>
+                    <button class="filter-btn inactive" onclick="loadReports('all', this)">All Time</button>
+                </div>
+            </div>
+
+            <!-- SUMMARY STATS -->
+            <div id="reportsSummary" class="stats-grid" style="margin-top:20px;">
+                <div class="stat-card">
+                    <div class="stat-label">Total Appointments</div>
+                    <div class="stat-value" id="repTotal">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value" id="repCompleted" style="color:#28a745;">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Cancelled</div>
+                    <div class="stat-value" id="repCancelled" style="color:#dc3545;">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="repRevenue" style="font-size:22px;">₱—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average / Appt</div>
+                    <div class="stat-value" id="repAverage" style="font-size:22px;">₱—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pending Balance</div>
+                    <div class="stat-value" id="repPending" style="font-size:22px; color:#dc3545;">₱—</div>
+                </div>
+            </div>
+
+            <div class="reports-grid">
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-spa"></i> Top Services</h4>
+                    <div id="topServicesList">
+                        <p style="color:#999;">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="report-card">
+                    <h4><i class="fa-solid fa-user-tie"></i> Top Staff</h4>
+                    <div id="topStaffList">
+                        <p style="color:#999;">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-card" style="margin-top: 20px;">
+                <h4><i class="fa-solid fa-chart-line"></i> Revenue Trend (Last 7 Days)</h4>
+                <div id="revenueChart">
+                    <p style="color:#999;">Loading...</p>
+                </div>
+            </div>
+
+            <div class="report-card" style="margin-top: 20px;">
+                <h4><i class="fa-solid fa-chart-pie"></i> Category Breakdown</h4>
+                <div id="categoryBreakdown">
+                    <p style="color:#999;">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SERVICE MODAL -->
+    <div id="serviceModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Service</h3>
+                <button class="modal-close" onclick="closeServiceModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="serviceForm">
+                <input type="hidden" id="serviceId">
+
+                <div class="input-group">
+                    <label for="svcName"><i class="fa-solid fa-spa"></i> Service Name</label>
+                    <input type="text" id="svcName" placeholder="e.g. Haircut" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="svcCategory"><i class="fa-solid fa-tag"></i> Category</label>
+                    <select id="svcCategory" required>
+                        <option value="">Select category...</option>
+                        <option value="Hair">💇 Hair</option>
+                        <option value="Nails">💅 Nails</option>
+                        <option value="Skin">✨ Skin</option>
+                        <option value="Body">💆 Body</option>
+                        <option value="Makeup">💄 Makeup</option>
+                        <option value="Lashes & Brows">👁️ Lashes & Brows</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="svcDescription"><i class="fa-solid fa-comment"></i> Description</label>
+                    <textarea id="svcDescription" placeholder="Short description..."></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label for="svcPrice"><i class="fa-solid fa-peso-sign"></i> Price (₱)</label>
+                        <input type="number" id="svcPrice" placeholder="300" required min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="svcDuration"><i class="fa-solid fa-clock"></i> Duration (mins)</label>
+                        <input type="number" id="svcDuration" placeholder="30" required min="5">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="svcStatus"><i class="fa-solid fa-toggle-on"></i> Status</label>
+                    <select id="svcStatus">
+                        <option value="Active">✅ Active</option>
+                        <option value="Inactive">❌ Inactive</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="button login-btn" id="svcSubmitBtn">
+                    <i class="fa-solid fa-save"></i> Save Service
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STAFF MODAL -->
+    <div id="staffModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="staffModalTitle">Add Staff</h3>
+                <button class="modal-close" onclick="closeStaffModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="staffForm">
+                <input type="hidden" id="staffId">
+
+                <div class="input-group">
+                    <label for="staffName"><i class="fa-solid fa-user"></i> Full Name</label>
+                    <input type="text" id="staffName" placeholder="e.g. Maria Santos" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="staffEmail"><i class="fa-solid fa-envelope"></i> Email</label>
+                    <input type="email" id="staffEmail" placeholder="staff@erica.com" required>
+                </div>
+
+                <div class="input-group" id="passwordField">
+                    <label for="staffPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="staffPassword" placeholder="Min 6 characters" minlength="6">
+                </div>
+
+                <div class="input-group">
+                    <label for="staffContact"><i class="fa-solid fa-phone"></i> Contact Number</label>
+                    <input type="tel" id="staffContact" placeholder="09171234567">
+                </div>
+
+                <div class="input-group">
+                    <label for="staffSpecialization"><i class="fa-solid fa-star"></i> Specialization</label>
+                    <input type="text" id="staffSpecialization" placeholder="e.g. Hair Stylist, Nail Technician">
+                </div>
+
+                <div class="input-group">
+                    <label for="staffServices">
+                        <i class="fa-solid fa-spa"></i> Services (Ctrl+Click para sa multiple)
+                    </label>
+                    <select id="staffServices" multiple style="min-height: 120px;">
+                        <option value="">Loading services...</option>
+                    </select>
+                    <small style="color:#999; font-size:11px; display:block; margin-top:4px;">
+                        💡 Hold Ctrl (Windows) o Cmd (Mac) para pumili ng multiple services.
+                    </small>
+                </div>
+
+                <div class="input-group">
+                    <label for="staffBio"><i class="fa-solid fa-comment"></i> Bio</label>
+                    <textarea id="staffBio" placeholder="Short description about the staff..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="staffStatus"><i class="fa-solid fa-toggle-on"></i> Status</label>
+                    <select id="staffStatus">
+                        <option value="Available">✅ Available</option>
+                        <option value="On Leave">🏖️ On Leave</option>
+                        <option value="Inactive">❌ Inactive</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="button login-btn" id="staffSubmitBtn">
+                    <i class="fa-solid fa-save"></i> Save Staff
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-logo">Erica Salon</div>
+        <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>
+    </footer>
+<script src="ui.js"></script>
+    <script src="dashboard.js"></script>
+    
+</body>
+</html>

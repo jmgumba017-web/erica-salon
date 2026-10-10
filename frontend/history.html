@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments — Erica Salon</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="register.css">
+     <link rel="stylesheet" href="appointment.css">
+     <link rel="stylesheet" href="ui.css">  
+     <link rel="stylesheet" href="text-scale.css">
+
+   <style>
+    .history-container {
+        max-width: 800px;
+        padding: 50px 45px;
+    }
+
+    .appointment-card {
+        background: #fff;
+        border: 1px solid #f0e0e2;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(167, 13, 64, 0.05);
+    }
+
+    .appointment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px dashed #f0e0e2;
+    }
+
+    .appointment-date {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--burgundy);
+    }
+
+    .appointment-status {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-Pending { background: #fff3cd; color: #856404; }
+    .status-Confirmed { background: #d1ecf1; color: #0c5460; }
+    .status-Completed { background: #d4edda; color: #155724; }
+    .status-Cancelled { background: #f8d7da; color: #721c24; }
+    .status-In\ Progress { background: #cce5ff; color: #004085; }
+
+    .appointment-service {
+        padding: 10px 0;
+        border-bottom: 1px solid #f9f0f2;
+        font-size: 14px;
+    }
+
+    .appointment-service:last-child {
+        border-bottom: none;
+    }
+
+    .appointment-service-name {
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    .appointment-service-staff {
+        color: #999;
+        font-size: 13px;
+    }
+
+    .appointment-total {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid var(--burgundy);
+        text-align: right;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--burgundy);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 60px;
+        color: #f0e0e2;
+        margin-bottom: 20px;
+    }
+
+    /* ===== NAVBAR LAYOUT ===== */
+    .navbar .nav-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 15px 30px;
+        width: 100%;
+    }
+
+    .navbar .nav-links {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+    }
+
+    .navbar .social-icons {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .navbar .top-logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: var(--dark);
+    }
+
+    .navbar .top-logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--burgundy);
+    }
+
+    .navbar .logo-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--burgundy);
+    }
+
+    .navbar .logo-subtitle {
+        font-size: 11px;
+        color: #999;
+        display: block;
+    }
+
+    .navbar .nav-links a {
+        color: var(--dark);
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .navbar .nav-links a:hover {
+        color: var(--burgundy);
+    }
+
+    .navbar .menu-button {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .navbar .menu-button span {
+        width: 22px;
+        height: 2px;
+        background: var(--burgundy);
+        border-radius: 2px;
+    }
+
+    /* ===== PROFILE DROPDOWN (SA LABAS NG MEDIA) ===== */
+    .profile-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--burgundy);
+        color: white;
+        border: 2px solid white;
+        box-shadow: 0 2px 8px rgba(167, 13, 64, 0.2);
+        cursor: pointer;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.25s;
+        padding: 0;
+    }
+
+    .profile-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 4px 12px rgba(167, 13, 64, 0.35);
+    }
+
+    .profile-btn.active {
+        transform: scale(1.08);
+    }
+
+    .profile-dropdown {
+        position: absolute;
+        top: calc(100% + 12px);
+        right: 0;
+        width: 260px;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        padding: 8px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: 0.25s;
+        z-index: 1000;
+        border: 1px solid #f0e0e2;
+    }
+
+    .profile-dropdown.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .profile-dropdown .dropdown-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .profile-dropdown .dropdown-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--burgundy), #c2185b);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .profile-dropdown .dropdown-user {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        flex: 1;
+    }
+
+    .profile-dropdown .dropdown-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--dark);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .profile-dropdown .dropdown-email {
+        font-size: 11px;
+        color: #999;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .profile-dropdown .dropdown-divider {
+        height: 1px;
+        background: #f0e0e2;
+        margin: 6px 0;
+    }
+
+    .profile-dropdown .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 14px;
+        border-radius: 8px;
+        color: var(--dark);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+
+    .profile-dropdown .dropdown-item i {
+        font-size: 15px;
+        width: 18px;
+        color: var(--burgundy);
+        text-align: center;
+    }
+
+    .profile-dropdown .dropdown-item:hover {
+        background: var(--light-pink);
+    }
+
+    .profile-dropdown .dropdown-item.logout {
+        color: #d32f2f;
+    }
+
+    .profile-dropdown .dropdown-item.logout i {
+        color: #d32f2f;
+    }
+
+    .profile-dropdown .dropdown-item.logout:hover {
+        background: #ffebee;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+        .navbar .nav-links {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .navbar .nav-links.active {
+            display: flex;
+        }
+
+        .navbar .menu-button {
+            display: flex;
+        }
+    }
+</style>
+</head>
+<body class="login-page">
+<header class="navbar">
+    <div class="nav-container">
+          <!-- Logo -->
+            <a href="#home" class="top-logo">
+                <img src="image/logo.jpg" alt="Erica Logo">
+                <div class="logo-text">
+                    <div class="logo-name">Erica Salon</div>
+                    <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
+                </div>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="#home">Home</a>
+                <a href="#services">Services</a>
+                <a href="#about">About</a>
+                <a href="#manicure">Manicure</a>
+                <a href="#pedicure">Pedicure</a>
+                <a href="#hairtreatment">Hair Treatment</a>
+                <a href="#contacts">Contacts</a>
+            </nav>
+        <div class="social-icons">
+            <!-- PROFILE DROPDOWN -->
+            <div class="profile-wrapper">
+                <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
+                    <i class="fa-solid fa-user"></i>
+                </button>
+
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="dropdown-header">
+                        <div class="dropdown-avatar"><i class="fa-solid fa-user"></i></div>
+                        <div class="dropdown-user">
+                            <span class="dropdown-name" id="dropdownName">Guest</span>
+                            <span class="dropdown-email" id="dropdownEmail">guest@email.com</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="profile.html" class="dropdown-item">
+                        <i class="fa-solid fa-user-circle"></i><span>Show Profile</span>
+                    </a>
+                    <a href="history.html" class="dropdown-item">
+                        <i class="fa-solid fa-clock-rotate-left"></i><span>My Appointments</span>
+                    </a>
+                    <a href="payments.html" class="dropdown-item">
+                        <i class="fa-solid fa-receipt"></i><span>Payment History</span>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" id="logoutBtn" class="dropdown-item logout">
+                        <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <button class="menu-button" id="menuButton" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</header>
+
+    <main class="login-wrapper">
+        <div class="login-container history-container">
+
+            <div class="script-title">My Bookings</div>
+            <h2>Appointment History</h2>
+            <p class="login-subtitle">Lahat ng appointments mo ay nandito ✨</p>
+
+            <div id="appointmentsList">
+                <div class="empty-state">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p>Loading appointments...</p>
+                </div>
+            </div>
+
+            <p class="signup-link" style="margin-top:30px;">
+                <a href="calendar.html">+ Book Another Appointment</a>
+            </p>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-logo">Erica Salon</div>
+        <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const API_URL = window.location.origin;
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            alert('Please login first');
+            window.location.href = 'login.html';
+        }
+
+        async function loadAppointments() {
+            const list = document.getElementById('appointmentsList');
+
+            try {
+                const res = await fetch(`${API_URL}/api/appointments/my`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await res.json();
+                console.log('📥 Appointments:', data);
+
+                if (!data.success || !data.appointments || data.appointments.length === 0) {
+                    list.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-calendar-xmark"></i>
+                            <h3>Wala Pang Appointments</h3>
+                            <p>Mag-book na ng appointment!</p>
+                            <a href="calendar.html" class="button login-btn" style="max-width: 250px; margin: 20px auto 0; text-decoration: none;">
+                                <i class="fa-solid fa-calendar-plus"></i> Book Now
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+
+             list.innerHTML = data.appointments.map(appt => {
+    const servicesHTML = appt.services.map(s => `
+        <div class="appointment-service">
+            <div class="appointment-service-name">
+                💅 ${s.serviceId?.serviceName || 'Service'}
+            </div>
+            <div class="appointment-service-staff">
+                👤 ${s.staffId?.name || 'Staff'} — ₱${s.price}
+            </div>
+        </div>
+    `).join('');
+
+    
+   // Payment info
+const paid = appt.totalAmount - appt.remainingBalance;
+
+// Can cancel?
+const canCancel = ['Pending', 'Confirmed'].includes(appt.status);
+
+// Pay button
+const payButton = (appt.remainingBalance > 0 && appt.status !== 'Cancelled')
+    ? `<a href="pay.html?id=${appt._id}" class="button login-btn" style="margin-top: 15px; text-decoration: none; font-size: 14px; padding: 12px;">
+        <i class="fa-solid fa-credit-card"></i> Pay Now (₱${appt.remainingBalance.toFixed(2)})
+       </a>`
+    : '';
+
+// Cancel button
+const cancelButton = canCancel
+    ? `<button onclick="cancelAppointment('${appt._id}')" 
+               style="width: 100%; margin-top: 10px; padding: 12px; 
+                      background: #fff; color: #dc3545; border: 2px solid #dc3545; 
+                      border-radius: 10px; font-weight: 600; cursor: pointer; 
+                      font-family: inherit; font-size: 14px; transition: 0.25s;"
+               onmouseover="this.style.background='#dc3545'; this.style.color='white';"
+               onmouseout="this.style.background='#fff'; this.style.color='#dc3545';">
+           <i class="fa-solid fa-xmark"></i> Cancel Appointment
+       </button>`
+    : '';
+
+return `
+    <div class="appointment-card">
+        <div class="appointment-header">
+            <div class="appointment-date">
+                📅 ${appt.appointmentDate} — ${appt.appointmentTime}
+            </div>
+            <span class="appointment-status status-${appt.status}">
+                ${appt.status}
+            </span>
+        </div>
+        ${servicesHTML}
+        
+        <div style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #f0e0e2;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
+                <span>💰 Total Amount:</span>
+                <strong>₱${appt.totalAmount.toFixed(2)}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
+                <span>✅ Paid:</span>
+                <strong style="color: #28a745;">₱${paid.toFixed(2)}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px; padding-top: 8px; border-top: 1px solid #f0e0e2;">
+                <span>⚠️ Balance:</span>
+                <strong style="color: ${appt.remainingBalance > 0 ? '#dc3545' : '#28a745'}; font-size: 16px;">
+                    ₱${appt.remainingBalance.toFixed(2)}
+                </strong>
+            </div>
+        </div>
+        ${payButton}
+        ${cancelButton}
+    </div>
+`;
+}).join('');
+
+            } catch (err) {
+                console.error('❌ Error:', err);
+                list.innerHTML = Skeleton.list(3);
+            }
+        }
+
+        loadAppointments();
+        // ============================================
+// CANCEL APPOINTMENT
+// ============================================
+async function cancelAppointment(appointmentId) {
+  // Confirm muna
+const result = await Confirm.show({
+    title: 'Cancel Appointment?',
+    message: 'This action cannot be undone. Please provide a reason.',
+    confirmText: 'Yes, Cancel',
+    cancelText: 'Go Back',
+    type: 'danger',
+    requireReason: true,
+    reasonPlaceholder: 'Bakit mo i-cancel? (required)'
+});
+
+if (!result.confirmed) return;
+const reason = result.reason;
+
+  try {
+    const res = await fetch(`${API_URL}/api/appointments/${appointmentId}/cancel`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ reason: reason || 'Cancelled by customer' })
+    });
+
+    const data = await res.json();
+    console.log('📥 Cancel response:', data);
+
+  if (data.success) {
+    Toast.success('Appointment cancelled successfully!');
+    loadAppointments();
+} else {
+      Toast.error(data.message);
+    }
+  } catch (err) {
+    console.error('❌ Cancel error:', err);
+    alert('⚠️ Network error. Please try again.');
+  }
+}
+
+    // ============================================
+// PROFILE DROPDOWN TOGGLE
+// ============================================
+const profileBtn = document.getElementById('profileBtn');
+const profileDropdown = document.getElementById('profileDropdown');
+
+if (profileBtn && profileDropdown) {
+    profileBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('show');
+        profileBtn.classList.toggle('active');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+            profileDropdown.classList.remove('show');
+            profileBtn.classList.remove('active');
+        }
+    });
+}
+
+// ============================================
+// LOAD USER INFO
+// ============================================
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+if (user.name) {
+    const dropdownName = document.getElementById('dropdownName');
+    const dropdownEmail = document.getElementById('dropdownEmail');
+    if (dropdownName) dropdownName.textContent = user.name;
+    if (dropdownEmail) dropdownEmail.textContent = user.email;
+}
+
+// ============================================
+// LOGOUT
+// ============================================
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    });
+}     
+
+    </script>
+    <script src="ui.js"></script>
+</body>
+</html>

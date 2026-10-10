@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Erica Salon</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" >
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" >
+
+    <!-- CSS --> 
+    <link rel="stylesheet" href="homepage.css">
+    <link rel="stylesheet" href="ui.css">
+    
+
+    <style>
+        /* Smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 140px; /* Para hindi matakpan ng navbar yung section title */
+        }
+
+        /* Active nav link highlight */
+        .nav-links a.active {
+            color: var(--burgundy);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            
+            <!-- Logo -->
+            <a href="#home" class="top-logo">
+                <img src="image/logo.jpg" alt="Erica Logo">
+                <div class="logo-text">
+                    <div class="logo-name">Erica Salon</div>
+                    <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
+                </div>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="#home">Home</a>
+                <a href="#services">Services</a>
+                <a href="#about">About</a>
+                <a href="#manicure">Manicure</a>
+                <a href="#pedicure">Pedicure</a>
+                <a href="#hairtreatment">Hair Treatment</a>
+                <a href="#contacts">Contacts</a>
+            </nav>
+
+            <div class="social-icons">
+                <a href="#" aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+                <a href="#" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+            </div>
+
+            <button class="menu-button" id="menuButton" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ===== HOME / HERO ===== -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <div class="hero-content"> 
+                    <div class="script-title">Nail care</div>
+                </div>
+
+                <h1>Gorgeous Erica<br>Nail and Salon</h1>
+
+                <p>Make your nails perfect right now!</p>
+
+                <a href="login.html" class="button">Book an Appointment</a>
+            </div>
+
+            <div class="hero-image">
+                <img src="image/nail.jpg" alt="Nail care">
+            </div>
+        </section>
+
+        <!-- ===== SERVICES ===== -->
+        <section class="services section" id="services">
+            <div class="section-heading">
+                <h2>FEATURED NAIL SERVICES</h2>
+                <p>All kinds of procedures for your hands and feet.</p>
+            </div>
+
+            <div class="service-grid">
+                <article class="service-card">
+                    <img src="image/kukouno.jpg" alt="Manicure">
+                    <h3>Manicure <span>— from <b>150</b></span></h3>
+                </article>
+
+                <article class="service-card">
+                    <img src="image/kukodalawa.jpg" alt="Nail Art">
+                    <h3>Nail Art <span>— from <b>120</b></span></h3>
+                </article>
+
+                <article class="service-card">
+                    <img src="image/kukosapaauno.jpg" alt="Pedicure">
+                    <h3>Pedicure <span>— from <b>130</b></span></h3>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===== ABOUT ===== -->
+        <section class="about" id="about">
+            <div class="about-image">
+                <img src="image/kukotatlo.jpg" alt="Lotus salon">
+            </div>
+
+            <div class="about-content">
+                <div class="script-title">About us</div>
+                <h2>WELCOME TO GORGEOUS ERICA SALON!</h2>
+                <p class="large-text">
+                    Erica Salon is a perfect place to get high-quality nail care and spa services in a clean and welcoming atmosphere.
+                </p>
+
+                <p>
+                    Our licensed nail artists are always aware of the latest trends and truly care about their clients.
+                    We also offer free Wi-Fi, relaxing music,
+                    and complimentary cookies and beverages to make your experience more enjoyable.
+                </p>
+
+                <div class="call-us">
+                    <div class="call-icon"><i class="fa-solid fa-phone"></i></div>
+                    <div>
+                        <span>Call us now!</span>
+                        <strong>+1 (234) 567 89 00</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FEATURES ===== -->
+        <section class="features">
+            <div class="feature">
+                <i class="fa-solid fa-scissors"></i>
+                <div>
+                    <h3>Sterile Tools</h3>
+                    <p>We have one-use files and dry-heat sterilizers.</p>
+                    <a href="#">MORE INFO</a>
+                </div>
+            </div>
+
+            <div class="feature">
+                <i class="fa-solid fa-hand-sparkles"></i>
+                <div>
+                    <h3>Expert Staff</h3>
+                    <p>Our nail masters work fast and safely.</p>
+                    <a href="#">MORE INFO</a>
+                </div>
+            </div>
+
+            <div class="feature">
+                <i class="fa-solid fa-palette"></i>
+                <div>
+                    <h3>100+ Colors</h3>
+                    <p>You can choose any nail polish you like.</p>
+                    <a href="#">MORE INFO</a>
+                </div>
+            </div>
+
+            <div class="feature">
+                <i class="fa-solid fa-box-open"></i>
+                <div>
+                    <h3>Famous Brands</h3>
+                    <p>We use only top-quality products for our clients.</p>
+                    <a href="#">MORE INFO</a>
+                </div>
+            </div>
+        </section>
+            
+        <!-- ===== LARGE IMAGE ===== -->
+        <section class="large-image">
+            <img src="image/Background.png" alt="Nail salon">
+        </section>
+
+        <!-- ===== TEAM ===== -->
+        <section class="team section">
+            <div class="section-heading">
+                <div class="script-title">Team</div>
+                <h2>NAILS MASTERS</h2>
+                <p>Our fairies of manicure and pedicure will take care of you.</p>
+            </div>
+
+            <div class="team-grid">
+                <article class="team-card">
+                    <div class="team-image">
+                        <img src="image/erica.jpg" alt="Erica Infante">
+                    </div>
+                    <h3>Erica Infante</h3>
+                    <strong>Owner & Nail Artist</strong>
+                </article>
+
+                <article class="team-card">
+                    <div class="team-image">
+                        <img src="image/Marie Reyes.jpg" alt="Mae">
+                    </div>
+                    <h3>Mae</h3>
+                    <strong>Licensed Hair Technician</strong>
+                </article>
+
+                <article class="team-card">
+                    <div class="team-image">
+                        <img src="image/Danica Ramos.jpg" alt="Isa">
+                    </div>
+                    <h3>Isa</h3>
+                    <strong>Pedicure Specialist</strong>
+                </article>
+            </div>
+        </section>
+
+        <!-- ===== PROMOTIONS ===== -->
+        <section class="promotions">
+            <div class="promotion products">
+                <img src="image/promo.jpg" alt="Nail care products">
+                <div class="promotion-content">
+                    <div class="script-title">Products</div>
+                    <h2>Top Nail Care<br>Products</h2>
+                    <p>Buy everything you need in our salon.</p>
+                    <a href="#">LEARN MORE</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== MANICURE ===== -->
+        <section class="price-section" id="manicure">
+            <div class="price-image">
+                <img src="image/manicure.jpg" alt="Manicure">
+            </div>
+
+            <div class="price-content">
+                <div class="script-title">Manicure</div>
+                <h2>MANICURE SERVICES</h2>
+
+                <div class="price-item">
+                    <div class="price-title">Glue manicure <span>$20</span></div>
+                    <p>Long-lasting manicure with resin glue acting as a base coat.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">CND Shellac or OPI Gel manicure <span>$25</span></div>
+                    <p>Long-lasting manicure with gel nail polish.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">French manicure <span>$55</span></div>
+                    <p>Light pink or nude nail beds with bold white nail tips.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">Gel off manicure <span>$35</span></div>
+                    <p>Gel polish removal and nail care.</p>
+                </div>
+
+                <a href="calendar.html" class="button">Book Now</a>
+            </div>
+        </section>
+
+        <!-- ===== PEDICURE ===== -->
+        <section class="price-section reverse" id="pedicure">
+            <div class="price-image">
+                <img src="image/pedicure.jpg" alt="Pedicure">
+            </div>
+
+            <div class="price-content">
+                <div class="script-title">Pedicure</div>
+                <h2>PEDICURE SERVICES</h2>
+
+                <div class="price-item">
+                    <div class="price-title">French pedicure <span>$35</span></div>
+                    <p>Light pink or nude toenails with white toenail tips.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">Spa pedicure <span>$55</span></div>
+                    <p>Moisturizing mask, cuticle repair, callous removal, buff, and polish.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">Herbal pedicure <span>$50</span></div>
+                    <p>Before the pedicure, feet are soaked in herbs to revitalize dry skin.</p>
+                </div>
+
+                <a href="calendar.html" class="button">Book Now</a>
+            </div>
+        </section>
+
+        <!-- ===== HAIR TREATMENT ===== -->
+        <section class="price-section" id="hairtreatment">
+            <div class="price-image">
+                <img src="image/Background.png" alt="Hair Treatment">
+            </div>
+
+            <div class="price-content">
+                <div class="script-title">Hair Treatment</div>
+                <h2>HAIR TREATMENT SERVICES</h2>
+
+                <div class="price-item">
+                    <div class="price-title">Hair Spa <span>$45</span></div>
+                    <p>Deep conditioning treatment for damaged hair.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">Keratin Treatment <span>$80</span></div>
+                    <p>Smoothing treatment for frizzy and unruly hair.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">Hair Color <span>$60</span></div>
+                    <p>Professional hair coloring with premium products.</p>
+                </div>
+
+                <div class="price-item">
+                    <div class="price-title">Hair Rebond <span>$120</span></div>
+                    <p>Straightening treatment for smooth, silky hair.</p>
+                </div>
+
+                <a href="calendar.html" class="button">Book Now</a>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <section class="contact" id="contacts">
+            <div class="map">
+                <iframe src="https://www.google.com/maps?q=59%20Queen%20Street,%20New%20York,%20NY%2010002&output=embed" loading="lazy"></iframe>
+            </div>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    <div>
+                        <h3>Address</h3>
+                        <p>Blk 20 Lot 12 Phase 3 Golden Hills Panorama,<br>Loma de Gato, Marilao, Philippines, 3019</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fa-solid fa-phone"></i></div>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>0927 317 9191</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fa-solid fa-envelope"></i></div>
+                    <div>
+                        <h3>Email</h3>
+                        <p>gorgeousnails@email.com</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+      <!-- ===== GALLERY ===== -->
+<section class="gallery">
+    <div class="section-heading">
+        <div class="script-title">Gallery</div>
+        <h2>OUR WORK</h2>
+        <p>Mga likha ng aming mga nail artists ✨</p>
+    </div>
+
+    <div class="gallery-wrapper">
+        <button class="gallery-nav gallery-prev" id="galleryPrev" aria-label="Previous">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <div class="gallery-scroll" id="galleryScroll">
+            <div class="gallery-item">
+                <img src="image/kukouno.jpg" alt="Nail art 1">
+            </div>
+            <div class="gallery-item">
+                <img src="image/kukodalawa.jpg" alt="Nail art 2">
+            </div>
+            <div class="gallery-item">
+                <img src="image/kukosapaauno.jpg" alt="Nail art 3">
+            </div>
+            <div class="gallery-item">
+                <img src="image/kukotatlo.jpg" alt="Nail art 4">
+            </div>
+            <div class="gallery-item">
+                <img src="image/manicure.jpg" alt="Nail art 5">
+            </div>
+            <div class="gallery-item">
+                <img src="image/pedicure.jpg" alt="Nail art 6">
+            </div>
+        </div>
+
+        <button class="gallery-nav gallery-next" id="galleryNext" aria-label="Next">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+</section>
+    </main>
+
+    <footer>
+        <div class="footer-logo">Erica Salon</div>
+        <p>© 2026 Gorgeous Erica Nails & Salon. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // ===== MOBILE MENU TOGGLE =====
+        const menuButton = document.getElementById("menuButton");
+        const navLinks = document.getElementById("navLinks");
+
+        if (menuButton && navLinks) {
+            menuButton.addEventListener("click", function () {
+                navLinks.classList.toggle("active");
+            });
+        }
+
+        // ===== CLOSE MENU ON LINK CLICK (Mobile) =====
+        document.querySelectorAll(".nav-links a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                navLinks.classList.remove("active");
+            });
+        });
+
+        // ===== ACTIVE LINK HIGHLIGHT ON SCROLL =====
+        const sections = document.querySelectorAll('section[id]');
+        const navItems = document.querySelectorAll('.nav-links a');
+
+        function highlightNav() {
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 150;
+                const sectionHeight = section.clientHeight;
+
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', highlightNav);
+        window.addEventListener('load', highlightNav);
+
+        // ===== GALLERY SCROLL =====
+const galleryScroll = document.getElementById('galleryScroll');
+const galleryPrev = document.getElementById('galleryPrev');
+const galleryNext = document.getElementById('galleryNext');
+
+if (galleryScroll && galleryPrev && galleryNext) {
+    const scrollAmount = 320; // px per click
+
+    galleryPrev.addEventListener('click', () => {
+        galleryScroll.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    galleryNext.addEventListener('click', () => {
+        galleryScroll.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    // Update button visibility based on scroll position
+    function updateGalleryButtons() {
+        const scrollLeft = galleryScroll.scrollLeft;
+        const maxScroll = galleryScroll.scrollWidth - galleryScroll.clientWidth;
+
+        galleryPrev.style.opacity = scrollLeft > 10 ? '1' : '0.5';
+        galleryNext.style.opacity = scrollLeft < maxScroll - 10 ? '1' : '0.5';
+    }
+
+    galleryScroll.addEventListener('scroll', updateGalleryButtons);
+    window.addEventListener('load', updateGalleryButtons);
+    window.addEventListener('resize', updateGalleryButtons);
+}
+
+    </script>
+    <script src="ui.js"></script>
+    
+</body>
+</html>
