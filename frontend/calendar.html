@@ -113,19 +113,19 @@
                     <h3>How It Works</h3>
                     <ul class="tips-list">
                         <li>
-                            <i class="fa-solid fa-1" style="background: #fce4ec; color: #a70d40;"></i>
+                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
                             <span>Pumili ng date sa calendar</span>
                         </li>
                         <li>
-                            <i class="fa-solid fa-2" style="background: #fce4ec; color: #a70d40;"></i>
+                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
                             <span>Pumili ng service</span>
                         </li>
                         <li>
-                            <i class="fa-solid fa-3" style="background: #fce4ec; color: #a70d40;"></i>
+                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
                             <span>Pumili ng staff</span>
                         </li>
                         <li>
-                            <i class="fa-solid fa-4" style="background: #fce4ec; color: #a70d40;"></i>
+                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
                             <span>I-confirm ang booking</span>
                         </li>
                     </ul>
@@ -402,6 +402,15 @@
             if (dn) dn.textContent = user.name;
             if (de) de.textContent = user.email;
         }
+
+        // ===== CHECK IF LOGGED IN =====
+(function checkLogin() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    alert('Please login first to book an appointment');
+    window.location.href = 'login.html';
+  }
+})();
     </script>
 </body>
 </html>
