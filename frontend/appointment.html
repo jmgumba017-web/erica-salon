@@ -25,14 +25,15 @@
                     <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
                 </div>
             </a>
-
-            <nav class="nav-links" id="navLinks">
-                <a href="homepage.html">Home</a>
-                <a href="calendar.html">Book</a>
-                <a href="history.html">My Appointments</a>
-                <a href="payments.html">Payments</a>
-            </nav>
-
+ <nav class="nav-links" id="navLinks">
+            <a href="homepage.html">Home</a>
+            <a href="homepage.html#services">Services</a>
+            <a href="homepage.html#about">About</a>
+            <a href="homepage.html#manicure">Manicure</a>
+            <a href="homepage.html#pedicure">Pedicure</a>
+            <a href="homepage.html#hairtreatment">Hair Treatment</a>
+            <a href="homepage.html#contacts">Contacts</a>
+        </nav>
             <div class="social-icons">
                 <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
@@ -207,24 +208,30 @@
                         </div>
                     </div>
 
-                    <!-- STEP 2: SERVICE -->
-                    <div class="form-section">
-                        <div class="form-section-header">
-                            <span class="step-badge">2</span>
-                            <h4>Choose a Service</h4>
-                        </div>
+                    <!-- STEP 2: SERVICES (MULTI-SELECT, MAX 3) -->
+<div class="form-section">
+    <div class="form-section-header">
+        <span class="step-badge">2</span>
+        <h4>Choose Services</h4>
+        <span class="optional-badge">Max 3</span>
+    </div>
 
-                        <div class="input-group">
-                            <label for="service">
-                                <i class="fa-solid fa-spa"></i> Service
-                            </label>
-                            <select id="service" name="service" required onchange="updateSummaryService()">
-                                <option value="">Loading services...</option>
-                            </select>
-                        </div>
-                    </div>
+    <p class="staff-hint">
+        <i class="fa-solid fa-info-circle"></i>
+        Pumili ng <strong>1 hanggang 3 services</strong>. 
+        <span id="serviceCount">0/3 selected</span>
+    </p>
 
-                   <!-- STEP 3: STAFF (OPTIONAL) -->
+    <!-- Selected services chips -->
+    <div id="selectedServices" class="selected-services-chips"></div>
+
+    <!-- Services list (populated by JS) -->
+    <div id="servicesContainer" class="services-container">
+        <p style="color:#999; padding: 12px;">Loading services...</p>
+    </div>
+</div>
+
+<!-- STEP 3: STAFF (OPTIONAL) -->
 <div class="form-section">
     <div class="form-section-header">
         <span class="step-badge">3</span>

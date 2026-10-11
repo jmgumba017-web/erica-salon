@@ -41,44 +41,214 @@ function showMessage(message, type = 'info') {
 }
 
 // ============================================
-// STEP 1: LOAD SERVICES FROM API
+// STEP 1: LOAD SERVICES (MULTI-SELECT, MAX 3)
 // ============================================
+const MAX_SERVICES = 3;
+let selectedServices = [];   // array of { _id, serviceName, price, duration }
+let allServices = [];
+
 async function loadServices() {
-  const serviceSelect = document.getElementById('service');
-  if (!serviceSelect) return;
+  const container = document.getElementById('servicesContainer');
+  if (!container) return;
 
   try {
     const res = await fetch(`${API_URL}/api/services`);
     const data = await res.json();
     const services = data.services || data;
+    allServices = services;
 
     console.log('📥 Services loaded:', services.length);
 
+    // Group by category
     const grouped = {};
     services.forEach(s => {
       if (!grouped[s.category]) grouped[s.category] = [];
       grouped[s.category].push(s);
     });
 
-    let html = '<option value="">Choose a service...</option>';
     const categoryIcons = {
       'Hair': '💇', 'Nails': '💅', 'Skin': '✨',
       'Body': '💆', 'Makeup': '💄', 'Lashes & Brows': '👁️'
     };
 
+    let html = '';
     for (const [category, list] of Object.entries(grouped)) {
-      html += `<optgroup label="${categoryIcons[category] || '📌'} ${category}">`;
+      html += `<div class="service-category">`;
+      html += `<div class="service-category-label">${categoryIcons[category] || '📌'} ${category}</div>`;
+
       list.forEach(s => {
-        html += `<option value="${s._id}">${s.serviceName} - ₱${s.price} (${s.duration} mins)</option>`;
+        html += `
+          <label class="service-item" data-id="${s._id}" data-name="${s.serviceName}" data-price="${s.price}" data-duration="${s.duration}">
+            <input type="checkbox" class="service-checkbox" value="${s._id}">
+            <div class="service-info">
+              <span class="service-name">${s.serviceName}</span>
+              <span class="service-meta">⏱ ${s.duration} mins</span>
+            </div>
+            <span class="service-price">₱${s.price}</span>
+          </label>
+        `;
       });
-      html += `</optgroup>`;
+
+      html += `</div>`;
     }
 
-    serviceSelect.innerHTML = html;
+    container.innerHTML = html;
+
+    // Attach listeners
+    document.querySelectorAll('.service-item').forEach(item => {
+      const checkbox = item.querySelector('.service-checkbox');
+
+      checkbox.addEventListener('change', () => {
+        handleServiceToggle(item, checkbox);
+      });
+    });
+
+    // Render initial chips
+    renderSelectedChips();
 
   } catch (err) {
     console.error('❌ Load services error:', err);
-    serviceSelect.innerHTML = '<option value="">Error loading services</option>';
+    container.innerHTML = '<p style="color:#c00; padding: 12px;">Error loading services</p>';
+  }
+}
+
+// ============================================
+// HANDLE SERVICE TOGGLE
+// ============================================
+function handleServiceToggle(item, checkbox) {
+  const id = item.dataset.id;
+  const name = item.dataset.name;
+  const price = parseFloat(item.dataset.price);
+  const duration = parseInt(item.dataset.duration);
+
+  if (checkbox.checked) {
+    // Check limit
+    if (selectedServices.length >= MAX_SERVICES) {
+      checkbox.checked = false;
+      showServiceLimitWarning();
+      return;
+    }
+
+    // Add
+    selectedServices.push({ _id: id, serviceName: name, price, duration });
+    item.classList.add('selected');
+  } else {
+    // Remove
+    selectedServices = selectedServices.filter(s => s._id !== id);
+    item.classList.remove('selected');
+  }
+
+  updateServicesUI();
+}
+
+// ============================================
+// UPDATE UI (chips, counter, disabled states)
+// ============================================
+function updateServicesUI() {
+  // Update counter
+  const counter = document.getElementById('serviceCount');
+  if (counter) counter.textContent = `${selectedServices.length}/${MAX_SERVICES} selected`;
+
+  // Enable/disable remaining checkboxes
+  document.querySelectorAll('.service-item').forEach(item => {
+    const isSelected = selectedServices.some(s => s._id === item.dataset.id);
+
+    if (!isSelected && selectedServices.length >= MAX_SERVICES) {
+      item.classList.add('disabled');
+    } else {
+      item.classList.remove('disabled');
+    }
+  });
+
+  // Update chips
+  renderSelectedChips();
+
+  // Update sidebar summary
+  updateSummaryServices();
+}
+
+// ============================================
+// RENDER SELECTED CHIPS
+// ============================================
+function renderSelectedChips() {
+  const container = document.getElementById('selectedServices');
+  if (!container) return;
+
+  if (selectedServices.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = selectedServices.map(s => `
+    <span class="service-chip" data-id="${s._id}">
+      ${s.serviceName}
+      <button type="button" class="chip-remove" aria-label="Remove">✕</button>
+    </span>
+  `).join('');
+
+  // Attach remove listeners
+  container.querySelectorAll('.chip-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const chip = btn.closest('.service-chip');
+      const id = chip.dataset.id;
+      removeServiceById(id);
+    });
+  });
+}
+
+// ============================================
+// REMOVE SERVICE BY ID
+// ============================================
+function removeServiceById(id) {
+  selectedServices = selectedServices.filter(s => s._id !== id);
+
+  // Uncheck the matching checkbox
+  const item = document.querySelector(`.service-item[data-id="${id}"]`);
+  if (item) {
+    item.classList.remove('selected');
+    const cb = item.querySelector('.service-checkbox');
+    if (cb) cb.checked = false;
+  }
+
+  updateServicesUI();
+}
+
+// ============================================
+// SHOW LIMIT WARNING
+// ============================================
+function showServiceLimitWarning() {
+  const existing = document.querySelector('.service-limit-warning');
+  if (existing) existing.remove();
+
+  const warning = document.createElement('div');
+  warning.className = 'service-limit-warning';
+  warning.innerHTML = `⚠️ Maximum <strong>${MAX_SERVICES} services</strong> lang per booking. Alisin muna ang isa para makapagdagdag.`;
+
+  const container = document.getElementById('servicesContainer');
+  if (container && container.parentNode) {
+    container.parentNode.insertBefore(warning, container.nextSibling);
+  }
+
+  setTimeout(() => warning.remove(), 3500);
+}
+
+// ============================================
+// UPDATE SIDEBAR SUMMARY (multiple services)
+// ============================================
+function updateSummaryServices() {
+  const sidebarService = document.getElementById('sidebarService');
+  if (!sidebarService) return;
+
+  if (selectedServices.length === 0) {
+    sidebarService.textContent = '—';
+    return;
+  }
+
+  // Show up to 2 names + "+N more"
+  if (selectedServices.length <= 2) {
+    sidebarService.textContent = selectedServices.map(s => s.serviceName).join(', ');
+  } else {
+    sidebarService.textContent = `${selectedServices[0].serviceName} +${selectedServices.length - 1} more`;
   }
 }
 
@@ -92,15 +262,15 @@ async function loadStaff() {
   try {
     const res = await fetch(`${API_URL}/api/staff`);
     const data = await res.json();
-    const staffList = data.staff || data;
+    const staffList = data.staff || [];
 
     console.log('📥 Staff loaded:', staffList.length);
 
     let html = `
       <label class="staff-card staff-any">
         <input type="radio" name="staff" value="" checked>
-        <div class="staff-photo staff-photo-any">
-          <i class="fa-solid fa-users"></i>
+        <div class="staff-photo-any">
+          <i class="fa-solid fa-user-group"></i>
         </div>
         <span class="staff-name">
           Any
@@ -112,12 +282,12 @@ async function loadStaff() {
     html += staffList.map((s) => `
       <label class="staff-card">
         <input type="radio" name="staff" value="${s._id}" data-name="${s.name}">
-        <img src="${s.photo || 'image/erica.jpg'}" 
-             alt="${s.name}" 
+        <img src="${s.photo || 'image/erica.jpg'}"
+             alt="${s.name}"
              class="staff-photo"
              onerror="this.onerror=null; this.src='image/erica.jpg';">
         <span class="staff-name">
-          ${s.name.split(' ')[0]}
+          ${s.name}
           <span class="staff-role">${s.specialization?.[0] || 'Staff'}</span>
         </span>
       </label>
@@ -142,7 +312,6 @@ async function loadStaff() {
     staffGrid.innerHTML = '<p style="color:#999;">Error loading staff</p>';
   }
 }
-
 // ============================================
 // STEP 2.5: LOAD DAY STATUS
 // ============================================
@@ -160,17 +329,14 @@ async function loadDayStatus(date) {
     const dateBadge = document.getElementById('dateBadge');
     const form = document.getElementById('appointmentForm');
 
-    // ✅ Guard: kung walang dateBadge
     if (!dateBadge) {
       console.warn('⚠️ #dateBadge not found — skipping badge insertion');
       return;
     }
 
-    // Alisin ang lumang badge
     const oldBadge = document.getElementById('dayStatusBadge');
     if (oldBadge) oldBadge.remove();
 
-    // Gumawa ng bagong badge
     const container = document.createElement('div');
     container.id = 'dayStatusBadge';
     container.style.cssText = `
@@ -198,7 +364,6 @@ async function loadDayStatus(date) {
 
     dateBadge.parentNode.insertBefore(container, dateBadge.nextSibling);
 
-    // Enable/Disable submit button
     if (form) {
       const submitBtn = form.querySelector('button[type="submit"]');
       if (submitBtn) {
@@ -242,16 +407,13 @@ if (appointmentForm) {
 
     const appointmentDate = document.getElementById('appointmentDate').value;
     const appointmentTime = document.querySelector('input[name="time"]:checked')?.value;
-    const serviceId = document.getElementById('service').value;
     let staffId = document.querySelector('input[name="staff"]:checked')?.value;
     const notes = document.getElementById('notes')?.value || '';
 
     // ✅ Staff is OPTIONAL — auto-assign if empty
     if (!staffId) {
       console.log('📌 No staff selected — auto-assigning available staff');
-
       const firstStaffRadio = document.querySelector('input[name="staff"]:not([value=""])');
-
       if (firstStaffRadio && firstStaffRadio.value) {
         staffId = firstStaffRadio.value;
         console.log('✅ Auto-assigned to:', staffId);
@@ -260,24 +422,31 @@ if (appointmentForm) {
       }
     }
 
-    // Validation
+    // ✅ Validation
     if (!appointmentDate) {
       return showMessage('❌ Please select a date first (go to calendar)', 'error');
     }
     if (!appointmentTime) {
       return showMessage('❌ Please select a preferred time', 'error');
     }
-    if (!serviceId) {
-      return showMessage('❌ Please select a service', 'error');
+    if (selectedServices.length === 0) {
+      return showMessage('❌ Please select at least 1 service', 'error');
+    }
+    if (selectedServices.length > MAX_SERVICES) {
+      return showMessage(`❌ Maximum ${MAX_SERVICES} services lang per booking`, 'error');
     }
     if (!staffId) {
       return showMessage('❌ Please select a staff', 'error');
     }
 
+    // ✅ Dynamic services array from user selection
     const bookingData = {
       appointmentDate,
       appointmentTime,
-      services: [{ serviceId, staffId }],
+      services: selectedServices.map(s => ({
+        serviceId: s._id,
+        staffId: staffId
+      })),
       notes
     };
 
@@ -302,7 +471,6 @@ if (appointmentForm) {
       console.log('📥 Booking response:', data);
 
       if (data.success) {
-        // ✅ Check kung kailangan ng down payment (first-time customer)
         if (data.requireDownPayment) {
           showMessage('✅ ' + data.message, 'success');
           setTimeout(() => {
@@ -330,9 +498,9 @@ if (appointmentForm) {
 // ============================================
 // INITIALIZE
 // ============================================
-window.addEventListener('DOMContentLoaded', () => {
-  loadServices();
-  loadStaff();
+window.addEventListener('DOMContentLoaded', async () => {
+  await loadServices();
+  await loadStaff();
 
   const dateParam = new URLSearchParams(window.location.search).get('date');
   if (dateParam) {
