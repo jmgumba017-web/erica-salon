@@ -1,15 +1,9 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
 // ============================================
-// EMAIL TRANSPORTER (Gmail SMTP)
+// SENDGRID SETUP
 // ============================================
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS  // App Password (16 chars)
-  }
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // ============================================
 // HELPER: Base HTML Template
@@ -59,27 +53,35 @@ function emailTemplate(title, content, buttonText = null, buttonLink = null) {
 }
 
 // ============================================
-// SEND EMAIL (Base Function) — Gmail SMTP
+// SEND EMAIL (Base Function)
 // ============================================
 async function sendEmail(to, subject, html) {
   try {
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.warn('⚠️ Email not configured. Skipping.');
+    if (!process.env.SENDGRID_API_KEY) {
+      console.warn('⚠️ SENDGRID_API_KEY not set. Skipping.');
       return { success: false, message: 'Email not configured' };
     }
 
-    const info = await transporter.sendMail({
-      from: `"Erica Salon" <${process.env.EMAIL_USER}>`,
+    const msg = {
       to,
+      from: {
+        email: process.env.EMAIL_FROM || 'jmgumba017@gmail.com',
+        name: 'Erica Salon'
+      },
       subject,
       html
-    });
+    };
 
-    console.log(`📧 Email sent to ${to}:`, info.messageId);
-    return { success: true, messageId: info.messageId };
+    const response = await sgMail.send(msg);
+    const messageId = response[0]?.headers['x-message-id'] || 'sent';
+    console.log(`📧 Email sent to ${to}:`, messageId);
+    return { success: true, messageId };
 
   } catch (err) {
     console.error('❌ Email error:', err.message);
+    if (err.response) {
+      console.error('   SendGrid response:', JSON.stringify(err.response.body, null, 2));
+    }
     return { success: false, error: err.message };
   }
 }
@@ -287,11 +289,6 @@ async function sendPasswordResetEmail(email, name, resetToken, resetUrl) {
       </div>
 
       <p>Kung hindi mo ginawa ang request na ito, huwag pansinin ang email na ito. Ang iyong password ay mananatiling hindi nagbabago.</p>
-
-      <p style="margin-top: 30px; font-size: 13px; color: #999;">
-        Kung hindi gumagana ang button, i-copy ang link na ito sa browser:
-      </p>
-      <p style="word-break: break-all; color: #a70d40; font-size: 12px;">${resetUrl}</p>
     `,
     'Back to Login',
     `${process.env.APP_URL || 'https://erica-salon.onrender.com'}/login.html`
