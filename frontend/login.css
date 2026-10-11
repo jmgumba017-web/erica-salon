@@ -1,3 +1,8 @@
+/* ============================================
+   ERICA SALON — LOGIN CSS
+   Luxury Palette: Cream/Champagne/Gold/Brown
+   ============================================ */
+
 * {
     margin: 0;
     padding: 0;
@@ -10,8 +15,8 @@ html {
 
 body {
     font-family: "DM Sans", sans-serif;
-    color: #292641;
-    background: #f8eeee;
+    color: var(--dark-brown);
+    background: var(--cream);
 }
 
 img {
@@ -25,13 +30,40 @@ a {
 }
 
 :root {
-    --pink: #edccca;
-    --light-pink: #f8eeee;
-    --dark: #292641;
-    --burgundy: #a70d40;
-    --script: #c97982;
-    --gray: #686577;
-    --white: #ffffff;
+  /* ============================================
+     LUXURY SALON PALETTE
+     ============================================ */
+  
+  /* 50% — Cream / Ivory */
+  --cream: #FFF8E7;
+  --ivory: #F5F5DC;
+  --light-cream: #FFFDF5;
+  
+  /* 25% — Champagne Beige */
+  --champagne: #F7E7CE;
+  --champagne-dark: #E8D4B8;
+  --beige: #E8DCC4;
+  
+  /* 15% — Gold */
+  --gold: #D4AF37;
+  --gold-light: #E5C76B;
+  --gold-dark: #B8941F;
+  
+  /* 10% — Dark Brown */
+  --dark-brown: #3E2723;
+  --brown: #4A2C2A;
+  --light-brown: #6B4A45;
+  
+  /* ============================================
+     ALIASES (for compatibility sa existing code)
+     ============================================ */
+  --pink: var(--champagne);
+  --light-pink: var(--cream);
+  --dark: var(--dark-brown);
+  --burgundy: var(--gold-dark);
+  --script: var(--gold);
+  --gray: var(--light-brown);
+  --white: #FFFFFF;
 }
 
 /* ===== GENERAL ===== */
@@ -49,18 +81,20 @@ a {
     font-size: 48px;
     font-weight: 600;
     letter-spacing: 1px;
+    color: var(--dark-brown);
 }
 
 .section-heading p {
     margin-top: 22px;
     font-size: 20px;
+    color: var(--light-brown);
 }
 
 .script-title {
     margin-bottom: 25px;
     font-family: "Allura", cursive;
     font-size: 32px;
-    color: var(--script);
+    color: var(--gold);
 }
 
 /* ===== BUTTON ===== */
@@ -70,8 +104,8 @@ a {
     justify-content: center;
     gap: 10px;
     padding: 18px 30px;
-    background: var(--burgundy);
-    color: white;
+    background: var(--gold-dark);
+    color: var(--white);
     font-size: 15px;
     font-weight: 700;
     border: none;
@@ -80,14 +114,14 @@ a {
 }
 
 .button:hover {
-    background: #7e0930;
+    background: var(--gold);
     transform: translateY(-2px);
 }
 
 /* ===== NAVIGATION ===== */
 .navbar {
     height: 120px;
-    background: var(--pink);
+    background: var(--champagne);
     position: relative;
     z-index: 100;
 }
@@ -126,7 +160,7 @@ a {
     font-family: "Cormorant Garamond", serif;
     font-size: 30px;
     line-height: 1;
-    color: var(--dark);
+    color: var(--dark-brown);
 }
 
 .logo-subtitle {
@@ -134,7 +168,7 @@ a {
     margin-top: 6px;
     font-size: 9px;
     letter-spacing: 2px;
-    color: #9c7277;
+    color: var(--light-brown);
     max-width: 220px;
 }
 
@@ -149,12 +183,12 @@ a {
 .nav-links a {
     font-size: 14px;
     font-weight: 600;
-    color: #555267;
+    color: var(--light-brown);
     transition: 0.25s;
 }
 
 .nav-links a:hover {
-    color: var(--burgundy);
+    color: var(--gold-dark);
 }
 
 /* ===== SOCIAL ===== */
@@ -169,20 +203,20 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    background: var(--dark);
+    color: var(--white);
+    background: var(--dark-brown);
     transition: 0.25s;
 }
 
 .social-icons a:hover {
-    background: var(--burgundy);
+    background: var(--gold-dark);
 }
 
 /* ===== MOBILE MENU ===== */
 .menu-button {
     display: none;
     border: 0;
-    background: var(--dark);
+    background: var(--dark-brown);
     width: 42px;
     height: 42px;
     padding: 8px;
@@ -193,12 +227,12 @@ a {
     display: block;
     height: 2px;
     margin: 5px 0;
-    background: white;
+    background: var(--white);
 }
 
 /* ===== LOGIN PAGE ===== */
 .login-page {
-    background: var(--light-pink);
+    background: var(--cream);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -214,11 +248,11 @@ a {
     position: relative;
     overflow: hidden;
     background:
-        radial-gradient(rgba(167, 13, 64, 0.10) 1.5px, transparent 1.5px),
-        radial-gradient(circle at 12% 18%, rgba(201, 121, 130, 0.45), transparent 38%),
-        radial-gradient(circle at 88% 82%, rgba(167, 13, 64, 0.22), transparent 42%),
+        radial-gradient(rgba(212, 175, 55, 0.10) 1.5px, transparent 1.5px),
+        radial-gradient(circle at 12% 18%, rgba(247, 231, 206, 0.6), transparent 38%),
+        radial-gradient(circle at 88% 82%, rgba(212, 175, 55, 0.15), transparent 42%),
         radial-gradient(circle at 85% 12%, rgba(255, 255, 255, 0.85), transparent 32%),
-        linear-gradient(135deg, var(--pink) 0%, var(--light-pink) 100%);
+        linear-gradient(135deg, var(--cream) 0%, var(--champagne) 100%);
     background-size: 28px 28px, auto, auto, auto, auto;
 }
 
@@ -231,7 +265,7 @@ a {
     width: 380px;
     height: 380px;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(201, 121, 130, 0.55), rgba(167, 13, 64, 0.25));
+    background: linear-gradient(135deg, rgba(247, 231, 206, 0.7), rgba(212, 175, 55, 0.25));
     filter: blur(40px);
     animation: floatBlob 9s ease-in-out infinite;
     pointer-events: none;
@@ -246,10 +280,10 @@ a {
     width: 420px;
     height: 420px;
     border-radius: 50%;
-    border: 2px solid rgba(167, 13, 64, 0.20);
+    border: 2px solid rgba(212, 175, 55, 0.20);
     box-shadow:
-        0 0 0 30px rgba(167, 13, 64, 0.05),
-        0 0 0 70px rgba(201, 121, 130, 0.07);
+        0 0 0 30px rgba(212, 175, 55, 0.05),
+        0 0 0 70px rgba(247, 231, 206, 0.15);
     animation: floatBlob 12s ease-in-out infinite reverse;
     pointer-events: none;
 }
@@ -261,17 +295,17 @@ a {
 
 /* --- Card --- */
 .login-container {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 253, 245, 0.95);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     width: 100%;
     max-width: 460px;
     padding: 55px 45px;
     border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    border: 2px solid var(--gold-light);
     box-shadow:
-        0 30px 70px rgba(167, 13, 64, 0.16),
-        0 0 0 8px rgba(255, 255, 255, 0.35);
+        0 30px 70px rgba(62, 39, 35, 0.15),
+        0 0 0 8px rgba(212, 175, 55, 0.08);
     text-align: center;
     position: relative;
     z-index: 2;
@@ -292,7 +326,7 @@ a {
     transform: translateX(-50%);
     width: 110px;
     height: 5px;
-    background: linear-gradient(90deg, var(--script), var(--burgundy));
+    background: linear-gradient(90deg, var(--gold), var(--gold-dark));
     border-radius: 0 0 12px 12px;
 }
 
@@ -304,7 +338,7 @@ a {
     right: 26px;
     font-size: 18px;
     letter-spacing: 6px;
-    color: var(--script);
+    color: var(--gold);
     opacity: 0.7;
     animation: twinkle 2.8s ease-in-out infinite;
     pointer-events: none;
@@ -319,7 +353,7 @@ a {
     font-family: "Cormorant Garamond", serif;
     font-size: 38px;
     font-weight: 600;
-    color: var(--dark);
+    color: var(--dark-brown);
     margin-bottom: 10px;
 }
 
@@ -330,11 +364,11 @@ a {
     width: 50px;
     height: 2px;
     margin: 14px auto 0;
-    background: linear-gradient(90deg, transparent, var(--script), transparent);
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
 
 .login-subtitle {
-    color: var(--gray);
+    color: var(--light-brown);
     font-size: 15px;
     margin: 18px 0 35px;
 }
@@ -343,7 +377,7 @@ a {
     text-align: center;
     margin-bottom: 10px;
     font-size: 40px;
-    background: linear-gradient(90deg, var(--script), var(--burgundy));
+    background: linear-gradient(90deg, var(--gold), var(--gold-dark));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -364,12 +398,12 @@ a {
     gap: 8px;
     font-size: 14px;
     font-weight: 600;
-    color: var(--dark);
+    color: var(--dark-brown);
     margin-bottom: 8px;
 }
 
 .input-group label i {
-    color: var(--burgundy);
+    color: var(--gold-dark);
 }
 
 .input-group input {
@@ -377,27 +411,28 @@ a {
     padding: 14px 16px;
     font-family: inherit;
     font-size: 15px;
-    color: var(--dark);
-    background: var(--light-pink);
-    border: 1px solid #e6d6d8;
+    color: var(--dark-brown);
+    background: var(--cream);
+    border: 1px solid var(--champagne-dark);
     border-radius: 12px;
     outline: none;
     transition: 0.25s;
 }
 
 .input-group input:hover {
-    border-color: var(--script);
+    border-color: var(--gold-light);
 }
 
 .input-group input:focus {
-    border-color: var(--burgundy);
-    background: #fff;
-    box-shadow: 0 0 0 4px rgba(167, 13, 64, 0.10);
+    border-color: var(--gold);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
     transform: translateY(-1px);
 }
 
 .input-group input::placeholder {
-    color: #b6a3a6;
+    color: var(--light-brown);
+    opacity: 0.6;
 }
 
 /* Options row */
@@ -414,16 +449,16 @@ a {
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    color: var(--gray);
+    color: var(--light-brown);
 }
 
 .remember input {
-    accent-color: var(--burgundy);
+    accent-color: var(--gold-dark);
     cursor: pointer;
 }
 
 .forgot-link {
-    color: var(--burgundy);
+    color: var(--gold-dark);
     font-weight: 600;
     transition: 0.25s;
 }
@@ -435,23 +470,23 @@ a {
 .login-btn {
     width: 100%;
     border-radius: 12px;
-    background: linear-gradient(135deg, var(--burgundy), #c4204f);
-    box-shadow: 0 10px 25px rgba(167, 13, 64, 0.30);
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.30);
 }
 
 .login-btn:hover {
-    background: linear-gradient(135deg, #7e0930, var(--burgundy));
-    box-shadow: 0 14px 30px rgba(167, 13, 64, 0.40);
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    box-shadow: 0 14px 30px rgba(212, 175, 55, 0.40);
 }
 
 .signup-link {
     margin-top: 25px;
     font-size: 15px;
-    color: var(--gray);
+    color: var(--light-brown);
 }
 
 .signup-link a {
-    color: var(--burgundy);
+    color: var(--gold-dark);
     font-weight: 700;
 }
 
@@ -463,18 +498,18 @@ a {
 footer {
     padding: 60px;
     text-align: center;
-    background: var(--pink);
+    background: var(--dark-brown);
 }
 
 .footer-logo {
     font-family: "Cormorant Garamond", serif;
     font-size: 45px;
     margin-bottom: 15px;
-    color: var(--dark);
+    color: var(--cream);
 }
 
 footer p {
-    color: var(--gray);
+    color: var(--champagne);
 }
 
 /* ===== RESPONSIVE ===== */
@@ -531,7 +566,7 @@ footer p {
         flex-direction: column;
         gap: 0;
         margin: 0;
-        background: var(--pink);
+        background: var(--champagne);
         transition: 0.4s;
         z-index: 99;
     }
@@ -544,7 +579,7 @@ footer p {
         width: 100%;
         padding: 18px;
         text-align: center;
-        border-top: 1px solid rgba(40, 38, 64, 0.08);
+        border-top: 1px solid rgba(62, 39, 35, 0.08);
     }
 
     .login-container {
@@ -574,22 +609,22 @@ footer p {
     justify-content: center;
     gap: 12px;
     padding: 14px 20px;
-    background: #fff;
-    border: 1.5px solid #dadce0;
+    background: var(--white);
+    border: 1.5px solid var(--champagne-dark);
     border-radius: 12px;
     font-family: inherit;
     font-size: 15px;
     font-weight: 600;
-    color: #3c4043;
+    color: var(--dark-brown);
     cursor: pointer;
     transition: 0.25s;
     margin-bottom: 20px;
 }
 
 .google-btn:hover {
-    background: #f8f9fa;
-    border-color: #c6c6c6;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: var(--cream);
+    border-color: var(--gold-light);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.15);
     transform: translateY(-1px);
 }
 
@@ -603,7 +638,7 @@ footer p {
     align-items: center;
     text-align: center;
     margin: 24px 0;
-    color: #999;
+    color: var(--light-brown);
     font-size: 13px;
 }
 
@@ -612,12 +647,12 @@ footer p {
     content: '';
     flex: 1;
     height: 1px;
-    background: #e6d6d8;
+    background: var(--champagne-dark);
 }
 
 .divider span {
     padding: 0 16px;
-    color: #999;
+    color: var(--light-brown);
     font-weight: 500;
 }
 
@@ -649,19 +684,19 @@ footer p {
 
 .salon-icon {
     position: absolute;
-    color: var(--burgundy);
+    color: var(--gold-dark);
     opacity: 0.14;
     animation: salonFloat 8s ease-in-out infinite;
 }
 
 .salon-icon.s1 { top: 9%;  left: 7%;  font-size: 64px; transform: rotate(-25deg); animation-delay: 0s; }
-.salon-icon.s2 { top: 62%; left: 5%;  font-size: 52px; color: var(--script); opacity: 0.22; animation-delay: 1.2s; }
-.salon-icon.s3 { top: 14%; right: 9%; font-size: 48px; color: var(--script); opacity: 0.25; animation-delay: 2s; }
+.salon-icon.s2 { top: 62%; left: 5%;  font-size: 52px; color: var(--gold); opacity: 0.22; animation-delay: 1.2s; }
+.salon-icon.s3 { top: 14%; right: 9%; font-size: 48px; color: var(--gold); opacity: 0.25; animation-delay: 2s; }
 .salon-icon.s4 { top: 72%; right: 8%; font-size: 44px; animation-delay: 0.6s; }
-.salon-icon.s5 { top: 40%; left: 14%; font-size: 36px; color: var(--script); opacity: 0.25; animation-delay: 3s; }
+.salon-icon.s5 { top: 40%; left: 14%; font-size: 36px; color: var(--gold); opacity: 0.25; animation-delay: 3s; }
 .salon-icon.s6 { top: 44%; right: 15%; font-size: 40px; transform: rotate(35deg); animation-delay: 1.8s; }
 .salon-icon.s7 { top: 84%; left: 22%; font-size: 40px; opacity: 0.12; animation-delay: 2.6s; }
-.salon-icon.s8 { top: 4%;  left: 42%; font-size: 36px; color: var(--script); opacity: 0.2; animation-delay: 0.9s; }
+.salon-icon.s8 { top: 4%;  left: 42%; font-size: 36px; color: var(--gold); opacity: 0.2; animation-delay: 0.9s; }
 
 @keyframes salonFloat {
     0%, 100% { translate: 0 0; rotate: 0deg; }
@@ -675,17 +710,17 @@ footer p {
     justify-content: center;
     gap: 14px;
     margin-bottom: 14px;
-    color: var(--burgundy);
+    color: var(--gold-dark);
 }
 
 .salon-ornament span {
     width: 60px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--script));
+    background: linear-gradient(90deg, transparent, var(--gold));
 }
 
 .salon-ornament span:last-child {
-    background: linear-gradient(270deg, transparent, var(--script));
+    background: linear-gradient(270deg, transparent, var(--gold));
 }
 
 .salon-ornament i {
@@ -708,7 +743,7 @@ footer p {
     gap: 8px;
     margin-top: 28px;
     padding-top: 22px;
-    border-top: 1px dashed #e6d6d8;
+    border-top: 1px dashed var(--champagne-dark);
 }
 
 .salon-services span {
@@ -718,16 +753,16 @@ footer p {
     padding: 7px 14px;
     font-size: 12px;
     font-weight: 600;
-    color: var(--burgundy);
-    background: var(--light-pink);
-    border: 1px solid #f0d9db;
+    color: var(--gold-dark);
+    background: var(--cream);
+    border: 1px solid var(--champagne-dark);
     border-radius: 999px;
     transition: 0.25s;
 }
 
 .salon-services span:hover {
-    background: var(--burgundy);
-    color: #fff;
+    background: var(--gold-dark);
+    color: var(--white);
     transform: translateY(-2px);
 }
 
@@ -759,5 +794,207 @@ footer p {
     .login-container,
     .login-container::after {
         animation: none;
+    }
+}
+
+/* ============================================
+   LAYOUT FOR CENTER & SIDE CARDS
+   ============================================ */
+.login-page-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    z-index: 2;
+    position: relative;
+}
+
+/* ===== SIDE CARDS (LEFT & RIGHT) ===== */
+.side-card {
+    flex: 1;
+    max-width: 320px;
+    background: rgba(255, 253, 245, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 2px solid var(--gold-light);
+    border-radius: 20px;
+    padding: 30px 24px;
+    box-shadow: 0 15px 35px rgba(212, 175, 55, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: sideCardIn 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.left-card {
+    animation-delay: 0.1s;
+}
+
+.right-card {
+    animation-delay: 0.2s;
+}
+
+@keyframes sideCardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.side-card-badge {
+    align-self: flex-start;
+    padding: 6px 14px;
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold-dark);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.side-card h3 {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 26px;
+    color: var(--dark-brown);
+    line-height: 1.2;
+}
+
+.side-card p {
+    font-size: 13px;
+    color: var(--light-brown);
+    line-height: 1.5;
+}
+
+/* Feature items in Left Card */
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 5px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--champagne-dark);
+}
+
+.feature-item i {
+    font-size: 18px;
+    color: var(--gold-dark);
+    background: var(--cream);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.feature-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.feature-item strong {
+    font-size: 13px;
+    color: var(--dark-brown);
+}
+
+.feature-item span {
+    font-size: 11px;
+    color: var(--light-brown);
+}
+
+/* Quote and Hours in Right Card */
+.quote-box {
+    position: relative;
+    padding: 16px;
+    background: rgba(255, 248, 231, 0.9);
+    border-radius: 14px;
+    border-left: 3px solid var(--gold-dark);
+}
+
+.quote-icon {
+    font-size: 16px;
+    color: var(--gold);
+    margin-bottom: 6px;
+}
+
+.quote-text {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 17px;
+    font-style: italic;
+    color: var(--dark-brown) !important;
+    line-height: 1.3 !important;
+}
+
+.quote-author {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold-dark);
+}
+
+.hours-card h4 {
+    font-size: 14px;
+    color: var(--dark-brown);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hours-card h4 i {
+    color: var(--gold-dark);
+}
+
+.hours-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.hours-card li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--light-brown);
+    border-bottom: 1px dashed var(--champagne-dark);
+    padding-bottom: 4px;
+}
+
+.hours-card li strong {
+    color: var(--dark-brown);
+}
+
+.quick-contact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--gold-dark);
+    background: rgba(212, 175, 55, 0.15);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+/* ============================================
+   RESPONSIVE HANDLING FOR SIDE CARDS
+   ============================================ */
+@media (max-width: 1100px) {
+    .side-card {
+        display: none;
     }
 }
