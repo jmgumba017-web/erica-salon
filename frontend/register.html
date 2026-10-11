@@ -299,186 +299,168 @@
             }
         }
     </style>
+<script>
+    // ============================================
+    // OTP API URL — iba ang pangalan para hindi mag-conflict sa auth.js
+    // ============================================
+    const OTP_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? window.location.origin
+        : 'https://erica-salon.onrender.com';
 
-    <script>
-        // ============================================
-        // API URL — Auto-detect (local vs production)
-        // ============================================
-        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? window.location.origin
-            : 'https://erica-salon.onrender.com';
+    // ============================================
+    // OTP MODAL LOGIC
+    // ============================================
+    const otpModal = document.getElementById('otpModal');
+    const otpInputs = document.querySelectorAll('.otp-input');
+    let currentOTPEmail = '';
+    let otpTimerInterval = null;
 
-        // ============================================
-        // OTP MODAL LOGIC
-        // ============================================
-        const otpModal = document.getElementById('otpModal');
-        const otpInputs = document.querySelectorAll('.otp-input');
-        let currentOTPEmail = '';
-        let otpTimerInterval = null;
+    function showOTPModal(email) {
+        currentOTPEmail = email;
+        document.getElementById('otpEmail').textContent = email;
+        otpModal.classList.add('show');
 
-        function showOTPModal(email) {
-            currentOTPEmail = email;
-            document.getElementById('otpEmail').textContent = email;
-            otpModal.classList.add('show');
-
-            // Clear inputs
-            otpInputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('filled');
-            });
-
-            // Focus first input
-            otpInputs[0].focus();
-
-            // Start timer (10 minutes)
-            startOTPTimer(600);
-        }
-
-        function closeOTPModal(e) {
-            if (e) e.preventDefault();
-            otpModal.classList.remove('show');
-            if (otpTimerInterval) clearInterval(otpTimerInterval);
-        }
-
-        // Auto-advance inputs
-        otpInputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                const value = e.target.value;
-
-                if (value) {
-                    input.classList.add('filled');
-                    // Auto-advance
-                    if (index < otpInputs.length - 1) {
-                        otpInputs[index + 1].focus();
-                    }
-                } else {
-                    input.classList.remove('filled');
-                }
-            });
-
-            // Backspace navigation
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-            });
-
-            // Paste support
-            input.addEventListener('paste', (e) => {
-                e.preventDefault();
-                const pastedData = e.clipboardData.getData('text').slice(0, 6);
-                const digits = pastedData.split('');
-
-                digits.forEach((digit, i) => {
-                    if (otpInputs[i]) {
-                        otpInputs[i].value = digit;
-                        otpInputs[i].classList.add('filled');
-                    }
-                });
-
-                // Focus last input
-                otpInputs[Math.min(digits.length, 5)].focus();
-            });
+        otpInputs.forEach(input => {
+            input.value = '';
+            input.classList.remove('filled');
         });
 
-        function startOTPTimer(seconds) {
-            if (otpTimerInterval) clearInterval(otpTimerInterval);
+        otpInputs[0].focus();
+        startOTPTimer(600);
+    }
 
-            let remaining = seconds;
-            const timerEl = document.getElementById('otpTimer');
+    function closeOTPModal(e) {
+        if (e) e.preventDefault();
+        otpModal.classList.remove('show');
+        if (otpTimerInterval) clearInterval(otpTimerInterval);
+    }
 
-            otpTimerInterval = setInterval(() => {
-                remaining--;
-                const mins = Math.floor(remaining / 60);
-                const secs = remaining % 60;
-                timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-
-                if (remaining <= 0) {
-                    clearInterval(otpTimerInterval);
-                    timerEl.textContent = 'Expired';
-                    timerEl.style.color = '#dc3545';
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', (e) => {
+            const value = e.target.value;
+            if (value) {
+                input.classList.add('filled');
+                if (index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
                 }
-            }, 1000);
-        }
-
-        async function verifyOTP() {
-            const code = Array.from(otpInputs).map(i => i.value).join('');
-
-            if (code.length !== 6) {
-                alert('Please enter the 6-digit code');
-                return;
+            } else {
+                input.classList.remove('filled');
             }
+        });
 
-            const btn = document.getElementById('verifyBtn');
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-
-            try {
-                const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: currentOTPEmail,
-                        code
-                    })
-                });
-
-                const data = await res.json();
-                console.log('📥 Verify response:', data);
-
-                if (data.success) {
-                    // Save session
-                    sessionStorage.setItem('token', data.token);
-                    sessionStorage.setItem('user', JSON.stringify(data.user));
-
-                    alert('✅ ' + data.message);
-                    closeOTPModal();
-                    setTimeout(() => {
-                        window.location.href = 'calendar.html';
-                    }, 1000);
-                } else {
-                    alert('❌ ' + data.message);
-                    // Clear inputs
-                    otpInputs.forEach(input => {
-                        input.value = '';
-                        input.classList.remove('filled');
-                    });
-                    otpInputs[0].focus();
-                }
-            } catch (err) {
-                console.error('❌ Verify error:', err);
-                alert('⚠️ Network error. Please try again.');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                otpInputs[index - 1].focus();
             }
-        }
+        });
 
-        async function resendOTP(e) {
+        input.addEventListener('paste', (e) => {
             e.preventDefault();
-
-            try {
-                const res = await fetch(`${API_URL}/api/auth/resend-otp`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: currentOTPEmail })
-                });
-
-                const data = await res.json();
-
-                if (data.success) {
-                    alert('✅ ' + data.message);
-                    startOTPTimer(600);
-                    document.getElementById('otpTimer').style.color = '';
-                } else {
-                    alert('❌ ' + data.message);
+            const pastedData = e.clipboardData.getData('text').slice(0, 6);
+            const digits = pastedData.split('');
+            digits.forEach((digit, i) => {
+                if (otpInputs[i]) {
+                    otpInputs[i].value = digit;
+                    otpInputs[i].classList.add('filled');
                 }
-            } catch (err) {
-                alert('⚠️ Network error');
+            });
+            otpInputs[Math.min(digits.length, 5)].focus();
+        });
+    });
+
+    function startOTPTimer(seconds) {
+        if (otpTimerInterval) clearInterval(otpTimerInterval);
+        let remaining = seconds;
+        const timerEl = document.getElementById('otpTimer');
+
+        otpTimerInterval = setInterval(() => {
+            remaining--;
+            const mins = Math.floor(remaining / 60);
+            const secs = remaining % 60;
+            timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            if (remaining <= 0) {
+                clearInterval(otpTimerInterval);
+                timerEl.textContent = 'Expired';
+                timerEl.style.color = '#dc3545';
             }
+        }, 1000);
+    }
+
+    async function verifyOTP() {
+        const code = Array.from(otpInputs).map(i => i.value).join('');
+
+        if (code.length !== 6) {
+            alert('Please enter the 6-digit code');
+            return;
         }
-    </script>
+
+        const btn = document.getElementById('verifyBtn');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+
+        try {
+            const res = await fetch(`${OTP_API_URL}/api/auth/verify-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: currentOTPEmail,
+                    code
+                })
+            });
+
+            const data = await res.json();
+            console.log('📥 Verify response:', data);
+
+            if (data.success) {
+                sessionStorage.setItem('token', data.token);
+                sessionStorage.setItem('user', JSON.stringify(data.user));
+                alert('✅ ' + data.message);
+                closeOTPModal();
+                setTimeout(() => {
+                    window.location.href = 'calendar.html';
+                }, 1000);
+            } else {
+                alert('❌ ' + data.message);
+                otpInputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
+                });
+                otpInputs[0].focus();
+            }
+        } catch (err) {
+            console.error('❌ Verify error:', err);
+            alert('⚠️ Network error. Please try again.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+
+    async function resendOTP(e) {
+        e.preventDefault();
+
+        try {
+            const res = await fetch(`${OTP_API_URL}/api/auth/resend-otp`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: currentOTPEmail })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                alert('✅ ' + data.message);
+                startOTPTimer(600);
+                document.getElementById('otpTimer').style.color = '';
+            } else {
+                alert('❌ ' + data.message);
+            }
+        } catch (err) {
+            alert('⚠️ Network error');
+        }
+    }
+</script>
 
     <script>
         window.GOOGLE_CLIENT_ID = "22321828973-utnctdba0hcpis28alb6cmj6cjbcefa1.apps.googleusercontent.com";
