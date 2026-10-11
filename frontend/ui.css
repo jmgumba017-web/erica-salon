@@ -1,5 +1,6 @@
 /* ============================================
    ERICA SALON — Global UI Library
+   Gold/Champagne/Cream Theme
    ============================================ */
 
 /* ===== TOAST NOTIFICATIONS ===== */
@@ -58,7 +59,7 @@
     flex: 1;
     font-size: 14px;
     font-weight: 500;
-    color: #2c1810;
+    color: #3e2723;
     line-height: 1.4;
 }
 
@@ -79,8 +80,8 @@
 }
 
 .toast-close:hover {
-    background: #f0e0e2;
-    color: #a70d40;
+    background: var(--cream);
+    color: var(--gold-dark);
 }
 
 .toast-progress {
@@ -161,12 +162,12 @@
     margin: 0 0 10px 0;
     font-family: 'Cormorant Garamond', serif;
     font-size: 24px;
-    color: #2c1810;
+    color: #3e2723;
 }
 
 .confirm-modal p {
     margin: 0 0 20px 0;
-    color: #666;
+    color: #8d6e63;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -174,7 +175,7 @@
 .confirm-reason {
     width: 100%;
     padding: 12px;
-    border: 2px solid #e6d6d8;
+    border: 2px solid var(--champagne-dark);
     border-radius: 10px;
     font-family: inherit;
     font-size: 14px;
@@ -186,8 +187,8 @@
 }
 
 .confirm-reason:focus {
-    border-color: #a70d40;
-    box-shadow: 0 0 0 3px rgba(167, 13, 64, 0.1);
+    border-color: var(--gold-dark);
+    box-shadow: 0 0 0 3px rgba(168, 134, 42, 0.15);
 }
 
 .confirm-actions {
@@ -208,23 +209,23 @@
 }
 
 .btn-cancel {
-    background: #f0e0e2;
-    color: #2c1810;
+    background: var(--cream);
+    color: #3e2723;
 }
 
 .btn-cancel:hover {
-    background: #e6d6d8;
+    background: var(--champagne);
 }
 
 .btn-confirm {
-    background: #a70d40;
+    background: var(--gold-dark);
     color: white;
 }
 
 .btn-confirm:hover {
-    background: #7e0930;
+    background: #8e6f22;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(167, 13, 64, 0.3);
+    box-shadow: 0 4px 12px rgba(168, 134, 42, 0.35);
 }
 
 .btn-confirm.btn-warning {
@@ -253,12 +254,12 @@
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 12px rgba(167, 13, 64, 0.06);
+    box-shadow: 0 2px 12px rgba(168, 134, 42, 0.08);
 }
 
 .skeleton-line {
     height: 16px;
-    background: linear-gradient(90deg, #f0e0e2 25%, #f8eeee 50%, #f0e0e2 75%);
+    background: linear-gradient(90deg, var(--cream) 25%, var(--champagne) 50%, var(--cream) 75%);
     background-size: 200% 100%;
     animation: skeletonLoading 1.5s ease-in-out infinite;
     border-radius: 8px;
@@ -273,7 +274,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(90deg, #f0e0e2 25%, #f8eeee 50%, #f0e0e2 75%);
+    background: linear-gradient(90deg, var(--cream) 25%, var(--champagne) 50%, var(--cream) 75%);
     background-size: 200% 100%;
     animation: skeletonLoading 1.5s ease-in-out infinite;
     flex-shrink: 0;
@@ -353,12 +354,12 @@ button.button {
 .payment-card:hover,
 .report-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(167, 13, 64, 0.12);
+    box-shadow: 0 10px 30px rgba(168, 134, 42, 0.15);
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(167, 13, 64, 0.15);
+    box-shadow: 0 10px 30px rgba(168, 134, 42, 0.18);
 }
 
 /* ===== MOBILE RESPONSIVE ===== */
@@ -395,16 +396,16 @@ button.button {
 }
 
 ::-webkit-scrollbar-track {
-    background: #f8eeee;
+    background: var(--cream);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #e6d6d8;
+    background: var(--champagne-dark);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #a70d40;
+    background: var(--gold-dark);
 }
 
 /* ===== FOCUS STATES ===== */
@@ -413,7 +414,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 3px solid rgba(167, 13, 64, 0.4);
+    outline: 3px solid rgba(168, 134, 42, 0.4);
     outline-offset: 2px;
 }
 
