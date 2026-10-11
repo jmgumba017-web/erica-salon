@@ -1,17 +1,13 @@
 const nodemailer = require('nodemailer');
-const { Resend } = require('resend');
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // ============================================
-// EMAIL TRANSPORTER
+// EMAIL TRANSPORTER (Gmail SMTP)
 // ============================================
 const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: parseInt(process.env.EMAIL_PORT) || 587,
-  secure: false,
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS  // App Password (16 chars)
   }
 });
 
@@ -63,30 +59,24 @@ function emailTemplate(title, content, buttonText = null, buttonLink = null) {
 }
 
 // ============================================
-// SEND EMAIL (Base Function)
+// SEND EMAIL (Base Function) — Gmail SMTP
 // ============================================
-
 async function sendEmail(to, subject, html) {
   try {
-    if (!process.env.RESEND_API_KEY) {
-      console.warn('⚠️ RESEND_API_KEY not set. Skipping email.');
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn('⚠️ Email not configured. Skipping.');
       return { success: false, message: 'Email not configured' };
     }
 
-    const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'Erica Salon <onboarding@resend.dev>',
+    const info = await transporter.sendMail({
+      from: `"Erica Salon" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html
     });
 
-    if (error) {
-      console.error('❌ Resend error:', error);
-      return { success: false, error: error.message };
-    }
-
-    console.log(`📧 Email sent to ${to}:`, data.id);
-    return { success: true, messageId: data.id };
+    console.log(`📧 Email sent to ${to}:`, info.messageId);
+    return { success: true, messageId: info.messageId };
 
   } catch (err) {
     console.error('❌ Email error:', err.message);
@@ -119,7 +109,7 @@ async function sendBookingConfirmation(to, customerName, appointment, services) 
       <p>Please arrive 10 minutes before your appointment.</p>
     `,
     'View My Appointments',
-    `${process.env.APP_URL || 'http://localhost:3000'}/history.html`
+    `${process.env.APP_URL || 'https://erica-salon.onrender.com'}/history.html`
   );
 
   return sendEmail(to, `✅ Booking Confirmed — ${appointment.appointmentDate}`, html);
@@ -145,7 +135,7 @@ async function sendBookingReminder(to, customerName, appointment, services) {
       <p>See you tomorrow! 💅</p>
     `,
     'View My Appointments',
-    `${process.env.APP_URL || 'http://localhost:3000'}/history.html`
+    `${process.env.APP_URL || 'https://erica-salon.onrender.com'}/history.html`
   );
 
   return sendEmail(to, `⏰ Appointment Reminder — Tomorrow at ${appointment.appointmentTime}`, html);
@@ -169,7 +159,7 @@ async function sendCancellationEmail(to, customerName, appointment, reason) {
       <p>We hope to see you soon! 💅</p>
     `,
     'Book Again',
-    `${process.env.APP_URL || 'http://localhost:3000'}/calendar.html`
+    `${process.env.APP_URL || 'https://erica-salon.onrender.com'}/calendar.html`
   );
 
   return sendEmail(to, `❌ Appointment Cancelled — ${appointment.appointmentDate}`, html);
@@ -199,7 +189,7 @@ async function sendPaymentConfirmation(to, customerName, payment, appointment) {
       <p>Salamat! 💅</p>
     `,
     'View Payments',
-    `${process.env.APP_URL || 'http://localhost:3000'}/payments.html`
+    `${process.env.APP_URL || 'https://erica-salon.onrender.com'}/payments.html`
   );
 
   return sendEmail(to, `💰 Payment Confirmed — ₱${payment.amount.toFixed(2)}`, html);
@@ -222,7 +212,7 @@ async function sendAppointmentConfirmedEmail(to, customerName, appointment) {
       <p>We look forward to seeing you! 💅</p>
     `,
     'View My Appointments',
-    `${process.env.APP_URL || 'http://localhost:3000'}/history.html`
+    `${process.env.APP_URL || 'https://erica-salon.onrender.com'}/history.html`
   );
 
   return sendEmail(to, `✅ Appointment Confirmed — ${appointment.appointmentDate}`, html);
@@ -304,7 +294,7 @@ async function sendPasswordResetEmail(email, name, resetToken, resetUrl) {
       <p style="word-break: break-all; color: #a70d40; font-size: 12px;">${resetUrl}</p>
     `,
     'Back to Login',
-    `${process.env.APP_URL || 'http://localhost:3000'}/login.html`
+    `${process.env.APP_URL || 'https://erica-salon.onrender.com'}/login.html`
   );
 
   return sendEmail(email, `🔐 Erica Salon — Password Reset Request`, html);
