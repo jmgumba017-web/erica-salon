@@ -4,7 +4,9 @@
 
 console.log('💇 staff-dashboard.js loaded');
 
-const API_URL = window.location.origin;
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? window.location.origin
+  : 'https://erica-salon.onrender.com';   // ✅ TAMA
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 

@@ -1,6 +1,5 @@
 // ============================================
 // ERICA SALON — Appointment Booking Logic
-// Dynamic Services + Staff + Booking
 // ============================================
 
 console.log('📅 appointment.js loaded');
@@ -33,8 +32,10 @@ function showMessage(message, type = 'info') {
   `;
 
   const form = document.querySelector('.login-form');
-  if (form) {
+  if (form && form.parentNode) {
     form.parentNode.insertBefore(div, form);
+  } else {
+    document.body.insertBefore(div, document.body.firstChild);
   }
   setTimeout(() => div.remove(), 5000);
 }
@@ -53,22 +54,16 @@ async function loadServices() {
 
     console.log('📥 Services loaded:', services.length);
 
-    // Group by category
     const grouped = {};
     services.forEach(s => {
       if (!grouped[s.category]) grouped[s.category] = [];
       grouped[s.category].push(s);
     });
 
-    // Render options
     let html = '<option value="">Choose a service...</option>';
     const categoryIcons = {
-      'Hair': '💇',
-      'Nails': '💅',
-      'Skin': '✨',
-      'Body': '💆',
-      'Makeup': '💄',
-      'Lashes & Brows': '👁️'
+      'Hair': '💇', 'Nails': '💅', 'Skin': '✨',
+      'Body': '💆', 'Makeup': '💄', 'Lashes & Brows': '👁️'
     };
 
     for (const [category, list] of Object.entries(grouped)) {
@@ -101,7 +96,6 @@ async function loadStaff() {
 
     console.log('📥 Staff loaded:', staffList.length);
 
-    // ✅ Add "Any Available Staff" option
     let html = `
       <label class="staff-card staff-any">
         <input type="radio" name="staff" value="" checked>
@@ -115,11 +109,13 @@ async function loadStaff() {
       </label>
     `;
 
-    // Add individual staff
     html += staffList.map((s) => `
       <label class="staff-card">
         <input type="radio" name="staff" value="${s._id}" data-name="${s.name}">
-        <img src="${s.photo || 'image/erica.jpg'}" alt="${s.name}" class="staff-photo">
+        <img src="${s.photo || 'image/erica.jpg'}" 
+             alt="${s.name}" 
+             class="staff-photo"
+             onerror="this.onerror=null; this.src='image/erica.jpg';">
         <span class="staff-name">
           ${s.name.split(' ')[0]}
           <span class="staff-role">${s.specialization?.[0] || 'Staff'}</span>
@@ -129,19 +125,15 @@ async function loadStaff() {
 
     staffGrid.innerHTML = html;
 
-    // Re-attach change listeners
     document.querySelectorAll(".staff-card input").forEach(card => {
       card.addEventListener("change", () => {
         const staffName = card.value ? (card.dataset.name || 'Selected') : 'Any Available';
         console.log("Selected staff:", staffName);
-        
-        // Update sidebar
         const sidebarStaff = document.getElementById('sidebarStaff');
         if (sidebarStaff) sidebarStaff.textContent = staffName;
       });
     });
 
-    // ✅ Update sidebar initial value
     const sidebarStaff = document.getElementById('sidebarStaff');
     if (sidebarStaff) sidebarStaff.textContent = 'Any Available';
 
@@ -165,69 +157,71 @@ async function loadDayStatus(date) {
 
     if (!data.success) return;
 
-    // Update yung date badge
     const dateBadge = document.getElementById('dateBadge');
-    const badgeContainer = document.getElementById('dayStatusBadge');
+    const form = document.getElementById('appointmentForm');
 
-    // Create badge kung wala pa
-    if (!badgeContainer) {
-      const container = document.createElement('div');
-      container.id = 'dayStatusBadge';
-      container.style.cssText = `
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 700;
-        margin-bottom: 20px;
-      `;
-
-      if (data.isFull) {
-        container.style.background = '#f8d7da';
-        container.style.color = '#721c24';
-        container.innerHTML = `🚫 <strong>FULL</strong> — ${data.booked}/${data.maxCapacity} bookings today`;
-      } else {
-        container.style.background = '#d4edda';
-        container.style.color = '#155724';
-        container.innerHTML = `✅ <strong>${data.available}</strong> slot(s) remaining today`;
-      }
-
-      // Insert after date-badge
-      dateBadge.parentNode.insertBefore(container, dateBadge.nextSibling);
-    } else {
-      // Update existing badge
-      if (data.isFull) {
-        badgeContainer.style.background = '#f8d7da';
-        badgeContainer.style.color = '#721c24';
-        badgeContainer.innerHTML = `🚫 <strong>FULL</strong> — ${data.booked}/${data.maxCapacity} bookings today`;
-      } else {
-        badgeContainer.style.background = '#d4edda';
-        badgeContainer.style.color = '#155724';
-        badgeContainer.innerHTML = `✅ <strong>${data.available}</strong> slot(s) remaining today`;
-      }
+    // ✅ Guard: kung walang dateBadge
+    if (!dateBadge) {
+      console.warn('⚠️ #dateBadge not found — skipping badge insertion');
+      return;
     }
 
-    // Disable form kung FULL
+    // Alisin ang lumang badge
+    const oldBadge = document.getElementById('dayStatusBadge');
+    if (oldBadge) oldBadge.remove();
+
+    // Gumawa ng bagong badge
+    const container = document.createElement('div');
+    container.id = 'dayStatusBadge';
+    container.style.cssText = `
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      width: 100%;
+      justify-content: center;
+    `;
+
     if (data.isFull) {
-      const form = document.getElementById('appointmentForm');
+      container.style.background = '#f8d7da';
+      container.style.color = '#721c24';
+      container.innerHTML = `🚫 <strong>FULLY BOOKED</strong> — ${data.booked}/${data.maxCapacity} slots taken`;
+    } else {
+      container.style.background = '#d4edda';
+      container.style.color = '#155724';
+      container.innerHTML = `✅ <strong>${data.available}</strong> slot(s) remaining — ${data.booked}/${data.maxCapacity} booked`;
+    }
+
+    dateBadge.parentNode.insertBefore(container, dateBadge.nextSibling);
+
+    // Enable/Disable submit button
+    if (form) {
       const submitBtn = form.querySelector('button[type="submit"]');
-
-      // Show message
-      showMessage('❌ This date is fully booked. Please choose another date.', 'error');
-
-      // Disable submit
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-ban"></i> Fully Booked';
-      submitBtn.style.opacity = '0.6';
-      submitBtn.style.cursor = 'not-allowed';
+      if (submitBtn) {
+        if (data.isFull) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fa-solid fa-ban"></i> Fully Booked';
+          submitBtn.style.opacity = '0.6';
+          submitBtn.style.cursor = 'not-allowed';
+          showMessage('❌ This date is fully booked. Please choose another date.', 'error');
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-calendar-check"></i> Book Appointment';
+          submitBtn.style.opacity = '1';
+          submitBtn.style.cursor = 'pointer';
+        }
+      }
     }
 
   } catch (err) {
     console.error('❌ Load day status error:', err);
   }
 }
+
 // ============================================
 // STEP 3: SUBMIT BOOKING
 // ============================================
@@ -246,20 +240,18 @@ if (appointmentForm) {
       return;
     }
 
-    // Kunin ang form data
     const appointmentDate = document.getElementById('appointmentDate').value;
     const appointmentTime = document.querySelector('input[name="time"]:checked')?.value;
     const serviceId = document.getElementById('service').value;
     let staffId = document.querySelector('input[name="staff"]:checked')?.value;
     const notes = document.getElementById('notes')?.value || '';
 
-     // ✅ Staff is OPTIONAL — auto-assign if empty
+    // ✅ Staff is OPTIONAL — auto-assign if empty
     if (!staffId) {
       console.log('📌 No staff selected — auto-assigning available staff');
 
-      // Get first available staff from the list
-      const firstStaffRadio = document.querySelector('input[name="staff"]:not([value=""]):not([value="any"])');
-      
+      const firstStaffRadio = document.querySelector('input[name="staff"]:not([value=""])');
+
       if (firstStaffRadio && firstStaffRadio.value) {
         staffId = firstStaffRadio.value;
         console.log('✅ Auto-assigned to:', staffId);
@@ -282,7 +274,6 @@ if (appointmentForm) {
       return showMessage('❌ Please select a staff', 'error');
     }
 
-    // Prepare data
     const bookingData = {
       appointmentDate,
       appointmentTime,
@@ -311,10 +302,18 @@ if (appointmentForm) {
       console.log('📥 Booking response:', data);
 
       if (data.success) {
-        showMessage('✅ ' + data.message, 'success');
-        setTimeout(() => {
-          window.location.href = 'history.html';
-        }, 1500);
+        // ✅ Check kung kailangan ng down payment (first-time customer)
+        if (data.requireDownPayment) {
+          showMessage('✅ ' + data.message, 'success');
+          setTimeout(() => {
+            window.location.href = `pay.html?id=${data.appointment._id}&type=downpayment`;
+          }, 2000);
+        } else {
+          showMessage('✅ ' + data.message, 'success');
+          setTimeout(() => {
+            window.location.href = 'history.html';
+          }, 1500);
+        }
       } else {
         showMessage('❌ ' + data.message, 'error');
       }
@@ -329,13 +328,12 @@ if (appointmentForm) {
 }
 
 // ============================================
-// INITIALIZE — Load services + staff pag-load ng page
+// INITIALIZE
 // ============================================
 window.addEventListener('DOMContentLoaded', () => {
   loadServices();
   loadStaff();
 
-  // ✅ Load day status kung may date
   const dateParam = new URLSearchParams(window.location.search).get('date');
   if (dateParam) {
     loadDayStatus(dateParam);

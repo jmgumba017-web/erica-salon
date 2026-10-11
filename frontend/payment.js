@@ -3,6 +3,7 @@
 // ============================================
 
 console.log('💳 payment.js loaded');
+
 const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
   ? window.location.origin
   : 'https://erica-salon.onrender.com';
@@ -104,7 +105,8 @@ function renderSummary(appointment, services) {
   }
 
   // Show form
-  document.getElementById('paymentForm').style.display = 'block';
+  const form = document.getElementById('paymentForm');
+  if (form) form.style.display = 'block';
 
   // ✅ Update sidebar summary
   const sidebarDate = document.getElementById('sidebarDate');
@@ -121,12 +123,38 @@ function renderSummary(appointment, services) {
 }
 
 // ============================================
-// SUBMIT PAYMENT
+// HELPER: Show message
 // ============================================
-const paymentForm = document.getElementById('paymentForm');
+function showMessage(message, type = 'info') {
+  const existing = document.querySelector('.auth-message');
+  if (existing) existing.remove();
 
-if (paymentForm) {
-  // ============================================
+  const div = document.createElement('div');
+  div.className = `auth-message auth-${type}`;
+  div.textContent = message;
+  div.style.cssText = `
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    animation: slideDown 0.3s ease;
+    ${type === 'success' ? 'background: #d4edda; color: #155724; border: 1px solid #c3e6cb;' : ''}
+    ${type === 'error' ? 'background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;' : ''}
+    ${type === 'info' ? 'background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;' : ''}
+  `;
+
+  const form = document.getElementById('paymentForm') || document.querySelector('.login-form');
+  if (form && form.parentNode) {
+    form.parentNode.insertBefore(div, form);
+  } else {
+    document.body.insertBefore(div, document.body.firstChild);
+  }
+  setTimeout(() => div.remove(), 5000);
+}
+
+// ============================================
 // SUBMIT PAYMENT (with receipt upload)
 // ============================================
 const paymentForm = document.getElementById('paymentForm');
@@ -224,39 +252,8 @@ if (paymentForm) {
     }
   });
 }
-}
 
 // ============================================
-// HELPER: Show message (kung walang Toast library)
+// INITIALIZE
 // ============================================
-function showMessage(message, type = 'info') {
-  const existing = document.querySelector('.auth-message');
-  if (existing) existing.remove();
-
-  const div = document.createElement('div');
-  div.className = `auth-message auth-${type}`;
-  div.textContent = message;
-  div.style.cssText = `
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin: 15px 0;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-    animation: slideDown 0.3s ease;
-    ${type === 'success' ? 'background: #d4edda; color: #155724; border: 1px solid #c3e6cb;' : ''}
-    ${type === 'error' ? 'background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;' : ''}
-    ${type === 'info' ? 'background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;' : ''}
-  `;
-
-  const form = document.getElementById('paymentForm') || document.querySelector('.login-form');
-  if (form && form.parentNode) {
-    form.parentNode.insertBefore(div, form);
-  } else {
-    document.body.insertBefore(div, document.body.firstChild);
-  }
-  setTimeout(() => div.remove(), 5000);
-}
-
-// Initialize
 loadAppointment();
