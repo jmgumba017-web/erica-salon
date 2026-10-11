@@ -124,359 +124,366 @@
         });
     </script>
 
-    <script>
-        window.GOOGLE_CLIENT_ID = "123456789-abcdefg.apps.googleusercontent.com";
-    </script>
     <script src="auth.js"></script>
+
     <!-- ===== OTP MODAL ===== -->
-<div id="otpModal" class="otp-modal-overlay">
-    <div class="otp-modal-content">
-        <div class="otp-icon">
-            <i class="fa-solid fa-envelope-circle-check"></i>
+    <div id="otpModal" class="otp-modal-overlay">
+        <div class="otp-modal-content">
+            <div class="otp-icon">
+                <i class="fa-solid fa-envelope-circle-check"></i>
+            </div>
+            <h2>Verify Your Email</h2>
+            <p class="otp-subtitle">
+                Nag-send kami ng <strong>6-digit code</strong> sa<br>
+                <strong id="otpEmail">your@email.com</strong>
+            </p>
+
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" class="otp-input" data-index="0">
+                <input type="text" maxlength="1" class="otp-input" data-index="1">
+                <input type="text" maxlength="1" class="otp-input" data-index="2">
+                <input type="text" maxlength="1" class="otp-input" data-index="3">
+                <input type="text" maxlength="1" class="otp-input" data-index="4">
+                <input type="text" maxlength="1" class="otp-input" data-index="5">
+            </div>
+
+            <p class="otp-timer">
+                Mag-e-expire sa <strong id="otpTimer">10:00</strong>
+            </p>
+
+            <button onclick="verifyOTP()" class="button login-btn" id="verifyBtn">
+                <i class="fa-solid fa-check-circle"></i> Verify Code
+            </button>
+
+            <p class="otp-resend">
+                Hindi natanggap? 
+                <a href="#" onclick="resendOTP(event)">I-resend ang code</a>
+            </p>
+
+            <p class="otp-back">
+                <a href="#" onclick="closeOTPModal(event)">← Back to register</a>
+            </p>
         </div>
-        <h2>Verify Your Email</h2>
-        <p class="otp-subtitle">
-            Nag-send kami ng <strong>6-digit code</strong> sa<br>
-            <strong id="otpEmail">your@email.com</strong>
-        </p>
-
-        <div class="otp-inputs">
-            <input type="text" maxlength="1" class="otp-input" data-index="0">
-            <input type="text" maxlength="1" class="otp-input" data-index="1">
-            <input type="text" maxlength="1" class="otp-input" data-index="2">
-            <input type="text" maxlength="1" class="otp-input" data-index="3">
-            <input type="text" maxlength="1" class="otp-input" data-index="4">
-            <input type="text" maxlength="1" class="otp-input" data-index="5">
-        </div>
-
-        <p class="otp-timer">
-            Mag-e-expire sa <strong id="otpTimer">10:00</strong>
-        </p>
-
-        <button onclick="verifyOTP()" class="button login-btn" id="verifyBtn">
-            <i class="fa-solid fa-check-circle"></i> Verify Code
-        </button>
-
-        <p class="otp-resend">
-            Hindi natanggap? 
-            <a href="#" onclick="resendOTP(event)">I-resend ang code</a>
-        </p>
-
-        <p class="otp-back">
-            <a href="#" onclick="closeOTPModal(event)">← Back to register</a>
-        </p>
     </div>
-</div>
 
-<style>
-    .otp-modal-overlay {
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        padding: 20px;
-        backdrop-filter: blur(4px);
-    }
+    <style>
+        .otp-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
 
-    .otp-modal-overlay.show {
-        display: flex;
-    }
+        .otp-modal-overlay.show {
+            display: flex;
+        }
 
-    .otp-modal-content {
-        background: white;
-        border-radius: 20px;
-        padding: 40px 35px;
-        max-width: 420px;
-        width: 100%;
-        text-align: center;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        animation: modalSlideIn 0.3s ease;
-    }
+        .otp-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 35px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
 
-    @keyframes modalSlideIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .otp-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--burgundy, #a70d40), #c2185b);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-        margin: 0 auto 20px;
-        box-shadow: 0 8px 20px rgba(167, 13, 64, 0.3);
-    }
+        .otp-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--burgundy, #a70d40), #c2185b);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(167, 13, 64, 0.3);
+        }
 
-    .otp-modal-content h2 {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 28px;
-        color: var(--burgundy, #a70d40);
-        margin: 0 0 10px 0;
-    }
+        .otp-modal-content h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            color: var(--burgundy, #a70d40);
+            margin: 0 0 10px 0;
+        }
 
-    .otp-subtitle {
-        color: #666;
-        font-size: 14px;
-        margin-bottom: 25px;
-        line-height: 1.5;
-    }
+        .otp-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
 
-    .otp-subtitle strong {
-        color: var(--dark, #2c1810);
-    }
+        .otp-subtitle strong {
+            color: var(--dark, #2c1810);
+        }
 
-    .otp-inputs {
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-        margin-bottom: 20px;
-    }
+        .otp-inputs {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
 
-    .otp-input {
-        width: 48px;
-        height: 56px;
-        text-align: center;
-        font-size: 24px;
-        font-weight: 700;
-        font-family: 'Courier New', monospace;
-        border: 2px solid #e6d6d8;
-        border-radius: 10px;
-        outline: none;
-        background: #fdf0f3;
-        transition: 0.2s;
-    }
-
-    .otp-input:focus {
-        border-color: var(--burgundy, #a70d40);
-        background: white;
-        box-shadow: 0 0 0 3px rgba(167, 13, 64, 0.1);
-    }
-
-    .otp-input.filled {
-        background: white;
-        border-color: var(--burgundy, #a70d40);
-    }
-
-    .otp-timer {
-        font-size: 13px;
-        color: #999;
-        margin-bottom: 20px;
-    }
-
-    .otp-timer strong {
-        color: var(--burgundy, #a70d40);
-        font-family: 'Courier New', monospace;
-    }
-
-    .otp-resend, .otp-back {
-        font-size: 13px;
-        color: #666;
-        margin-top: 15px;
-    }
-
-    .otp-resend a, .otp-back a {
-        color: var(--burgundy, #a70d40);
-        font-weight: 700;
-        text-decoration: none;
-    }
-
-    .otp-resend a:hover, .otp-back a:hover {
-        text-decoration: underline;
-    }
-
-    @media (max-width: 480px) {
-        .otp-inputs { gap: 5px; }
         .otp-input {
-            width: 40px;
-            height: 48px;
-            font-size: 20px;
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #e6d6d8;
+            border-radius: 10px;
+            outline: none;
+            background: #fdf0f3;
+            transition: 0.2s;
         }
-    }
-</style>
 
-<script>
-    // ============================================
-    // OTP MODAL LOGIC
-    // ============================================
-    const otpModal = document.getElementById('otpModal');
-    const otpInputs = document.querySelectorAll('.otp-input');
-    let currentOTPEmail = '';
-    let otpTimerInterval = null;
+        .otp-input:focus {
+            border-color: var(--burgundy, #a70d40);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(167, 13, 64, 0.1);
+        }
 
-    function showOTPModal(email) {
-        currentOTPEmail = email;
-        document.getElementById('otpEmail').textContent = email;
-        otpModal.classList.add('show');
+        .otp-input.filled {
+            background: white;
+            border-color: var(--burgundy, #a70d40);
+        }
 
-        // Clear inputs
-        otpInputs.forEach(input => {
-            input.value = '';
-            input.classList.remove('filled');
-        });
+        .otp-timer {
+            font-size: 13px;
+            color: #999;
+            margin-bottom: 20px;
+        }
 
-        // Focus first input
-        otpInputs[0].focus();
+        .otp-timer strong {
+            color: var(--burgundy, #a70d40);
+            font-family: 'Courier New', monospace;
+        }
 
-        // Start timer (10 minutes)
-        startOTPTimer(600);
-    }
+        .otp-resend, .otp-back {
+            font-size: 13px;
+            color: #666;
+            margin-top: 15px;
+        }
 
-    function closeOTPModal(e) {
-        if (e) e.preventDefault();
-        otpModal.classList.remove('show');
-        if (otpTimerInterval) clearInterval(otpTimerInterval);
-    }
+        .otp-resend a, .otp-back a {
+            color: var(--burgundy, #a70d40);
+            font-weight: 700;
+            text-decoration: none;
+        }
 
-    // Auto-advance inputs
-    otpInputs.forEach((input, index) => {
-        input.addEventListener('input', (e) => {
-            const value = e.target.value;
+        .otp-resend a:hover, .otp-back a:hover {
+            text-decoration: underline;
+        }
 
-            if (value) {
-                input.classList.add('filled');
-                // Auto-advance
-                if (index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                }
-            } else {
+        @media (max-width: 480px) {
+            .otp-inputs { gap: 5px; }
+            .otp-input {
+                width: 40px;
+                height: 48px;
+                font-size: 20px;
+            }
+        }
+    </style>
+
+    <script>
+        // ============================================
+        // API URL — Auto-detect (local vs production)
+        // ============================================
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? window.location.origin
+            : 'https://erica-salon.onrender.com';
+
+        // ============================================
+        // OTP MODAL LOGIC
+        // ============================================
+        const otpModal = document.getElementById('otpModal');
+        const otpInputs = document.querySelectorAll('.otp-input');
+        let currentOTPEmail = '';
+        let otpTimerInterval = null;
+
+        function showOTPModal(email) {
+            currentOTPEmail = email;
+            document.getElementById('otpEmail').textContent = email;
+            otpModal.classList.add('show');
+
+            // Clear inputs
+            otpInputs.forEach(input => {
+                input.value = '';
                 input.classList.remove('filled');
-            }
-        });
+            });
 
-        // Backspace navigation
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                otpInputs[index - 1].focus();
-            }
-        });
+            // Focus first input
+            otpInputs[0].focus();
 
-        // Paste support
-        input.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const pastedData = e.clipboardData.getData('text').slice(0, 6);
-            const digits = pastedData.split('');
+            // Start timer (10 minutes)
+            startOTPTimer(600);
+        }
 
-            digits.forEach((digit, i) => {
-                if (otpInputs[i]) {
-                    otpInputs[i].value = digit;
-                    otpInputs[i].classList.add('filled');
+        function closeOTPModal(e) {
+            if (e) e.preventDefault();
+            otpModal.classList.remove('show');
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+        }
+
+        // Auto-advance inputs
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                const value = e.target.value;
+
+                if (value) {
+                    input.classList.add('filled');
+                    // Auto-advance
+                    if (index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                } else {
+                    input.classList.remove('filled');
                 }
             });
 
-            // Focus last input
-            otpInputs[Math.min(digits.length, 5)].focus();
-        });
-    });
-
-    function startOTPTimer(seconds) {
-        if (otpTimerInterval) clearInterval(otpTimerInterval);
-
-        let remaining = seconds;
-        const timerEl = document.getElementById('otpTimer');
-
-        otpTimerInterval = setInterval(() => {
-            remaining--;
-            const mins = Math.floor(remaining / 60);
-            const secs = remaining % 60;
-            timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-
-            if (remaining <= 0) {
-                clearInterval(otpTimerInterval);
-                timerEl.textContent = 'Expired';
-                timerEl.style.color = '#dc3545';
-            }
-        }, 1000);
-    }
-
-    async function verifyOTP() {
-        const code = Array.from(otpInputs).map(i => i.value).join('');
-
-        if (code.length !== 6) {
-            alert('Please enter the 6-digit code');
-            return;
-        }
-
-        const btn = document.getElementById('verifyBtn');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-
-        try {
-            const res = await fetch('/api/auth/verify-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: currentOTPEmail,
-                    code
-                })
+            // Backspace navigation
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
             });
 
-            const data = await res.json();
-            console.log('📥 Verify response:', data);
+            // Paste support
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').slice(0, 6);
+                const digits = pastedData.split('');
 
-            if (data.success) {
-                // Save session
-                sessionStorage.setItem('token', data.token);
-                sessionStorage.setItem('user', JSON.stringify(data.user));
-
-                alert('✅ ' + data.message);
-                closeOTPModal();
-                setTimeout(() => {
-                    window.location.href = 'calendar.html';
-                }, 1000);
-            } else {
-                alert('❌ ' + data.message);
-                // Clear inputs
-                otpInputs.forEach(input => {
-                    input.value = '';
-                    input.classList.remove('filled');
+                digits.forEach((digit, i) => {
+                    if (otpInputs[i]) {
+                        otpInputs[i].value = digit;
+                        otpInputs[i].classList.add('filled');
+                    }
                 });
-                otpInputs[0].focus();
-            }
-        } catch (err) {
-            console.error('❌ Verify error:', err);
-            alert('⚠️ Network error. Please try again.');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
-    }
 
-    async function resendOTP(e) {
-        e.preventDefault();
-
-        try {
-            const res = await fetch('/api/auth/resend-otp', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: currentOTPEmail })
+                // Focus last input
+                otpInputs[Math.min(digits.length, 5)].focus();
             });
+        });
 
-            const data = await res.json();
+        function startOTPTimer(seconds) {
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
 
-            if (data.success) {
-                alert('✅ ' + data.message);
-                startOTPTimer(600);
-                document.getElementById('otpTimer').style.color = '';
-            } else {
-                alert('❌ ' + data.message);
-            }
-        } catch (err) {
-            alert('⚠️ Network error');
+            let remaining = seconds;
+            const timerEl = document.getElementById('otpTimer');
+
+            otpTimerInterval = setInterval(() => {
+                remaining--;
+                const mins = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+                if (remaining <= 0) {
+                    clearInterval(otpTimerInterval);
+                    timerEl.textContent = 'Expired';
+                    timerEl.style.color = '#dc3545';
+                }
+            }, 1000);
         }
-    }
-</script>
- <script>
-    window.GOOGLE_CLIENT_ID = "22321828973-utnctdba0hcpis28alb6cmj6cjbcefa1.apps.googleusercontent.com";
-</script>
-<script src="ui.js"></script>
+
+        async function verifyOTP() {
+            const code = Array.from(otpInputs).map(i => i.value).join('');
+
+            if (code.length !== 6) {
+                alert('Please enter the 6-digit code');
+                return;
+            }
+
+            const btn = document.getElementById('verifyBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+
+            try {
+                const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentOTPEmail,
+                        code
+                    })
+                });
+
+                const data = await res.json();
+                console.log('📥 Verify response:', data);
+
+                if (data.success) {
+                    // Save session
+                    sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('user', JSON.stringify(data.user));
+
+                    alert('✅ ' + data.message);
+                    closeOTPModal();
+                    setTimeout(() => {
+                        window.location.href = 'calendar.html';
+                    }, 1000);
+                } else {
+                    alert('❌ ' + data.message);
+                    // Clear inputs
+                    otpInputs.forEach(input => {
+                        input.value = '';
+                        input.classList.remove('filled');
+                    });
+                    otpInputs[0].focus();
+                }
+            } catch (err) {
+                console.error('❌ Verify error:', err);
+                alert('⚠️ Network error. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function resendOTP(e) {
+            e.preventDefault();
+
+            try {
+                const res = await fetch(`${API_URL}/api/auth/resend-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentOTPEmail })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    startOTPTimer(600);
+                    document.getElementById('otpTimer').style.color = '';
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            } catch (err) {
+                alert('⚠️ Network error');
+            }
+        }
+    </script>
+
+    <script>
+        window.GOOGLE_CLIENT_ID = "22321828973-utnctdba0hcpis28alb6cmj6cjbcefa1.apps.googleusercontent.com";
+    </script>
+
+    <script src="ui.js"></script>
 </body>
 </html>

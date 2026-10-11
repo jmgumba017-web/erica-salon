@@ -5,7 +5,9 @@
 
 console.log('📅 appointment.js loaded');
 
-const API_URL = window.location.origin;
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? window.location.origin
+  : 'https://erica-salon.onrender.com';
 
 // ============================================
 // HELPER: Show message
