@@ -54,6 +54,7 @@ app.use('/api/services', require('./routes/services'));
 app.use('/api/appointments', require('./routes/appointments'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/schedules', require('./routes/schedules'));
+app.use('/api/feedback', require('./routes/feedback'));
 
 // ============================================
 // FRIENDLY ROUTES (walang .html sa URL)

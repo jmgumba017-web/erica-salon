@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback — Erica Salon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="register.css">
+  <link rel="stylesheet" href="ui.css">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, var(--cream) 0%, var(--champagne) 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .feedback-wrapper {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .feedback-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(168, 134, 42, 0.15);
+    }
+
+    .feedback-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .feedback-header .script-title {
+      font-family: 'Allura', cursive;
+      font-size: 42px;
+      color: var(--gold);
+      margin-bottom: 5px;
+    }
+
+    .feedback-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      color: var(--dark-brown);
+      margin: 0 0 10px 0;
+    }
+
+    .feedback-header p {
+      color: var(--light-brown);
+      font-size: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark-brown);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--champagne-dark);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+      background: var(--light-cream);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold-dark);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(168, 134, 42, 0.15);
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* ⭐ STAR RATING */
+    .star-rating {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 10px 0 5px;
+    }
+
+    .star-rating input {
+      display: none;
+    }
+
+    .star-rating label {
+      font-size: 42px;
+      color: #ddd;
+      cursor: pointer;
+      transition: 0.2s;
+      line-height: 1;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: var(--gold);
+      transform: scale(1.1);
+    }
+
+    .star-rating input:checked ~ label {
+      color: #ddd;
+    }
+
+    /* Reverse order para gumana yung hover */
+    .star-rating {
+      flex-direction: row-reverse;
+      justify-content: center;
+    }
+
+    .star-rating input:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+      color: var(--gold);
+      text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+
+    .rating-label {
+      text-align: center;
+      font-size: 13px;
+      color: var(--light-brown);
+      margin-top: 5px;
+      height: 20px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(168, 134, 42, 0.35);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .message {
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .message.error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--gold-dark);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .feedback-card {
+        padding: 25px 20px;
+      }
+
+      .feedback-header .script-title {
+        font-size: 32px;
+      }
+
+      .feedback-header h2 {
+        font-size: 24px;
+      }
+
+      .star-rating label {
+        font-size: 36px;
+      }
+    }
+  </style>
+</head>
+<body class="page-loaded">
+
+  <div class="feedback-wrapper">
+    <div class="feedback-card">
+      <div class="feedback-header">
+        <div class="script-title">Feedback</div>
+        <h2>How was your experience?</h2>
+        <p>Ibahagi ang iyong experience sa Erica Salon 💖</p>
+      </div>
+
+      <form id="feedbackForm">
+        <div class="form-group">
+          <label for="name">
+            <i class="fa-solid fa-user"></i> Your Name *
+          </label>
+          <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">
+            <i class="fa-solid fa-envelope"></i> Email (optional)
+          </label>
+          <input type="email" id="email" name="email" placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <i class="fa-solid fa-star"></i> Rating *
+          </label>
+          <div class="star-rating">
+            <input type="radio" id="star5" name="rating" value="5" required>
+            <label for="star5" title="5 stars">★</label>
+
+            <input type="radio" id="star4" name="rating" value="4">
+            <label for="star4" title="4 stars">★</label>
+
+            <input type="radio" id="star3" name="rating" value="3">
+            <label for="star3" title="3 stars">★</label>
+
+            <input type="radio" id="star2" name="rating" value="2">
+            <label for="star2" title="2 stars">★</label>
+
+            <input type="radio" id="star1" name="rating" value="1">
+            <label for="star1" title="1 star">★</label>
+          </div>
+          <div class="rating-label" id="ratingLabel">Pumili ng rating</div>
+        </div>
+
+        <div class="form-group">
+          <label for="category">
+            <i class="fa-solid fa-tag"></i> Category
+          </label>
+          <select id="category" name="category">
+            <option value="Service">Service</option>
+            <option value="Staff">Staff</option>
+            <option value="Cleanliness">Cleanliness</option>
+            <option value="Website">Website</option>
+            <option value="Other" selected>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">
+            <i class="fa-solid fa-comment"></i> Your Message *
+          </label>
+          <textarea id="message" name="message" placeholder="Ibahagi ang iyong feedback..." required maxlength="1000"></textarea>
+          <div style="text-align: right; font-size: 12px; color: #999; margin-top: 5px;">
+            <span id="charCount">0</span> / 1000
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+        </button>
+
+        <div class="message" id="messageBox"></div>
+      </form>
+
+      <div style="text-align: center;">
+        <a href="homepage.html" class="back-link">
+          <i class="fa-solid fa-arrow-left"></i> Back to Home
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="feedback.js"></script>
+</body>
+</html>
