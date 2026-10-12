@@ -935,3 +935,89 @@ footer p {
         height: 36px;
     }
 }
+
+/* ============================================ */
+/* RESPONSIVE DESIGN — MOBILE FIRST */
+/* ============================================ */
+
+/* 📱 Small phones (portrait) — up to 480px */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .navbar {
+    padding: 10px 15px;
+  }
+
+  .nav-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logo-text .logo-name {
+    font-size: 18px;
+  }
+
+  .logo-text .logo-subtitle {
+    font-size: 10px;
+  }
+
+  .login-container,
+  .payment-container {
+    padding: 25px 20px;
+    margin: 10px;
+    border-radius: 16px;
+  }
+
+  .appointment-header h2 {
+    font-size: 22px;
+  }
+
+  .script-title {
+    font-size: 32px;
+  }
+
+  .payment-methods {
+    grid-template-columns: 1fr; /* 1 column lang sa mobile */
+  }
+
+  .receipt-preview img {
+    max-height: 180px;
+  }
+
+  .gcash-qr-section img {
+    max-width: 180px;
+  }
+
+  button,
+  .button {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+
+/* 📱 Tablets — 481px to 768px */
+@media (min-width: 481px) and (max-width: 768px) {
+  .login-container,
+  .payment-container {
+    max-width: 90%;
+    padding: 35px 30px;
+  }
+
+  .payment-methods {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 💻 Desktop — 769px and up */
+@media (min-width: 769px) {
+  .login-container,
+  .payment-container {
+    max-width: 520px;
+  }
+
+  .payment-methods {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

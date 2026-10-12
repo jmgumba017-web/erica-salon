@@ -426,3 +426,177 @@ textarea:focus-visible {
 input, select, textarea, button {
     transition: all 0.2s !important;
 }
+
+/* ============================================ */
+/* FIX: Prevent horizontal scroll sa buong page */
+/* ============================================ */
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ✅ SA LAHAT NG ELEMENTS — pero hindi kasama yung gallery */
+img,
+video,
+iframe,
+svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ✅ EXCEPTION: Gallery — para gumana yung horizontal scroll */
+.gallery,
+.gallery-wrapper,
+.gallery-scroll {
+    max-width: none !important;
+    overflow-x: auto !important;
+}
+
+.gallery-scroll {
+    overflow-y: hidden !important;
+}
+
+.gallery-item {
+    max-width: none !important;
+    flex-shrink: 0 !important;
+}
+
+/* ✅ EXCEPTION: Navigation at iba pang may horizontal scroll */
+.nav-links,
+.toast-container {
+    max-width: none !important;
+}
+
+/* ============================================ */
+/* QUICK FIX: Center everything sa mobile */
+/* ============================================ */
+
+@media (max-width: 768px) {
+    html, body {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .navbar {
+        width: 100%;
+        height: 80px;
+    }
+
+    .nav-container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 15px;
+        flex-wrap: wrap;
+    }
+
+    .top-logo {
+        min-width: auto;
+        max-width: 70%;
+    }
+
+    .top-logo img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .logo-name {
+        font-size: 22px;
+    }
+
+    .logo-subtitle {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .social-icons {
+        display: none;
+    }
+
+    .menu-button {
+        display: block;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .hero {
+        padding: 40px 20px;
+        min-height: auto;
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .hero-content {
+        padding-left: 0;
+        text-align: center;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+        line-height: 1.1;
+    }
+
+    .hero p {
+        margin-top: 20px;
+        font-size: 15px;
+    }
+
+    .hero .button {
+        margin-top: 25px;
+        display: inline-block;
+    }
+
+    .hero-image {
+        padding: 10px;
+    }
+
+    .hero-image img {
+        height: 250px;
+        object-fit: cover;
+    }
+
+    .section {
+        padding: 60px 20px;
+    }
+
+    .section-heading h2 {
+        font-size: 28px;
+    }
+
+    .section-heading p {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        height: 70px;
+    }
+
+    .top-logo img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .logo-name {
+        font-size: 18px;
+    }
+
+    .logo-subtitle {
+        display: none;
+    }
+
+    .hero h1 {
+        font-size: 28px;
+    }
+
+    .hero p {
+        font-size: 14px;
+    }
+
+    .hero-image img {
+        height: 200px;
+    }
+}
