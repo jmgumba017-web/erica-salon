@@ -107,19 +107,6 @@ function renderSummary(appointment, services) {
   // Show form
   const form = document.getElementById('paymentForm');
   if (form) form.style.display = 'block';
-
-  // ✅ Update sidebar summary
-  const sidebarDate = document.getElementById('sidebarDate');
-  const sidebarTime = document.getElementById('sidebarTime');
-  const sidebarTotal = document.getElementById('sidebarTotal');
-  const sidebarPaid = document.getElementById('sidebarPaid');
-  const sidebarBalance = document.getElementById('sidebarBalance');
-
-  if (sidebarDate) sidebarDate.textContent = appointment.appointmentDate;
-  if (sidebarTime) sidebarTime.textContent = appointment.appointmentTime;
-  if (sidebarTotal) sidebarTotal.textContent = '₱' + appointment.totalAmount.toFixed(2);
-  if (sidebarPaid) sidebarPaid.textContent = '₱' + paid.toFixed(2);
-  if (sidebarBalance) sidebarBalance.textContent = '₱' + appointment.remainingBalance.toFixed(2);
 }
 
 // ============================================
@@ -172,6 +159,7 @@ if (paymentForm) {
     const referenceNumber = refInput?.value || '';
     const notes = notesInput?.value || '';
 
+    // ✅ BASIC VALIDATION
     if (!amount || amount <= 0) {
       return alert('Please enter a valid amount');
     }
@@ -180,11 +168,40 @@ if (paymentForm) {
       return alert(`Amount cannot exceed ₱${currentAppointment.remainingBalance.toFixed(2)}`);
     }
 
+    // ============================================
+    // ✅ REQUIRED RECEIPT VALIDATION
+    // ============================================
+    const receipt = window.getSelectedReceipt ? window.getSelectedReceipt() : null;
+
+    if (!receipt) {
+      return alert(
+        '⚠️ Required ang receipt!\n\n' +
+        'Kailangan mong mag-upload ng proof of payment (screenshot ng GCash/Maya, o litrato ng resibo) bago ka makapag-confirm ng payment.'
+      );
+    }
+
+    // ============================================
+    // ✅ REQUIRED DOWN PAYMENT VALIDATION
+    // ============================================
+    const alreadyPaid = currentAppointment.totalAmount - currentAppointment.remainingBalance;
+    const isFirstTime = currentAppointment.requireDownPayment && currentAppointment.downPayment === 0;
+
+    if (isFirstTime && alreadyPaid === 0) {
+      const requiredDown = currentAppointment.totalAmount * 0.5;
+
+      if (amount < requiredDown) {
+        return alert(
+          `⚠️ First-time customer: Kailangan ng 50% down payment.\n\n` +
+          `Required: ₱${requiredDown.toFixed(2)}\n` +
+          `Your amount: ₱${amount.toFixed(2)}`
+        );
+      }
+    }
+
     // ✅ Determine payment type
     let paymentType = 'Balance';
-    const alreadyPaid = currentAppointment.totalAmount - currentAppointment.remainingBalance;
 
-    if (currentAppointment.requireDownPayment && currentAppointment.downPayment === 0) {
+    if (isFirstTime && alreadyPaid === 0 && amount >= currentAppointment.totalAmount * 0.5) {
       paymentType = 'Down Payment';
     } else if (alreadyPaid === 0 && amount < currentAppointment.totalAmount) {
       paymentType = 'Down Payment';
@@ -209,12 +226,7 @@ if (paymentForm) {
       formData.append('referenceNumber', referenceNumber);
       formData.append('paymentType', paymentType);
       formData.append('notes', notes);
-
-      // ✅ Idagdag ang receipt kung mayroon
-      const receipt = window.getSelectedReceipt ? window.getSelectedReceipt() : null;
-      if (receipt) {
-        formData.append('receipt', receipt);
-      }
+      formData.append('receipt', receipt); // ✅ Required na
 
       const res = await fetch(`${API_URL}/api/payments`, {
         method: 'POST',

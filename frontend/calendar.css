@@ -873,7 +873,7 @@ footer p {
    ============================================ */
 
 body.login-page {
-    background: 
+    background:
         radial-gradient(circle at 20% 20%, rgba(247, 231, 206, 0.6), transparent 40%),
         radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.15), transparent 45%),
         radial-gradient(circle at 50% 50%, rgba(232, 212, 184, 0.3), transparent 60%),

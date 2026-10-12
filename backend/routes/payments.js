@@ -39,6 +39,14 @@ const upload = multer({
 // ============================================
 router.post('/', auth, upload.single('receipt'), async (req, res) => {
   try {
+    // ✅ REQUIRED RECEIPT VALIDATION
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Required ang receipt! Kailangan mag-upload ng proof of payment.'
+      });
+    }
+
     const {
       appointmentId,
       amount,
@@ -47,6 +55,8 @@ router.post('/', auth, upload.single('receipt'), async (req, res) => {
       paymentType,
       notes
     } = req.body;
+    
+    // ... existing code
 
     // ===== VALIDATION =====
     if (!appointmentId || !amount || !paymentMethod || !paymentType) {
@@ -56,7 +66,9 @@ router.post('/', auth, upload.single('receipt'), async (req, res) => {
       });
     }
 
-    if (amount <= 0) {
+    const paymentAmount = parseFloat(amount);
+
+    if (isNaN(paymentAmount) || paymentAmount <= 0) {
       return res.status(400).json({
         success: false,
         message: 'Amount must be greater than 0'
@@ -82,37 +94,66 @@ router.post('/', auth, upload.single('receipt'), async (req, res) => {
     }
 
     // ===== CHECK PAYMENT AMOUNT =====
-    if (amount > appointment.remainingBalance) {
+    if (paymentAmount > appointment.remainingBalance) {
       return res.status(400).json({
         success: false,
         message: `Amount exceeds remaining balance (₱${appointment.remainingBalance})`
       });
     }
 
+    // ============================================
+    // ✅ REQUIRED DOWN PAYMENT VALIDATION
+    // ============================================
+    const alreadyPaid = appointment.totalAmount - appointment.remainingBalance;
+    const isFirstTime = appointment.requireDownPayment && appointment.downPayment === 0;
+
+    if (isFirstTime && alreadyPaid === 0) {
+      const requiredDown = appointment.totalAmount * 0.5;
+
+      if (paymentAmount < requiredDown) {
+        return res.status(400).json({
+          success: false,
+          message: `First-time customer: Kailangan ng 50% down payment (₱${requiredDown.toFixed(2)}). Your amount: ₱${paymentAmount.toFixed(2)}`
+        });
+      }
+    }
+
+    // ============================================
+    // ✅ DETERMINE FINAL PAYMENT TYPE (server-side)
+    // ============================================
+    let finalPaymentType = paymentType;
+
+    // Override kung mali ang paymentType na sinend ng frontend
+    if (isFirstTime && alreadyPaid === 0 && paymentAmount >= appointment.totalAmount * 0.5 && paymentAmount < appointment.totalAmount) {
+      finalPaymentType = 'Down Payment';
+    } else if (alreadyPaid === 0 && paymentAmount < appointment.totalAmount) {
+      finalPaymentType = 'Down Payment';
+    } else if (paymentAmount >= appointment.remainingBalance) {
+      finalPaymentType = alreadyPaid > 0 ? 'Balance' : 'Full Payment';
+    }
+
     // ===== CREATE PAYMENT =====
     const payment = await Payment.create({
       appointmentId: appointment._id,
       customerId: customer._id,
-      amount,
+      amount: paymentAmount,
       paymentMethod,
       referenceNumber: referenceNumber || '',
-      paymentType,
+      paymentType: finalPaymentType,
       paymentStatus: 'Paid',
       paymentDate: new Date(),
       receivedBy: req.user.id,
       notes: notes || '',
-      // ✅ Cloudinary URL (req.file.path ay full URL na)
       receiptPath: req.file ? req.file.path : ''
     });
 
     // ===== UPDATE APPOINTMENT BALANCE =====
-    appointment.downPayment += paymentType === 'Down Payment' ? amount : 0;
-    appointment.remainingBalance -= amount;
+    appointment.downPayment += finalPaymentType === 'Down Payment' ? paymentAmount : 0;
+    appointment.remainingBalance -= paymentAmount;
 
     // Auto-update status
     if (appointment.remainingBalance <= 0) {
       appointment.remainingBalance = 0;
-      // Don't change status to Completed — yung staff pa rin mag-set pag tapos na service
     }
 
     await appointment.save();
@@ -121,7 +162,7 @@ router.post('/', auth, upload.single('receipt'), async (req, res) => {
     await AppointmentHistory.create({
       appointmentId: appointment._id,
       action: 'Payment Added',
-      reason: `${paymentType}: ₱${amount} via ${paymentMethod}`,
+      reason: `${finalPaymentType}: ₱${paymentAmount} via ${paymentMethod}`,
       changedBy: req.user.id
     });
 
