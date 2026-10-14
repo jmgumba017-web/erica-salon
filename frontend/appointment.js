@@ -8,7 +8,7 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
   ? window.location.origin
   : 'https://erica-salon.onrender.com';
 
-  // ============================================
+// ============================================
 // LOAD BOOKED TIME SLOTS
 // ============================================
 async function loadBookedTimes() {
@@ -25,7 +25,6 @@ async function loadBookedTimes() {
         console.log('📥 Booked times:', data);
 
         if (data.success) {
-            // I-reset lahat ng time slots
             document.querySelectorAll('.time-slot').forEach(slot => {
                 slot.classList.remove('booked');
                 slot.style.opacity = '';
@@ -37,7 +36,6 @@ async function loadBookedTimes() {
                 }
             });
 
-            // I-disable yung mga booked na
             data.bookedTimes.forEach(bookedTime => {
                 const slot = document.querySelector(`.time-slot input[value="${bookedTime}"]`)?.closest('.time-slot');
                 
@@ -92,10 +90,10 @@ function showMessage(message, type = 'info') {
 }
 
 // ============================================
-// STEP 1: LOAD SERVICES (MULTI-SELECT, MAX 3)
+// STEP 1: LOAD SERVICES
 // ============================================
 const MAX_SERVICES = 3;
-let selectedServices = [];   // array of { _id, serviceName, price, duration }
+let selectedServices = [];
 let allServices = [];
 
 async function loadServices() {
@@ -110,7 +108,6 @@ async function loadServices() {
 
     console.log('📥 Services loaded:', services.length);
 
-    // Group by category
     const grouped = {};
     services.forEach(s => {
       if (!grouped[s.category]) grouped[s.category] = [];
@@ -145,16 +142,13 @@ async function loadServices() {
 
     container.innerHTML = html;
 
-    // Attach listeners
     document.querySelectorAll('.service-item').forEach(item => {
       const checkbox = item.querySelector('.service-checkbox');
-
       checkbox.addEventListener('change', () => {
         handleServiceToggle(item, checkbox);
       });
     });
 
-    // Render initial chips
     renderSelectedChips();
 
   } catch (err) {
@@ -173,18 +167,14 @@ function handleServiceToggle(item, checkbox) {
   const duration = parseInt(item.dataset.duration);
 
   if (checkbox.checked) {
-    // Check limit
     if (selectedServices.length >= MAX_SERVICES) {
       checkbox.checked = false;
       showServiceLimitWarning();
       return;
     }
-
-    // Add
     selectedServices.push({ _id: id, serviceName: name, price, duration });
     item.classList.add('selected');
   } else {
-    // Remove
     selectedServices = selectedServices.filter(s => s._id !== id);
     item.classList.remove('selected');
   }
@@ -193,17 +183,14 @@ function handleServiceToggle(item, checkbox) {
 }
 
 // ============================================
-// UPDATE UI (chips, counter, disabled states)
+// UPDATE UI
 // ============================================
 function updateServicesUI() {
-  // Update counter
   const counter = document.getElementById('serviceCount');
   if (counter) counter.textContent = `${selectedServices.length}/${MAX_SERVICES} selected`;
 
-  // Enable/disable remaining checkboxes
   document.querySelectorAll('.service-item').forEach(item => {
     const isSelected = selectedServices.some(s => s._id === item.dataset.id);
-
     if (!isSelected && selectedServices.length >= MAX_SERVICES) {
       item.classList.add('disabled');
     } else {
@@ -211,10 +198,7 @@ function updateServicesUI() {
     }
   });
 
-  // Update chips
   renderSelectedChips();
-
-  // Update sidebar summary
   updateSummaryServices();
 }
 
@@ -237,7 +221,6 @@ function renderSelectedChips() {
     </span>
   `).join('');
 
-  // Attach remove listeners
   container.querySelectorAll('.chip-remove').forEach(btn => {
     btn.addEventListener('click', () => {
       const chip = btn.closest('.service-chip');
@@ -248,12 +231,11 @@ function renderSelectedChips() {
 }
 
 // ============================================
-// REMOVE SERVICE BY ID
+// REMOVE SERVICE
 // ============================================
 function removeServiceById(id) {
   selectedServices = selectedServices.filter(s => s._id !== id);
 
-  // Uncheck the matching checkbox
   const item = document.querySelector(`.service-item[data-id="${id}"]`);
   if (item) {
     item.classList.remove('selected');
@@ -284,7 +266,7 @@ function showServiceLimitWarning() {
 }
 
 // ============================================
-// UPDATE SIDEBAR SUMMARY (multiple services)
+// UPDATE SIDEBAR SUMMARY
 // ============================================
 function updateSummaryServices() {
   const sidebarService = document.getElementById('sidebarService');
@@ -295,7 +277,6 @@ function updateSummaryServices() {
     return;
   }
 
-  // Show up to 2 names + "+N more"
   if (selectedServices.length <= 2) {
     sidebarService.textContent = selectedServices.map(s => s.serviceName).join(', ');
   } else {
@@ -304,7 +285,7 @@ function updateSummaryServices() {
 }
 
 // ============================================
-// STEP 2: LOAD STAFF FROM API
+// LOAD STAFF
 // ============================================
 async function loadStaff() {
   const staffGrid = document.querySelector('.staff-grid');
@@ -363,8 +344,9 @@ async function loadStaff() {
     staffGrid.innerHTML = '<p style="color:#999;">Error loading staff</p>';
   }
 }
+
 // ============================================
-// STEP 2.5: LOAD DAY STATUS
+// LOAD DAY STATUS
 // ============================================
 async function loadDayStatus(date) {
   if (!date) return;
@@ -380,10 +362,7 @@ async function loadDayStatus(date) {
     const dateBadge = document.getElementById('dateBadge');
     const form = document.getElementById('appointmentForm');
 
-    if (!dateBadge) {
-      console.warn('⚠️ #dateBadge not found — skipping badge insertion');
-      return;
-    }
+    if (!dateBadge) return;
 
     const oldBadge = document.getElementById('dayStatusBadge');
     if (oldBadge) oldBadge.remove();
@@ -439,7 +418,7 @@ async function loadDayStatus(date) {
 }
 
 // ============================================
-// STEP 3: SUBMIT BOOKING
+// SUBMIT BOOKING
 // ============================================
 const appointmentForm = document.getElementById('appointmentForm');
 
@@ -461,36 +440,21 @@ if (appointmentForm) {
     let staffId = document.querySelector('input[name="staff"]:checked')?.value;
     const notes = document.getElementById('notes')?.value || '';
 
-    // ✅ Staff is OPTIONAL — auto-assign if empty
     if (!staffId) {
-      console.log('📌 No staff selected — auto-assigning available staff');
       const firstStaffRadio = document.querySelector('input[name="staff"]:not([value=""])');
       if (firstStaffRadio && firstStaffRadio.value) {
         staffId = firstStaffRadio.value;
-        console.log('✅ Auto-assigned to:', staffId);
       } else {
         return showMessage('❌ No staff available at the moment. Please try again later.', 'error');
       }
     }
 
-    // ✅ Validation
-    if (!appointmentDate) {
-      return showMessage('❌ Please select a date first (go to calendar)', 'error');
-    }
-    if (!appointmentTime) {
-      return showMessage('❌ Please select a preferred time', 'error');
-    }
-    if (selectedServices.length === 0) {
-      return showMessage('❌ Please select at least 1 service', 'error');
-    }
-    if (selectedServices.length > MAX_SERVICES) {
-      return showMessage(`❌ Maximum ${MAX_SERVICES} services lang per booking`, 'error');
-    }
-    if (!staffId) {
-      return showMessage('❌ Please select a staff', 'error');
-    }
+    if (!appointmentDate) return showMessage('❌ Please select a date first', 'error');
+    if (!appointmentTime) return showMessage('❌ Please select a preferred time', 'error');
+    if (selectedServices.length === 0) return showMessage('❌ Please select at least 1 service', 'error');
+    if (selectedServices.length > MAX_SERVICES) return showMessage(`❌ Maximum ${MAX_SERVICES} services lang per booking`, 'error');
+    if (!staffId) return showMessage('❌ Please select a staff', 'error');
 
-    // ✅ Dynamic services array from user selection
     const bookingData = {
       appointmentDate,
       appointmentTime,
@@ -556,6 +520,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   const dateParam = new URLSearchParams(window.location.search).get('date');
   if (dateParam) {
     loadDayStatus(dateParam);
-    loadBookedTimes();  // ✅ IDAGDAG ITO
+    loadBookedTimes();
   }
 });
