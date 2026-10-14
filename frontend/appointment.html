@@ -25,19 +25,32 @@
                     <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
                 </div>
             </a>
- <nav class="nav-links" id="navLinks">
-            <a href="homepage.html">Home</a>
-            <a href="homepage.html#services">Services</a>
-            <a href="homepage.html#about">About</a>
-            <a href="homepage.html#manicure">Manicure</a>
-            <a href="homepage.html#pedicure">Pedicure</a>
-            <a href="homepage.html#hairtreatment">Hair Treatment</a>
-            <a href="homepage.html#contacts">Contacts</a>
-              <a href="feedback.html">Feedback</a>  <!-- ✅ BAGO -->
-        </nav>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="homepage.html">Home</a>
+                <a href="homepage.html#services">Services</a>
+                <a href="homepage.html#about">About</a>
+                <a href="homepage.html#manicure">Manicure</a>
+                <a href="homepage.html#pedicure">Pedicure</a>
+                <a href="homepage.html#hairtreatment">Hair Treatment</a>
+                <a href="homepage.html#contacts">Contacts</a>
+                <a href="feedback.html">Feedback</a>
+            </nav>
+
             <div class="social-icons">
-                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.facebook.com/gorgeousnailsbyerica" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   aria-label="Facebook">
+                    <i class="fa-brands fa-facebook-f"></i>
+                </a>
+                
+                <a href="https://www.instagram.com/gorgeousnailsbyerica" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
 
                 <div class="profile-wrapper">
                     <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
@@ -76,16 +89,13 @@
         </div>
     </header>
 
-    <!-- ===== MAIN LAYOUT WITH SIDEBAR ===== -->
+    <!-- ===== LAYOUT: SIDEBAR | FORM | VIDEO ===== -->
     <main class="appointment-layout">
 
-        <!-- LEFT SIDE — DECORATION + SIDEBAR -->
+        <!-- LEFT — SIDEBAR -->
         <aside class="appointment-sidebar">
-            <!-- Decorative background -->
-            <div class="sidebar-bg"></div>
-
-            <!-- Content -->
             <div class="sidebar-content">
+
                 <!-- Booking Summary -->
                 <div class="sidebar-card summary-card">
                     <div class="sidebar-icon">
@@ -117,22 +127,10 @@
                     </div>
                     <h3>Booking Tips</h3>
                     <ul class="tips-list">
-                        <li>
-                            <i class="fa-solid fa-check"></i>
-                            <span>Pumili ng preferred time slot</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-check"></i>
-                            <span>Pumili ng staff na mag-aasikaso</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-check"></i>
-                            <span>I-check ang booking summary</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-check"></i>
-                            <span>I-confirm ang booking</span>
-                        </li>
+                        <li><i class="fa-solid fa-check"></i><span>Choose your preferred time slot</span></li>
+                        <li><i class="fa-solid fa-check"></i><span>Choose your preferred staff member</span></li>
+                        <li><i class="fa-solid fa-check"></i><span>Check the booking summary</span></li>
+                        <li><i class="fa-solid fa-check"></i><span>Confirm your booking</span></li>
                     </ul>
                 </div>
 
@@ -152,23 +150,25 @@
                 <div class="sidebar-card social-card">
                     <h3>Follow Us</h3>
                     <div class="sidebar-social">
-                        <a href="#" aria-label="Facebook">
+                        <a href="https://www.facebook.com/gorgeousnailsbyerica" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           aria-label="Facebook">
                             <i class="fa-brands fa-facebook-f"></i>
                         </a>
-                        <a href="#" aria-label="Instagram">
+                        <a href="https://www.instagram.com/gorgeousnailsbyerica" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           aria-label="Instagram">
                             <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="#" aria-label="TikTok">
-                            <i class="fa-brands fa-tiktok"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </aside>
 
-        <!-- RIGHT SIDE — APPOINTMENT FORM -->
+        <!-- CENTER — APPOINTMENT FORM -->
         <div class="appointment-main">
-
             <div class="login-container appointment-container">
 
                 <!-- Decorative header -->
@@ -187,69 +187,69 @@
 
                     <input type="hidden" name="appointment_date" id="appointmentDate">
 
-                    <!-- STEP 1: PERSONAL INFO -->
+                    <!-- STEP 1: PERSONAL INFO (2 columns) -->
                     <div class="form-section">
                         <div class="form-section-header">
                             <span class="step-badge">1</span>
                             <h4>Your Information</h4>
                         </div>
 
-                        <div class="input-group">
-                            <label for="fullname">
-                                <i class="fa-solid fa-user"></i> Full Name
-                            </label>
-                            <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
-                        </div>
+                        <div class="form-section-body">
+                            <div class="input-group">
+                                <label for="fullname">
+                                    <i class="fa-solid fa-user"></i> Full Name
+                                </label>
+                                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+                            </div>
 
-                        <div class="input-group">
-                            <label for="phone">
-                                <i class="fa-solid fa-phone"></i> Phone Number
-                            </label>
-                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                            <div class="input-group">
+                                <label for="phone">
+                                    <i class="fa-solid fa-phone"></i> Phone Number
+                                </label>
+                                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- STEP 2: SERVICES (MULTI-SELECT, MAX 3) -->
-<div class="form-section">
-    <div class="form-section-header">
-        <span class="step-badge">2</span>
-        <h4>Choose Services</h4>
-        <span class="optional-badge">Max 3</span>
-    </div>
+                    <!-- STEP 2: SERVICES -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <span class="step-badge">2</span>
+                            <h4>Choose Services</h4>
+                            <span class="optional-badge">Max 3</span>
+                        </div>
 
-    <p class="staff-hint">
-        <i class="fa-solid fa-info-circle"></i>
-        Pumili ng <strong>1 hanggang 3 services</strong>. 
-        <span id="serviceCount">0/3 selected</span>
-    </p>
+                        <p class="staff-hint">
+                            <i class="fa-solid fa-info-circle"></i>
+                            Choose <strong>1-3 services</strong>. 
+                            <span id="serviceCount">0/3 selected</span>
+                        </p>
 
-    <!-- Selected services chips -->
-    <div id="selectedServices" class="selected-services-chips"></div>
+                        <div id="selectedServices" class="selected-services-chips"></div>
 
-    <!-- Services list (populated by JS) -->
-    <div id="servicesContainer" class="services-container">
-        <p style="color:#999; padding: 12px;">Loading services...</p>
-    </div>
-</div>
+                        <div id="servicesContainer" class="services-container">
+                            <p style="color:#999; padding: 12px;">Loading services...</p>
+                        </div>
+                    </div>
 
-<!-- STEP 3: STAFF (OPTIONAL) -->
-<div class="form-section">
-    <div class="form-section-header">
-        <span class="step-badge">3</span>
-        <h4>Choose Your Staff</h4>
-        <span class="optional-badge">Optional</span>
-    </div>
+                    <!-- STEP 3: STAFF (OPTIONAL) -->
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <span class="step-badge">3</span>
+                            <h4>Choose Your Staff</h4>
+                            <span class="optional-badge">Optional</span>
+                        </div>
 
-    <div class="input-group">
-        <p class="staff-hint">
-            <i class="fa-solid fa-info-circle"></i>
-            Kung hindi ka pipili, awtomatikong ipapasa sa available na staff.
-        </p>
-        <div class="staff-grid">
-            <p style="color:#999;">Loading staff...</p>
-        </div>
-    </div>
-</div>
+                        <div class="input-group">
+                            <p class="staff-hint">
+                                <i class="fa-solid fa-info-circle"></i>
+                                Choose your preferred staff member.
+                            </p>
+                            <div class="staff-grid">
+                                <p style="color:#999;">Loading staff...</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- STEP 4: TIME -->
                     <div class="form-section">
@@ -317,6 +317,30 @@
                 </p>
             </div>
         </div>
+
+        <!-- RIGHT — VIDEO -->
+        <aside class="appointment-sidebar video-sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-card video-card">
+                    <div class="sidebar-icon">
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <h3>Watch Our Salon</h3>
+                    <video 
+                        controls 
+                        autoplay 
+                        muted 
+                        loop 
+                        playsinline
+                        preload="metadata"
+                    >
+                        <source src="video/erica video2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p class="video-caption">Sterilizing process ✨</p>
+                </div>
+            </div>
+        </aside>
     </main>
 
     <footer>
@@ -326,7 +350,6 @@
 
     <script src="ui.js"></script>
     <script>
-        // ===== MOBILE MENU =====
         const menuButton = document.getElementById("menuButton");
         const navLinks = document.getElementById("navLinks");
         if (menuButton && navLinks) {
@@ -335,7 +358,6 @@
             });
         }
 
-        // ===== GET DATE FROM URL =====
         const params = new URLSearchParams(window.location.search);
         const dateParam = params.get("date");
         const dateBadge = document.getElementById("dateBadge");
@@ -351,14 +373,12 @@
             dateBadge.textContent = readable;
             appointmentDate.value = dateParam;
 
-            // Update sidebar date
             const sidebarDate = document.getElementById('sidebarDate');
             if (sidebarDate) sidebarDate.textContent = `${monthNames[parseInt(m) - 1]} ${parseInt(d)}`;
         } else {
             dateBadge.textContent = "No date selected";
         }
 
-        // ===== TIME SLOT HIGHLIGHT =====
         const slots = document.querySelectorAll(".time-slot");
         slots.forEach(slot => {
             slot.addEventListener("click", () => {
@@ -367,15 +387,6 @@
             });
         });
 
-        // ===== UPDATE SUMMARY — SERVICE =====
-        function updateSummaryService() {
-            const serviceSelect = document.getElementById('service');
-            const selectedText = serviceSelect.options[serviceSelect.selectedIndex]?.text || '—';
-            const sidebarService = document.getElementById('sidebarService');
-            if (sidebarService) sidebarService.textContent = selectedText.split(' - ')[0] || '—';
-        }
-
-        // ===== UPDATE SUMMARY — STAFF =====
         document.addEventListener('change', function(e) {
             if (e.target.name === 'staff') {
                 const staffName = e.target.dataset.name || e.target.value || '—';
@@ -384,14 +395,12 @@
             }
         });
 
-        // ===== UPDATE SUMMARY — TIME =====
         function updateSummaryTime() {
             const time = document.querySelector('input[name="time"]:checked')?.value;
             const sidebarTime = document.getElementById('sidebarTime');
             if (sidebarTime) sidebarTime.textContent = time ? time : '—';
         }
 
-        // ===== PROFILE DROPDOWN =====
         const profileBtn = document.getElementById("profileBtn");
         const profileDropdown = document.getElementById("profileDropdown");
 
@@ -410,7 +419,6 @@
             });
         }
 
-        // ===== LOAD USER INFO =====
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         if (user.name) {
             const dn = document.getElementById('dropdownName');
@@ -419,7 +427,6 @@
             if (de) de.textContent = user.email;
         }
 
-        // ===== LOGOUT =====
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function(e) {
@@ -433,7 +440,6 @@
         }
     </script>
 
-    <!-- Booking Logic -->
     <script src="appointment.js"></script>
 </body>
 </html>

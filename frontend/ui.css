@@ -481,6 +481,7 @@ svg {
     .navbar {
         width: 100%;
         height: 80px;
+        overflow: visible !important
     }
 
     .nav-container {
@@ -488,6 +489,7 @@ svg {
         max-width: 100%;
         padding: 0 15px;
         flex-wrap: wrap;
+          overflow: visible !important;
     }
 
     .top-logo {
@@ -509,9 +511,13 @@ svg {
         letter-spacing: 1px;
     }
 
-    .social-icons {
-        display: none;
-    }
+  .social-icons {
+    display: flex;
+    gap: 14px;
+    position: relative;
+    overflow: visible !important;
+    z-index: 9999;
+}
 
     .menu-button {
         display: block;
@@ -648,4 +654,138 @@ svg {
         min-width: 200px;
         right: -10px;
     }
+}
+
+/* ============================================ */
+/* FORCE: Profile dropdown items visible */
+/* ============================================ */
+
+.profile-dropdown.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    transform: translateY(0) !important;
+}
+
+.profile-dropdown.show .dropdown-item {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: var(--dark-brown) !important;
+    background: transparent !important;
+}
+
+.profile-dropdown.show .dropdown-item i {
+    color: var(--gold-dark) !important;
+    display: inline-block !important;
+}
+
+.profile-dropdown.show .dropdown-item span {
+    display: inline-block !important;
+    color: inherit !important;
+}
+
+.profile-dropdown.show .dropdown-item.logout {
+    color: #d32f2f !important;
+}
+
+.profile-dropdown.show .dropdown-item.logout i {
+    color: #d32f2f !important;
+}
+
+.profile-dropdown.show .dropdown-divider {
+    display: block !important;
+    height: 1px !important;
+    background: var(--champagne-dark) !important;
+    margin: 6px 0 !important;
+}
+
+/* ============================================ */
+/* SUPER FORCE: Profile dropdown items */
+/* ============================================ */
+
+/* Force yung buong dropdown */
+.profile-dropdown.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    transform: translateY(0) !important;
+    height: auto !important;
+    max-height: 500px !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+}
+
+/* Force yung header */
+.profile-dropdown.show .dropdown-header {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+}
+
+.profile-dropdown.show .dropdown-avatar,
+.profile-dropdown.show .dropdown-user,
+.profile-dropdown.show .dropdown-name,
+.profile-dropdown.show .dropdown-email {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Force yung divider */
+.profile-dropdown.show .dropdown-divider {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: 1px !important;
+    background: var(--champagne-dark) !important;
+    margin: 6px 0 !important;
+    width: 100% !important;
+}
+
+/* Force yung dropdown items */
+.profile-dropdown.show .dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+    min-height: 40px !important;
+    color: var(--dark-brown) !important;
+    background: transparent !important;
+    padding: 11px 14px !important;
+    text-decoration: none !important;
+}
+
+.profile-dropdown.show .dropdown-item i {
+    display: inline-block !important;
+    color: var(--gold-dark) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 15px !important;
+    width: 18px !important;
+}
+
+.profile-dropdown.show .dropdown-item span {
+    display: inline-block !important;
+    color: inherit !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 14px !important;
+}
+
+.profile-dropdown.show .dropdown-item.logout,
+.profile-dropdown.show .dropdown-item.logout i {
+    color: #d32f2f !important;
+}
+
+/* ============================================ */
+/* DEBUG: I-visible lahat ng dropdown items */
+/* ============================================ */
+.profile-dropdown .dropdown-item,
+.profile-dropdown .dropdown-divider,
+.profile-dropdown .dropdown-header {
+    opacity: 1 !important;
+    visibility: visible !important;
 }

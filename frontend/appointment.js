@@ -8,6 +8,57 @@ const API_URL = window.location.hostname === 'localhost' || window.location.host
   ? window.location.origin
   : 'https://erica-salon.onrender.com';
 
+  // ============================================
+// LOAD BOOKED TIME SLOTS
+// ============================================
+async function loadBookedTimes() {
+    const dateInput = document.getElementById('appointmentDate');
+    if (!dateInput) return;
+
+    const date = dateInput.value;
+    if (!date) return;
+
+    try {
+        const res = await fetch(`${API_URL}/api/appointments/booked-times/${date}`);
+        const data = await res.json();
+
+        console.log('📥 Booked times:', data);
+
+        if (data.success) {
+            // I-reset lahat ng time slots
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('booked');
+                slot.style.opacity = '';
+                slot.style.cursor = '';
+                
+                const radio = slot.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.disabled = false;
+                }
+            });
+
+            // I-disable yung mga booked na
+            data.bookedTimes.forEach(bookedTime => {
+                const slot = document.querySelector(`.time-slot input[value="${bookedTime}"]`)?.closest('.time-slot');
+                
+                if (slot) {
+                    slot.classList.add('booked');
+                    slot.style.opacity = '0.5';
+                    slot.style.cursor = 'not-allowed';
+                    
+                    const radio = slot.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.disabled = true;
+                        radio.checked = false;
+                    }
+                }
+            });
+        }
+    } catch (err) {
+        console.error('❌ Load booked times error:', err);
+    }
+}
+
 // ============================================
 // HELPER: Show message
 // ============================================
@@ -505,5 +556,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   const dateParam = new URLSearchParams(window.location.search).get('date');
   if (dateParam) {
     loadDayStatus(dateParam);
+    loadBookedTimes();  // ✅ IDAGDAG ITO
   }
 });

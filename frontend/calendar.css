@@ -119,6 +119,7 @@ a {
     align-items: center;
     justify-content: space-between;
     gap: 20px;
+     overflow: visible !important;
 }
 
 /* ===== LOGO ===== */
@@ -182,7 +183,9 @@ a {
 .social-icons {
     display: flex;
     gap: 14px;
-    align-items: center;
+    position: relative;
+    overflow: visible !important;
+    z-index: 9999;
 }
 
 .social-icons a {
@@ -934,4 +937,168 @@ footer {
 /* Make .login-wrapper background transparent to show body bg */
 .login-wrapper {
     background: transparent !important;
+}
+
+/* ============================================ */
+/* FULL BOOKING — Red dates */
+/* ============================================ */
+
+.cal-day.full-booked {
+    background: #ffebee;
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    cursor: not-allowed;
+    position: relative;
+    font-weight: 700;
+}
+
+.cal-day.full-booked::after {
+    content: "✕";
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 10px;
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.cal-day.full-booked:hover {
+    background: #ffebee;
+    transform: none;
+    box-shadow: none;
+    border-color: #dc3545;
+}
+
+/* ============================================ */
+/* FORCE: Profile dropdown items visible */
+/* ============================================ */
+
+.profile-dropdown.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    transform: translateY(0) !important;
+}
+
+.profile-dropdown.show .dropdown-item {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    color: var(--dark-brown) !important;
+    background: transparent !important;
+}
+
+.profile-dropdown.show .dropdown-item i {
+    color: var(--gold-dark) !important;
+    display: inline-block !important;
+}
+
+.profile-dropdown.show .dropdown-item span {
+    display: inline-block !important;
+    color: inherit !important;
+}
+
+.profile-dropdown.show .dropdown-item.logout {
+    color: #d32f2f !important;
+}
+
+.profile-dropdown.show .dropdown-item.logout i {
+    color: #d32f2f !important;
+}
+
+.profile-dropdown.show .dropdown-divider {
+    display: block !important;
+    height: 1px !important;
+    background: var(--champagne-dark) !important;
+    margin: 6px 0 !important;
+}
+
+/* ============================================ */
+/* SUPER FORCE: Profile dropdown items */
+/* ============================================ */
+
+/* Force yung buong dropdown */
+.profile-dropdown.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    transform: translateY(0) !important;
+    height: auto !important;
+    max-height: 500px !important;
+    overflow: visible !important;
+    z-index: 99999 !important;
+}
+
+/* Force yung header */
+.profile-dropdown.show .dropdown-header {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+}
+
+.profile-dropdown.show .dropdown-avatar,
+.profile-dropdown.show .dropdown-user,
+.profile-dropdown.show .dropdown-name,
+.profile-dropdown.show .dropdown-email {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Force yung divider */
+.profile-dropdown.show .dropdown-divider {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: 1px !important;
+    background: var(--champagne-dark) !important;
+    margin: 6px 0 !important;
+    width: 100% !important;
+}
+
+/* Force yung dropdown items */
+.profile-dropdown.show .dropdown-item {
+    display: flex !important;
+    align-items: center !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+    min-height: 40px !important;
+    color: var(--dark-brown) !important;
+    background: transparent !important;
+    padding: 11px 14px !important;
+    text-decoration: none !important;
+}
+
+.profile-dropdown.show .dropdown-item i {
+    display: inline-block !important;
+    color: var(--gold-dark) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 15px !important;
+    width: 18px !important;
+}
+
+.profile-dropdown.show .dropdown-item span {
+    display: inline-block !important;
+    color: inherit !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    font-size: 14px !important;
+}
+
+.profile-dropdown.show .dropdown-item.logout,
+.profile-dropdown.show .dropdown-item.logout i {
+    color: #d32f2f !important;
+}
+
+/* ============================================ */
+/* DEBUG: I-visible lahat ng dropdown items */
+/* ============================================ */
+.profile-dropdown .dropdown-item,
+.profile-dropdown .dropdown-divider,
+.profile-dropdown .dropdown-header {
+    opacity: 1 !important;
+    visibility: visible !important;
 }

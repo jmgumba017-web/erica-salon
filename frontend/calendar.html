@@ -31,13 +31,23 @@
                 <a href="calendar.html">Book</a>
                 <a href="history.html">My Appointments</a>
                 <a href="payments.html">Payments</a>
-                  <a href="feedback.html">Feedback</a> 
+                <a href="feedback.html">Feedback</a>
             </nav>
 
             <div class="social-icons">
-                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-
+                <a href="https://www.facebook.com/gorgeousnailsbyerica" 
+   target="_blank" 
+   rel="noopener noreferrer"
+   aria-label="Facebook">
+    <i class="fa-brands fa-facebook-f"></i>
+</a>
+            
+ <a href="https://instagram.com/gorgeousnailsbyerica?psln=czF5aGdnZ2w5N3Fj" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       aria-label="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+    </a>
                 <div class="profile-wrapper">
                     <button class="profile-btn" id="profileBtn" aria-label="Profile menu">
                         <i class="fa-solid fa-user"></i>
@@ -75,166 +85,161 @@
         </div>
     </header>
 
-    <!-- ===== LAYOUT WITH SIDEBAR ===== -->
-    <main class="appointment-layout">
+    <!-- ===== LAYOUT: VIDEO | CALENDAR | SIDEBAR ===== -->
+   <!-- ===== LAYOUT: CALENDAR | SIDEBAR | VIDEO ===== -->
+<!-- ===== LAYOUT: CALENDAR | SIDEBAR | VIDEO ===== -->
+<main class="appointment-layout">
 
-        <!-- LEFT SIDE — SIDEBAR -->
-        <aside class="appointment-sidebar">
-            <div class="sidebar-content">
+    <!-- LEFT — CALENDAR -->
+    <div class="appointment-main">
+        <div class="login-container calendar-container">
 
-                <!-- Selection Summary -->
-                <div class="sidebar-card summary-card">
-                    <div class="sidebar-icon">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                    <h3>Your Selection</h3>
-                    <div class="summary-item">
-                        <span>📅 Date:</span>
-                        <strong id="sidebarDate">—</strong>
-                    </div>
-                    <div class="summary-item">
-                        <span>💅 Service:</span>
-                        <strong id="sidebarService">—</strong>
-                    </div>
-                    <div class="summary-item">
-                        <span>👤 Staff:</span>
-                        <strong id="sidebarStaff">—</strong>
-                    </div>
-                    <div class="summary-item">
-                        <span>⏰ Time:</span>
-                        <strong id="sidebarTime">—</strong>
-                    </div>
-                </div>
-
-                <!-- How It Works -->
-                <div class="sidebar-card tips-card">
-                    <div class="sidebar-icon">
-                        <i class="fa-solid fa-list-check"></i>
-                    </div>
-                    <h3>How It Works</h3>
-                    <ul class="tips-list">
-                        <li>
-                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
-                            <span>Pumili ng date sa calendar</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
-                            <span>Pumili ng service</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
-                            <span>Pumili ng staff</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-1" style="background: var(--cream); color: var(--gold-dark);"></i>
-                            <span>I-confirm ang booking</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Important Info -->
-                <div class="sidebar-card tips-card">
-                    <div class="sidebar-icon">
-                        <i class="fa-solid fa-circle-info"></i>
-                    </div>
-                    <h3>Important</h3>
-                    <ul class="tips-list">
-                        <li>
-                            <i class="fa-solid fa-check" style="background: #d4edda; color: #155724;"></i>
-                            <span>Maximum 6 bookings per day</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-check" style="background: #d4edda; color: #155724;"></i>
-                            <span>Free cancellation 24hrs before</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-check" style="background: #d4edda; color: #155724;"></i>
-                            <span>Arrive 10 minutes early</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Operating Hours -->
-                <div class="sidebar-card contact-card">
-                    <div class="sidebar-icon">
-                        <i class="fa-solid fa-clock"></i>
-                    </div>
-                    <h3>Operating Hours</h3>
-                    <div class="hours-item">
-                        <span>Mon - Sat:</span>
-                        <strong>9AM - 7PM</strong>
-                    </div>
-                    <div class="hours-item">
-                        <span>Sunday:</span>
-                        <strong>Closed</strong>
-                    </div>
-                </div>
-
-                <!-- Help Card -->
-                <div class="sidebar-card contact-card">
-                    <div class="sidebar-icon">
-                        <i class="fa-solid fa-headset"></i>
-                    </div>
-                    <h3>Need Help?</h3>
-                    <p>Call us for assistance</p>
-                    <a href="tel:+639273179191" class="contact-btn">
-                        <i class="fa-solid fa-phone"></i> 0927 317 9191
-                    </a>
-                </div>
-
+            <div class="appointment-header">
+                <div class="script-title">Book Now</div>
+                <h2>Select a Date</h2>
+                <p class="login-subtitle">Choose your preferred appointment date ✨</p>
             </div>
-        </aside>
 
-        <!-- RIGHT SIDE — CALENDAR -->
-        <div class="appointment-main">
-
-            <div class="login-container calendar-container">
-
-                <!-- Header -->
-                <div class="appointment-header">
-                    <div class="script-title">Book Now</div>
-                    <h2>Select a Date</h2>
-                    <p class="login-subtitle">Choose your preferred appointment date ✨</p>
-                </div>
-
-                <!-- Calendar header -->
-                <div class="calendar-header">
-                    <button type="button" class="cal-nav" id="prevMonth" aria-label="Previous month">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <div class="cal-month" id="monthYear">Month Year</div>
-                    <button type="button" class="cal-nav" id="nextMonth" aria-label="Next month">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
-
-                <!-- Weekday labels -->
-                <div class="calendar-weekdays">
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
-                </div>
-
-                <!-- Days grid -->
-                <div class="calendar-days" id="calendarDays"></div>
-
-                <!-- Selected date display -->
-                <div class="selected-info">
-                    <span>Selected date:</span>
-                    <strong id="selectedDate">—</strong>
-                </div>
-
-                <button type="button" class="button login-btn" id="continueBtn" disabled>
-                    <i class="fa-solid fa-calendar-check"></i> Continue to Booking
+            <div class="calendar-header">
+                <button type="button" class="cal-nav" id="prevMonth" aria-label="Previous month">
+                    <i class="fa-solid fa-chevron-left"></i>
                 </button>
+                <div class="cal-month" id="monthYear">Month Year</div>
+                <button type="button" class="cal-nav" id="nextMonth" aria-label="Next month">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
 
+            <div class="calendar-weekdays">
+                <div>Sun</div><div>Mon</div><div>Tue</div>
+                <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+
+            <div class="calendar-days" id="calendarDays"></div>
+
+            <div class="selected-info">
+                <span>Selected date:</span>
+                <strong id="selectedDate">—</strong>
+            </div>
+
+            <button type="button" class="button login-btn" id="continueBtn" disabled>
+                <i class="fa-solid fa-calendar-check"></i> Continue to Booking
+            </button>
+
+        </div>
+    </div>
+
+    <!-- CENTER — SIDEBAR (cards) -->
+    <aside class="appointment-sidebar">
+        <div class="sidebar-content">
+
+            <!-- Selection Summary -->
+            <div class="sidebar-card summary-card">
+                <div class="sidebar-icon">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h3>Your Selection</h3>
+                <div class="summary-item">
+                    <span>📅 Date:</span>
+                    <strong id="sidebarDate">—</strong>
+                </div>
+                <div class="summary-item">
+                    <span>💅 Service:</span>
+                    <strong id="sidebarService">—</strong>
+                </div>
+                <div class="summary-item">
+                    <span>👤 Staff:</span>
+                    <strong id="sidebarStaff">—</strong>
+                </div>
+                <div class="summary-item">
+                    <span>⏰ Time:</span>
+                    <strong id="sidebarTime">—</strong>
+                </div>
+            </div>
+
+            <!-- How It Works -->
+            <div class="sidebar-card tips-card">
+                <div class="sidebar-icon">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <h3>How It Works</h3>
+                <ul class="tips-list">
+                    <li><i class="fa-solid fa-1"></i><span>Choose a date from the Calendar</span></li>
+                    <li><i class="fa-solid fa-2"></i><span>Choose a service</span></li>
+                    <li><i class="fa-solid fa-3"></i><span>Choose a staff member</span></li>
+                    <li><i class="fa-solid fa-4"></i><span>Confirm your booking</span></li>
+                </ul>
+            </div>
+
+            <!-- Important -->
+            <div class="sidebar-card tips-card">
+                <div class="sidebar-icon">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <h3>Important</h3>
+                <ul class="tips-list">
+                    <li><i class="fa-solid fa-check"></i><span>Maximum 6 bookings per day</span></li>
+                    <li><i class="fa-solid fa-check"></i><span>Free cancellation 24hrs before</span></li>
+                    <li><i class="fa-solid fa-check"></i><span>Arrive 30 minutes early</span></li>
+                </ul>
+            </div>
+
+            <!-- Operating Hours -->
+            <div class="sidebar-card contact-card">
+                <div class="sidebar-icon">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <h3>Operating Hours</h3>
+                <div class="hours-item">
+                    <span>Mon - Sat:</span>
+                    <strong>9AM - 7PM</strong>
+                </div>
+                <div class="hours-item">
+                    <span>Sunday:</span>
+                    <strong>Closed</strong>
+                </div>
+            </div>
+
+            <!-- Help -->
+            <div class="sidebar-card contact-card">
+                <div class="sidebar-icon">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3>Need Help?</h3>
+                <p>Call us for assistance</p>
+                <a href="tel:+639273179191" class="contact-btn">
+                    <i class="fa-solid fa-phone"></i> 0927 317 9191
+                </a>
+            </div>
+
+        </div>
+    </aside>
+
+    <!-- RIGHT — VIDEO -->
+    <aside class="appointment-sidebar video-sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-card video-card">
+                <div class="sidebar-icon">
+                    <i class="fa-solid fa-play"></i>
+                </div>
+                <h3>Sterilizing Process</h3>
+                <video 
+                    controls 
+                    autoplay 
+                    muted 
+                    loop 
+                    playsinline
+                    preload="metadata"
+                >
+                    <source src="video/erica_video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <p class="video-caption">Tour sa aming salon ✨</p>
             </div>
         </div>
-    </main>
+    </aside>
+
+</main>
 
     <footer>
         <div class="footer-logo">Erica Salon</div>
@@ -243,175 +248,185 @@
 
     <script src="ui.js"></script>
     <script>
-        // Mobile menu
-        const menuButton = document.getElementById("menuButton");
-        const navLinks = document.getElementById("navLinks");
-        if (menuButton && navLinks) {
-            menuButton.addEventListener("click", function () {
-                navLinks.classList.toggle("active");
-            });
+    // Mobile menu
+    const menuButton = document.getElementById("menuButton");
+    const navLinks = document.getElementById("navLinks");
+    if (menuButton && navLinks) {
+        menuButton.addEventListener("click", function () {
+            navLinks.classList.toggle("active");
+        });
+    }
+
+    // ===== CALENDAR LOGIC =====
+    const monthYearEl = document.getElementById("monthYear");
+    const daysEl = document.getElementById("calendarDays");
+    const selectedDateEl = document.getElementById("selectedDate");
+    const continueBtn = document.getElementById("continueBtn");
+    const prevBtn = document.getElementById("prevMonth");
+    const nextBtn = document.getElementById("nextMonth");
+
+    const monthNames = [
+        "January","February","March","April","May","June",
+        "July","August","September","October","November","December"
+    ];
+
+    const today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+    let selectedDate = null;
+
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? window.location.origin
+      : 'https://erica-salon.onrender.com';
+
+    async function checkDayStatus(dateStr, dayCell) {
+        try {
+            const res = await fetch(`${API_URL}/api/appointments/day-status/${dateStr}`);
+            const data = await res.json();
+            
+            if (data.success && data.isFull) {
+                dayCell.classList.add('full-booked');
+                dayCell.disabled = true;
+                dayCell.title = `Full — ${data.booked}/${data.maxCapacity} booked`;
+                dayCell.replaceWith(dayCell.cloneNode(true));
+            } else if (data.success) {
+                dayCell.title = `${data.available} slot(s) available`;
+            }
+        } catch (err) {
+            console.error('Error checking day status:', err);
+        }
+    }
+
+    function renderCalendar() {
+        monthYearEl.textContent = monthNames[currentMonth] + " " + currentYear;
+        daysEl.innerHTML = "";
+
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement("div");
+            empty.classList.add("cal-day", "empty");
+            daysEl.appendChild(empty);
         }
 
-        // ===== CALENDAR LOGIC =====
-        const monthYearEl = document.getElementById("monthYear");
-        const daysEl = document.getElementById("calendarDays");
-        const selectedDateEl = document.getElementById("selectedDate");
-        const continueBtn = document.getElementById("continueBtn");
-        const prevBtn = document.getElementById("prevMonth");
-        const nextBtn = document.getElementById("nextMonth");
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dayCell = document.createElement("button");
+            dayCell.type = "button";
+            dayCell.classList.add("cal-day");
+            dayCell.textContent = d;
 
-        const monthNames = [
-            "January","February","March","April","May","June",
-            "July","August","September","October","November","December"
-        ];
+            const thisDate = new Date(currentYear, currentMonth, d);
+            const yyyy = thisDate.getFullYear();
+            const mm = String(thisDate.getMonth() + 1).padStart(2, "0");
+            const dd = String(thisDate.getDate()).padStart(2, "0");
+            const dateStr = `${yyyy}-${mm}-${dd}`;
 
-        const today = new Date();
-        let currentMonth = today.getMonth();
-        let currentYear = today.getFullYear();
-        let selectedDate = null;
-
-        function renderCalendar() {
-            monthYearEl.textContent = monthNames[currentMonth] + " " + currentYear;
-            daysEl.innerHTML = "";
-
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-            for (let i = 0; i < firstDay; i++) {
-                const empty = document.createElement("div");
-                empty.classList.add("cal-day", "empty");
-                daysEl.appendChild(empty);
+            if (thisDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
+                dayCell.classList.add("disabled");
+                dayCell.disabled = true;
+            } else {
+                dayCell.addEventListener("click", () => selectDate(d));
+                checkDayStatus(dateStr, dayCell);
             }
 
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dayCell = document.createElement("button");
-                dayCell.type = "button";
-                dayCell.classList.add("cal-day");
-                dayCell.textContent = d;
-
-                const thisDate = new Date(currentYear, currentMonth, d);
-
-                if (thisDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
-                    dayCell.classList.add("disabled");
-                    dayCell.disabled = true;
-                } else {
-                    dayCell.addEventListener("click", () => selectDate(d));
-                }
-
-                if (
-                    d === today.getDate() &&
-                    currentMonth === today.getMonth() &&
-                    currentYear === today.getFullYear()
-                ) {
-                    dayCell.classList.add("today");
-                }
-
-                if (
-                    selectedDate &&
-                    d === selectedDate.getDate() &&
-                    currentMonth === selectedDate.getMonth() &&
-                    currentYear === selectedDate.getFullYear()
-                ) {
-                    dayCell.classList.add("selected");
-                }
-
-                daysEl.appendChild(dayCell);
+            if (d === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+                dayCell.classList.add("today");
             }
+
+            if (selectedDate && d === selectedDate.getDate() && currentMonth === selectedDate.getMonth() && currentYear === selectedDate.getFullYear()) {
+                dayCell.classList.add("selected");
+            }
+
+            daysEl.appendChild(dayCell);
         }
+    }
 
-        function selectDate(day) {
-            selectedDate = new Date(currentYear, currentMonth, day);
+    function selectDate(day) {
+        selectedDate = new Date(currentYear, currentMonth, day);
 
-            const yyyy = selectedDate.getFullYear();
-            const mm = String(selectedDate.getMonth() + 1).padStart(2, "0");
-            const dd = String(selectedDate.getDate()).padStart(2, "0");
-            const formatted = `${yyyy}-${mm}-${dd}`;
+        const yyyy = selectedDate.getFullYear();
+        const mm = String(selectedDate.getMonth() + 1).padStart(2, "0");
+        const dd = String(selectedDate.getDate()).padStart(2, "0");
+        const formatted = `${yyyy}-${mm}-${dd}`;
 
-            const readable = `${monthNames[selectedDate.getMonth()]} ${dd}, ${yyyy}`;
-            selectedDateEl.textContent = readable;
-            selectedDateEl.dataset.value = formatted;
+        const readable = `${monthNames[selectedDate.getMonth()]} ${dd}, ${yyyy}`;
+        selectedDateEl.textContent = readable;
+        selectedDateEl.dataset.value = formatted;
 
-            // ✅ Update sidebar
-            const sidebarDate = document.getElementById('sidebarDate');
-            if (sidebarDate) sidebarDate.textContent = `${monthNames[selectedDate.getMonth()]} ${dd}`;
+        const sidebarDate = document.getElementById('sidebarDate');
+        if (sidebarDate) sidebarDate.textContent = `${monthNames[selectedDate.getMonth()]} ${dd}`;
 
-            continueBtn.disabled = false;
-            renderCalendar();
-        }
-
-        prevBtn.addEventListener("click", () => {
-            currentMonth--;
-            if (currentMonth < 0) {
-                currentMonth = 11;
-                currentYear--;
-            }
-            renderCalendar();
-        });
-
-        nextBtn.addEventListener("click", () => {
-            currentMonth++;
-            if (currentMonth > 11) {
-                currentMonth = 0;
-                currentYear++;
-            }
-            renderCalendar();
-        });
-
-        continueBtn.addEventListener("click", () => {
-            if (selectedDateEl.dataset.value) {
-                window.location.href = "appointment.html?date=" + selectedDateEl.dataset.value;
-            }
-        });
-
+        continueBtn.disabled = false;
         renderCalendar();
+    }
 
-        // ===== PROFILE DROPDOWN =====
-        const profileBtn = document.getElementById('profileBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
+    prevBtn.addEventListener("click", () => {
+        currentMonth--;
+        if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+        renderCalendar();
+    });
 
-        if (profileBtn && profileDropdown) {
-            profileBtn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                profileDropdown.classList.toggle('show');
-            });
+    nextBtn.addEventListener("click", () => {
+        currentMonth++;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        renderCalendar();
+    });
 
-            document.addEventListener('click', function (e) {
-                if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
-                    profileDropdown.classList.remove('show');
-                }
-            });
+    continueBtn.addEventListener("click", () => {
+        if (selectedDateEl.dataset.value) {
+            window.location.href = "appointment.html?date=" + selectedDateEl.dataset.value;
         }
+    });
 
-        // ===== LOGOUT =====
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (confirm('Logout?')) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('user');
-                    window.location.href = 'login.html';
-                }
-            });
-        }
+    renderCalendar();
 
-        // ===== LOAD USER INFO =====
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (user.name) {
-            const dn = document.getElementById('dropdownName');
-            const de = document.getElementById('dropdownEmail');
-            if (dn) dn.textContent = user.name;
-            if (de) de.textContent = user.email;
-        }
+    // ===== PROFILE DROPDOWN =====
+    const profileBtn = document.getElementById('profileBtn');
+    const profileDropdown = document.getElementById('profileDropdown');
 
-        // ===== CHECK IF LOGGED IN =====
-(function checkLogin() {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    alert('Please login first to book an appointment');
-    window.location.href = 'login.html';
-  }
-})();
-    </script>
+    if (profileBtn && profileDropdown) {
+        profileBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('show');
+        });
+        document.addEventListener('click', function (e) {
+            if (!profileDropdown.contains(e.target) && !profileBtn.contains(e.target)) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+    }
+
+    // ===== LOGOUT =====
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (confirm('Logout?')) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    // ===== LOAD USER INFO =====
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.name) {
+        const dn = document.getElementById('dropdownName');
+        const de = document.getElementById('dropdownEmail');
+        if (dn) dn.textContent = user.name;
+        if (de) de.textContent = user.email;
+    }
+
+    // ===== CHECK IF LOGGED IN =====
+    (function checkLogin() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please login first to book an appointment');
+        window.location.href = 'login.html';
+      }
+    })();
+</script>
 </body>
 </html>

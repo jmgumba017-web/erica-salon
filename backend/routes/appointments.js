@@ -14,6 +14,39 @@ function computeEndTime(startTime, totalDurationMinutes) {
   return `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`;
 }
 
+
+// ============================================
+// GET /api/appointments/booked-times/:date
+// Get booked time slots for a specific date
+// ============================================
+router.get('/booked-times/:date', async (req, res) => {
+  try {
+    const { date } = req.params;
+
+    // Hanapin lahat ng appointments sa date na 'to
+    // na hindi Cancelled
+    const appointments = await Appointment.find({
+      appointmentDate: date,
+      status: { $ne: 'Cancelled' }
+    }).select('appointmentTime');
+
+    const bookedTimes = appointments.map(a => a.appointmentTime);
+
+    res.json({
+      success: true,
+      date,
+      bookedTimes,
+      totalBooked: bookedTimes.length
+    });
+
+  } catch (err) {
+    console.error('❌ Get booked times error:', err);
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+});
 // ============================================
 // HELPER: Count appointments for a day
 // ============================================
