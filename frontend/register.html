@@ -26,15 +26,15 @@
                     <span class="logo-subtitle">Your journey to Elegance and Beauty starts with us</span>
                 </div>
             </a>
-           <nav class="nav-links" id="navLinks">
-    <a href="homepage.html">Home</a>
-    <a href="homepage.html#services">Services</a>
-    <a href="homepage.html#about">About</a>
-    <a href="homepage.html#manicure">Manicure</a>
-    <a href="homepage.html#pedicure">Pedicure</a>
-    <a href="homepage.html#hairtreatment">Hair Treatment</a>
-    <a href="homepage.html#contacts">Contacts</a>
-</nav>
+            <nav class="nav-links" id="navLinks">
+                <a href="homepage.html">Home</a>
+                <a href="homepage.html#services">Services</a>
+                <a href="homepage.html#about">About</a>
+                <a href="homepage.html#manicure">Manicure</a>
+                <a href="homepage.html#pedicure">Pedicure</a>
+                <a href="homepage.html#hairtreatment">Hair Treatment</a>
+                <a href="homepage.html#contacts">Contacts</a>
+            </nav>
             <div class="social-icons">
                 <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
                 <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
@@ -299,171 +299,227 @@
             }
         }
     </style>
-<script>
-    // ============================================
-    // OTP API URL — iba ang pangalan para hindi mag-conflict sa auth.js
-    // ============================================
-    const OTP_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-        ? window.location.origin
-        : 'https://erica-salon.onrender.com';
 
-    // ============================================
-    // OTP MODAL LOGIC
-    // ============================================
-    const otpModal = document.getElementById('otpModal');
-    const otpInputs = document.querySelectorAll('.otp-input');
-    let currentOTPEmail = '';
-    let otpTimerInterval = null;
+    <script>
+        // ============================================
+        // OTP API URL
+        // ============================================
+        const OTP_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? window.location.origin
+            : 'https://erica-salon.onrender.com';
 
-    function showOTPModal(email) {
-        currentOTPEmail = email;
-        document.getElementById('otpEmail').textContent = email;
-        otpModal.classList.add('show');
+        // ============================================
+        // OTP MODAL LOGIC
+        // ============================================
+        const otpModal = document.getElementById('otpModal');
+        const otpInputs = document.querySelectorAll('.otp-input');
+        let currentOTPEmail = '';
+        let otpTimerInterval = null;
 
-        otpInputs.forEach(input => {
-            input.value = '';
-            input.classList.remove('filled');
-        });
+        function showOTPModal(email) {
+            currentOTPEmail = email;
+            document.getElementById('otpEmail').textContent = email;
+            otpModal.classList.add('show');
 
-        otpInputs[0].focus();
-        startOTPTimer(600);
-    }
-
-    function closeOTPModal(e) {
-        if (e) e.preventDefault();
-        otpModal.classList.remove('show');
-        if (otpTimerInterval) clearInterval(otpTimerInterval);
-    }
-
-    otpInputs.forEach((input, index) => {
-        input.addEventListener('input', (e) => {
-            const value = e.target.value;
-            if (value) {
-                input.classList.add('filled');
-                if (index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                }
-            } else {
+            otpInputs.forEach(input => {
+                input.value = '';
                 input.classList.remove('filled');
-            }
-        });
+            });
 
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                otpInputs[index - 1].focus();
-            }
-        });
+            otpInputs[0].focus();
+            startOTPTimer(600);
+        }
 
-        input.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const pastedData = e.clipboardData.getData('text').slice(0, 6);
-            const digits = pastedData.split('');
-            digits.forEach((digit, i) => {
-                if (otpInputs[i]) {
-                    otpInputs[i].value = digit;
-                    otpInputs[i].classList.add('filled');
+        function closeOTPModal(e) {
+            if (e) e.preventDefault();
+            otpModal.classList.remove('show');
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+        }
+
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                const value = e.target.value;
+                if (value) {
+                    input.classList.add('filled');
+                    if (index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                } else {
+                    input.classList.remove('filled');
                 }
             });
-            otpInputs[Math.min(digits.length, 5)].focus();
-        });
-    });
 
-    function startOTPTimer(seconds) {
-        if (otpTimerInterval) clearInterval(otpTimerInterval);
-        let remaining = seconds;
-        const timerEl = document.getElementById('otpTimer');
-
-        otpTimerInterval = setInterval(() => {
-            remaining--;
-            const mins = Math.floor(remaining / 60);
-            const secs = remaining % 60;
-            timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-            if (remaining <= 0) {
-                clearInterval(otpTimerInterval);
-                timerEl.textContent = 'Expired';
-                timerEl.style.color = '#dc3545';
-            }
-        }, 1000);
-    }
-
-    async function verifyOTP() {
-        const code = Array.from(otpInputs).map(i => i.value).join('');
-
-        if (code.length !== 6) {
-            alert('Please enter the 6-digit code');
-            return;
-        }
-
-        const btn = document.getElementById('verifyBtn');
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
-
-        try {
-            const res = await fetch(`${OTP_API_URL}/api/auth/verify-otp`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: currentOTPEmail,
-                    code
-                })
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
             });
 
-            const data = await res.json();
-            console.log('📥 Verify response:', data);
-
-            if (data.success) {
-                sessionStorage.setItem('token', data.token);
-                sessionStorage.setItem('user', JSON.stringify(data.user));
-                alert('✅ ' + data.message);
-                closeOTPModal();
-                setTimeout(() => {
-                    window.location.href = 'calendar.html';
-                }, 1000);
-            } else {
-                alert('❌ ' + data.message);
-                otpInputs.forEach(input => {
-                    input.value = '';
-                    input.classList.remove('filled');
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pastedData = e.clipboardData.getData('text').slice(0, 6);
+                const digits = pastedData.split('');
+                digits.forEach((digit, i) => {
+                    if (otpInputs[i]) {
+                        otpInputs[i].value = digit;
+                        otpInputs[i].classList.add('filled');
+                    }
                 });
-                otpInputs[0].focus();
-            }
-        } catch (err) {
-            console.error('❌ Verify error:', err);
-            alert('⚠️ Network error. Please try again.');
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
-    }
-
-    async function resendOTP(e) {
-        e.preventDefault();
-
-        try {
-            const res = await fetch(`${OTP_API_URL}/api/auth/resend-otp`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: currentOTPEmail })
+                otpInputs[Math.min(digits.length, 5)].focus();
             });
+        });
 
-            const data = await res.json();
+        function startOTPTimer(seconds) {
+            if (otpTimerInterval) clearInterval(otpTimerInterval);
+            let remaining = seconds;
+            const timerEl = document.getElementById('otpTimer');
 
-            if (data.success) {
-                alert('✅ ' + data.message);
-                startOTPTimer(600);
-                document.getElementById('otpTimer').style.color = '';
-            } else {
-                alert('❌ ' + data.message);
-            }
-        } catch (err) {
-            alert('⚠️ Network error');
+            otpTimerInterval = setInterval(() => {
+                remaining--;
+                const mins = Math.floor(remaining / 60);
+                const secs = remaining % 60;
+                timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                if (remaining <= 0) {
+                    clearInterval(otpTimerInterval);
+                    timerEl.textContent = 'Expired';
+                    timerEl.style.color = '#dc3545';
+                }
+            }, 1000);
         }
-    }
-</script>
+
+        async function verifyOTP() {
+            const code = Array.from(otpInputs).map(i => i.value).join('');
+
+            if (code.length !== 6) {
+                alert('Please enter the 6-digit code');
+                return;
+            }
+
+            const btn = document.getElementById('verifyBtn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+
+            try {
+                const res = await fetch(`${OTP_API_URL}/api/auth/verify-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentOTPEmail,
+                        code
+                    })
+                });
+
+                const data = await res.json();
+                console.log('📥 Verify response:', data);
+
+                if (data.success) {
+                    sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('user', JSON.stringify(data.user));
+                    alert('✅ ' + data.message);
+                    closeOTPModal();
+                    setTimeout(() => {
+                        window.location.href = 'calendar.html';
+                    }, 1000);
+                } else {
+                    alert('❌ ' + data.message);
+                    otpInputs.forEach(input => {
+                        input.value = '';
+                        input.classList.remove('filled');
+                    });
+                    otpInputs[0].focus();
+                }
+            } catch (err) {
+                console.error('❌ Verify error:', err);
+                alert('⚠️ Network error. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        async function resendOTP(e) {
+            e.preventDefault();
+
+            try {
+                const res = await fetch(`${OTP_API_URL}/api/auth/resend-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentOTPEmail })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('✅ ' + data.message);
+                    startOTPTimer(600);
+                    document.getElementById('otpTimer').style.color = '';
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            } catch (err) {
+                alert('⚠️ Network error');
+            }
+        }
+    </script>
 
     <script>
         window.GOOGLE_CLIENT_ID = "22321828973-utnctdba0hcpis28alb6cmj6cjbcefa1.apps.googleusercontent.com";
+    </script>
+
+    <!-- ============================================ -->
+    <!-- GOOGLE SIGN-IN INITIALIZATION (BAGO) -->
+    <!-- ============================================ -->
+    <script>
+        function handleCredentialResponse(response) {
+            console.log('📥 Google credential received');
+
+            fetch(`${OTP_API_URL}/api/auth/google`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential: response.credential })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('📥 Google auth response:', data);
+
+                if (data.success) {
+                    sessionStorage.setItem('token', data.token);
+                    sessionStorage.setItem('user', JSON.stringify(data.user));
+                    alert('✅ ' + data.message);
+                    setTimeout(() => {
+                        window.location.href = 'calendar.html';
+                    }, 1000);
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('❌ Google auth error:', err);
+                alert('⚠️ Network error. Please try again.');
+            });
+        }
+
+        window.addEventListener('load', function() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: window.GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse,
+                    use_fedcm_for_prompt: false
+                });
+
+                const googleBtn = document.getElementById('googleSignUpBtn');
+                if (googleBtn) {
+                    googleBtn.addEventListener('click', function() {
+                        google.accounts.id.prompt();
+                    });
+                }
+
+                console.log('✅ Google Sign-In initialized');
+            } else {
+                console.warn('⚠️ Google Sign-In not loaded yet');
+            }
+        });
     </script>
 
     <script src="ui.js"></script>

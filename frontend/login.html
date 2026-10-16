@@ -196,7 +196,68 @@
     <script>
         window.GOOGLE_CLIENT_ID = "22321828973-utnctdba0hcpis28alb6cmj6cjbcefa1.apps.googleusercontent.com";
     </script>
+
     <script src="auth.js"></script>
+
+    <!-- ============================================ -->
+    <!-- GOOGLE SIGN-IN INITIALIZATION (BAGO) -->
+    <!-- ============================================ -->
+    <script>
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? window.location.origin
+            : 'https://erica-salon.onrender.com';
+
+        function handleCredentialResponse(response) {
+            console.log('📥 Google credential received');
+
+            fetch(`${API_URL}/api/auth/google`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential: response.credential })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('📥 Google auth response:', data);
+
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    alert('✅ ' + data.message);
+                    setTimeout(() => {
+                        window.location.href = 'calendar.html';
+                    }, 1000);
+                } else {
+                    alert('❌ ' + data.message);
+                }
+            })
+            .catch(err => {
+                console.error('❌ Google auth error:', err);
+                alert('⚠️ Network error. Please try again.');
+            });
+        }
+
+        window.addEventListener('load', function() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.initialize({
+                    client_id: window.GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse,
+                    use_fedcm_for_prompt: false
+                });
+
+                const googleBtn = document.getElementById('googleLoginBtn');
+                if (googleBtn) {
+                    googleBtn.addEventListener('click', function() {
+                        google.accounts.id.prompt();
+                    });
+                }
+
+                console.log('✅ Google Sign-In initialized (login)');
+            } else {
+                console.warn('⚠️ Google Sign-In not loaded yet');
+            }
+        });
+    </script>
+
     <script src="ui.js"></script>
 </body>
 </html>
