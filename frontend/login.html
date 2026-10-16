@@ -200,17 +200,18 @@
     <script src="auth.js"></script>
 
     <!-- ============================================ -->
-    <!-- GOOGLE SIGN-IN INITIALIZATION (BAGO) -->
+    <!-- GOOGLE SIGN-IN INITIALIZATION -->
+    <!-- ✅ GINAMIT ANG GOOGLE_API_URL (hindi API_URL) -->
     <!-- ============================================ -->
     <script>
-        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        const GOOGLE_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? window.location.origin
             : 'https://erica-salon.onrender.com';
 
         function handleCredentialResponse(response) {
             console.log('📥 Google credential received');
 
-            fetch(`${API_URL}/api/auth/google`, {
+            fetch(`${GOOGLE_API_URL}/api/auth/google`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ credential: response.credential })
