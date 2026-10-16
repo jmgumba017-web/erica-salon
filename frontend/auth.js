@@ -48,7 +48,8 @@ function showMessage(message, type = 'info') {
   if (form) {
     form.parentNode.insertBefore(div, form);
   } else {
-    document.querySelector('.login-container').prepend(div);
+    const container = document.querySelector('.login-container');
+    if (container) container.prepend(div);
   }
 
   setTimeout(() => div.remove(), 5000);
@@ -103,20 +104,13 @@ if (registerForm) {
       const res = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-          confirmPassword,
-          contactNumber
-        })
+        body: JSON.stringify({ name, email, password, confirmPassword, contactNumber })
       });
 
       const data = await res.json();
       console.log('📥 Register response:', data);
 
       if (data.success && data.requiresOTP) {
-        // Show OTP modal (defined sa register.html)
         if (typeof showOTPModal === 'function') {
           showOTPModal(data.email);
         } else {
@@ -142,6 +136,9 @@ if (registerForm) {
 
 // ============================================
 // LOGIN FORM HANDLER
+// Redirect: login.html → calendar.html (customer)
+//           login.html → dashboard.html (admin)
+//           login.html → staff-dashboard.html (staff)
 // ============================================
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
@@ -174,13 +171,19 @@ if (loginForm) {
         saveSession(data.token, data.user);
         showMessage('✅ ' + data.message, 'success');
 
-        // Redirect base sa role
+        // ✅ Redirect base sa role (case-insensitive)
+        const role = (data.user.role || '').toLowerCase();
+        console.log('👤 User role:', role);
+
         setTimeout(() => {
-          if (data.user.role === 'Admin') {
+          if (role === 'admin') {
+            console.log('➡️ Redirecting to dashboard.html');
             window.location.href = 'dashboard.html';
-          } else if (data.user.role === 'Staff') {
+          } else if (role === 'staff') {
+            console.log('➡️ Redirecting to staff-dashboard.html');
             window.location.href = 'staff-dashboard.html';
           } else {
+            console.log('➡️ Redirecting to calendar.html');
             window.location.href = 'calendar.html';
           }
         }, 1000);
@@ -211,7 +214,15 @@ if (loginForm) {
 
   if (token && (currentPage === 'login.html' || currentPage === 'register.html' ||
                 currentPage === 'login' || currentPage === 'register')) {
-    console.log('✅ Already logged in, redirecting to calendar...');
-    window.location.href = 'calendar.html';
+    console.log('✅ Already logged in, redirecting...');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const role = (user.role || '').toLowerCase();
+    if (role === 'admin') {
+      window.location.href = 'dashboard.html';
+    } else if (role === 'staff') {
+      window.location.href = 'staff-dashboard.html';
+    } else {
+      window.location.href = 'calendar.html';
+    }
   }
 })();

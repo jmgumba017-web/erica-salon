@@ -108,7 +108,8 @@ a {
     height: 120px;
     background: var(--champagne);
     position: relative;
-    z-index: 100;
+    z-index: 999;
+    overflow: visible !important; 
 }
 
 .nav-container {
@@ -749,6 +750,7 @@ footer p {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    overflow: visible;
 }
 
 .profile-dropdown .dropdown-header {
@@ -978,6 +980,8 @@ footer {
     visibility: visible !important;
     display: block !important;
     transform: translateY(0) !important;
+     overflow: visible;
+     z-index: 99999 !important;
 }
 
 .profile-dropdown.show .dropdown-item {
@@ -986,6 +990,8 @@ footer {
     visibility: visible !important;
     color: var(--dark-brown) !important;
     background: transparent !important;
+     overflow: visible;
+     z-index: 99999 !important;
 }
 
 .profile-dropdown.show .dropdown-item i {
@@ -1011,6 +1017,8 @@ footer {
     height: 1px !important;
     background: var(--champagne-dark) !important;
     margin: 6px 0 !important;
+     overflow: visible;
+     z-index: 99999 !important;
 }
 
 /* ============================================ */
@@ -1035,6 +1043,7 @@ footer {
     opacity: 1 !important;
     visibility: visible !important;
     height: auto !important;
+    z-index: 99999 !important;
 }
 
 .profile-dropdown.show .dropdown-avatar,
@@ -1069,6 +1078,8 @@ footer {
     background: transparent !important;
     padding: 11px 14px !important;
     text-decoration: none !important;
+    z-index: 99999 !important;
+    overflow: visible;
 }
 
 .profile-dropdown.show .dropdown-item i {
@@ -1078,6 +1089,8 @@ footer {
     visibility: visible !important;
     font-size: 15px !important;
     width: 18px !important;
+    z-index: 99999;
+    overflow: visible;
 }
 
 .profile-dropdown.show .dropdown-item span {

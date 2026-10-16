@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="text-scale.css">
 
     <style>
-        /* Google Sign-In button container */
         .google-btn-container {
             display: flex;
             justify-content: center;
@@ -62,7 +61,6 @@
 
     <main class="login-wrapper">
 
-        <!-- SALON BACKGROUND DECORATIONS -->
         <div class="salon-decor" aria-hidden="true">
             <i class="fa-solid fa-scissors salon-icon s1"></i>
             <i class="fa-solid fa-spa salon-icon s2"></i>
@@ -76,7 +74,6 @@
 
         <div class="login-page-layout">
 
-            <!-- LEFT SIDE DESIGN CARD -->
             <aside class="side-card left-card">
                 <div class="side-card-badge"><i class="fa-solid fa-crown"></i> Premium Care</div>
                 <h3>Elegance in Every Detail</h3>
@@ -107,7 +104,6 @@
                 </div>
             </aside>
 
-            <!-- CENTER LOGIN FORM CONTAINER -->
             <div class="login-container">
 
                 <div class="salon-ornament" aria-hidden="true">
@@ -120,7 +116,6 @@
                 <h2>Login to Your Account</h2>
                 <p class="login-subtitle">Sign in to book your next appointment ✨</p>
 
-                <!-- GOOGLE SIGN-IN BUTTON (rendered by Google) -->
                 <div id="googleButtonContainer" class="google-btn-container"></div>
 
                 <div class="divider">
@@ -162,7 +157,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT SIDE DESIGN CARD -->
             <aside class="side-card right-card">
                 <div class="quote-box">
                     <i class="fa-solid fa-quote-left quote-icon"></i>
@@ -207,11 +201,6 @@
         window.GOOGLE_CLIENT_ID = "22321828973-utnctdba0hcpis28alb6cmj6cjbcefa1.apps.googleusercontent.com";
     </script>
 
-    <!-- ============================================ -->
-    <!-- GOOGLE SIGN-IN INITIALIZATION -->
-    <!-- ✅ GAMIT ANG renderButton() (hindi prompt()) -->
-    <!-- ✅ WALANG use_fedcm_for_prompt option       -->
-    <!-- ============================================ -->
     <script>
         const GOOGLE_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
             ? 'http://localhost:5000'
@@ -246,7 +235,6 @@
             });
         }
 
-        // ✅ Wait for Google library to load, then initialize ONCE
         function initGoogleSignIn() {
             if (typeof google === 'undefined' || !google.accounts) {
                 console.warn('⚠️ Google Sign-In not loaded yet, retrying...');
@@ -259,7 +247,6 @@
                 callback: handleCredentialResponse
             });
 
-            // ✅ Render official Google button
             google.accounts.id.renderButton(
                 document.getElementById('googleButtonContainer'),
                 {
@@ -278,6 +265,7 @@
         window.addEventListener('load', initGoogleSignIn);
     </script>
 
+    <script src="auth.js"></script>
     <script src="ui.js"></script>
 </body>
 </html>
