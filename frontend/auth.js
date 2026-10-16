@@ -8,8 +8,8 @@ console.log('🔐 auth.js loaded');
 // ============================================
 // HELPER: Get API base URL
 // ============================================
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? window.location.origin
+const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
   : 'https://erica-salon.onrender.com';
 
 // ============================================
@@ -25,11 +25,9 @@ function saveSession(token, user) {
 // HELPER: Show message
 // ============================================
 function showMessage(message, type = 'info') {
-  // Remove existing messages
   const existing = document.querySelector('.auth-message');
   if (existing) existing.remove();
 
-  // Create new message
   const div = document.createElement('div');
   div.className = `auth-message auth-${type}`;
   div.textContent = message;
@@ -46,7 +44,6 @@ function showMessage(message, type = 'info') {
     ${type === 'info' ? 'background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;' : ''}
   `;
 
-  // Insert sa taas ng form
   const form = document.querySelector('.login-form');
   if (form) {
     form.parentNode.insertBefore(div, form);
@@ -54,7 +51,6 @@ function showMessage(message, type = 'info') {
     document.querySelector('.login-container').prepend(div);
   }
 
-  // Auto-remove after 5 seconds
   setTimeout(() => div.remove(), 5000);
 }
 
@@ -74,7 +70,6 @@ function setButtonLoading(button, isLoading, originalText) {
 
 // ============================================
 // REGISTER FORM HANDLER
-// Redirect: register.html → calendar.html
 // ============================================
 const registerForm = document.getElementById('registerForm');
 if (registerForm) {
@@ -90,7 +85,6 @@ if (registerForm) {
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
 
-    // Validation
     if (!name || !email || !password) {
       return showMessage('Please fill all required fields', 'error');
     }
@@ -121,11 +115,14 @@ if (registerForm) {
       const data = await res.json();
       console.log('📥 Register response:', data);
 
-            if (data.success && data.requiresOTP) {
-        // Show OTP modal
-        showOTPModal(data.email);
+      if (data.success && data.requiresOTP) {
+        // Show OTP modal (defined sa register.html)
+        if (typeof showOTPModal === 'function') {
+          showOTPModal(data.email);
+        } else {
+          showMessage('✅ ' + data.message, 'success');
+        }
       } else if (data.success) {
-        // Direct success (for backward compatibility)
         saveSession(data.token, data.user);
         showMessage('✅ ' + data.message, 'success');
         setTimeout(() => {
@@ -145,8 +142,6 @@ if (registerForm) {
 
 // ============================================
 // LOGIN FORM HANDLER
-// Redirect: login.html → calendar.html (customer)
-//           login.html → dashboard.html (admin)
 // ============================================
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
@@ -179,12 +174,12 @@ if (loginForm) {
         saveSession(data.token, data.user);
         showMessage('✅ ' + data.message, 'success');
 
-               // Redirect base sa role
+        // Redirect base sa role
         setTimeout(() => {
           if (data.user.role === 'Admin') {
             window.location.href = 'dashboard.html';
           } else if (data.user.role === 'Staff') {
-            window.location.href = 'staff-dashboard.html';    // ← BAGO
+            window.location.href = 'staff-dashboard.html';
           } else {
             window.location.href = 'calendar.html';
           }
@@ -202,91 +197,18 @@ if (loginForm) {
 }
 
 // ============================================
-// GOOGLE SIGN-IN
-// Redirect: → calendar.html
+// ✅ GOOGLE SIGN-IN — TINANGGAL NA
 // ============================================
-function handleCredentialResponse(response) {
-  console.log('🔵 Google credential received');
-
-  fetch(`${API_URL}/api/auth/google`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ credential: response.credential })
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log('📥 Google response:', data);
-
-      if (data.success) {
-        saveSession(data.token, data.user);
-        showMessage('✅ ' + data.message, 'success');
-
-        // Redirect sa calendar
-        setTimeout(() => {
-          window.location.href = 'calendar.html';
-        }, 1500);
-      } else {
-        showMessage('❌ ' + data.message, 'error');
-      }
-    })
-    .catch(err => {
-      console.error('❌ Google error:', err);
-      showMessage('⚠️ Google sign-in failed. Please try again.', 'error');
-    });
-}
-
-// ============================================
-// INITIALIZE GOOGLE SIGN-IN
-// ============================================
-window.addEventListener('load', () => {
-  if (typeof google === 'undefined') {
-    console.warn('⚠️ Google SDK not loaded');
-    return;
-  }
-
-  if (!window.GOOGLE_CLIENT_ID || window.GOOGLE_CLIENT_ID.includes('placeholder')) {
-    console.warn('⚠️ GOOGLE_CLIENT_ID not set properly');
-    return;
-  }
-
-  try {
-    google.accounts.id.initialize({
-      client_id: window.GOOGLE_CLIENT_ID,
-      callback: handleCredentialResponse
-    });
-
-    // Attach sa Google buttons
-    const googleSignUpBtn = document.getElementById('googleSignUpBtn');
-    const googleLoginBtn = document.getElementById('googleLoginBtn');
-
-    if (googleSignUpBtn) {
-      googleSignUpBtn.addEventListener('click', () => {
-        google.accounts.id.prompt();
-      });
-    }
-
-    if (googleLoginBtn) {
-      googleLoginBtn.addEventListener('click', () => {
-        google.accounts.id.prompt();
-      });
-    }
-
-    console.log('✅ Google Sign-In initialized');
-  } catch (err) {
-    console.error('❌ Google init error:', err);
-  }
-});
+// Ang Google Sign-In initialization ay nasa login.html at register.html
+// para maiwasan ang "initialize() called multiple times" warning.
 
 // ============================================
 // CHECK IF ALREADY LOGGED IN
-// Kung naka-login na at nasa login/register page,
-// i-redirect sa calendar
 // ============================================
 (function checkAuth() {
   const token = localStorage.getItem('token');
   const currentPage = window.location.pathname.split('/').pop();
 
-  // Kung nasa login o register page at naka-login na, i-redirect sa calendar
   if (token && (currentPage === 'login.html' || currentPage === 'register.html' ||
                 currentPage === 'login' || currentPage === 'register')) {
     console.log('✅ Already logged in, redirecting to calendar...');
