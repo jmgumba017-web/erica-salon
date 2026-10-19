@@ -4,7 +4,7 @@
 
 console.log('👑 dashboard.js loaded');
 
-const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
   ? window.location.origin
   : 'https://erica-salon.onrender.com';
 const token = localStorage.getItem('token');
@@ -84,6 +84,10 @@ async function loadAppointments() {
     const data = await res.json();
 
     console.log('📥 Appointments:', data);
+
+    if (data.success && data.appointments) {
+      data.appointments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
 
     if (!data.success || data.appointments.length === 0) {
       list.innerHTML = `
@@ -273,12 +277,12 @@ async function cancelAppt(id) {
 }
 
 // ============================================
-// ACTIONS — COMPLETE
+// ACTIONS — COMPLETE (MAY RECEIPT NA)
 // ============================================
 async function completeAppt(id) {
   const result = await Confirm.show({
     title: 'Mark as Completed?',
-    message: 'This will mark the appointment as completed.',
+    message: 'This will mark the appointment as completed and generate a receipt.',
     confirmText: 'Yes, Complete',
     cancelText: 'Go Back',
     type: 'success'
@@ -287,6 +291,7 @@ async function completeAppt(id) {
   if (!result) return;
 
   try {
+    // 1. I-complete ang appointment
     const res = await fetch(`${API_URL}/api/admin/appointments/${id}/complete`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` }
@@ -295,6 +300,22 @@ async function completeAppt(id) {
 
     if (data.success) {
       Toast.success('Appointment completed!');
+      
+      // 2. Kunin ang buong detalye ng appointment (para sigurado at kumpleto para sa resibo)
+      const apptRes = await fetch(`${API_URL}/api/admin/appointments?search=`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const apptData = await apptRes.json();
+      
+      if (apptData.success) {
+        // Hanapin yung specific appointment na kaka-complete lang
+        const completedAppt = apptData.appointments.find(a => a._id === id);
+        if (completedAppt) {
+            showReceipt(completedAppt); // Ipakita ang resibo
+        }
+      }
+
+      // 3. I-refresh ang stats at listahan
       loadStats();
       loadAppointments();
     } else {
@@ -346,7 +367,7 @@ async function loadServices() {
       headers: { 'Authorization': `Bearer ${token}` }
     });
     const data = await res.json();
-
+    
     if (!data.success || data.services.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
@@ -1364,6 +1385,107 @@ window.switchTab = function(tabName) {
     loadScheduleStaffDropdown();
   }
 };
+
+// ============================================
+// RECEIPT FUNCTIONS
+// ============================================
+function showReceipt(appt) {
+    const modal = document.getElementById('receiptModal');
+    const content = document.getElementById('receiptContent');
+    
+    if(!modal || !content) {
+        alert('Receipt modal not found in HTML.');
+        return;
+    }
+
+    const paid = appt.totalAmount - (appt.remainingBalance || 0);
+    
+    // ✅ SAFE CHECK: Para hindi mag-crash kung walang services array
+    const services = appt.services || [];
+    const servicesList = services.map(s => `
+        <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
+            <span>${s.serviceId?.serviceName || 'Service'}</span>
+            <span>₱${(s.price || 0).toFixed(2)}</span>
+        </div>
+    `).join('');
+
+    const dateObj = new Date(appt.createdAt || Date.now());
+    const receiptNo = appt._id.slice(-6).toUpperCase();
+
+    content.innerHTML = `
+        <div id="printableReceipt" style="font-family: 'DM Sans', sans-serif; color: #333;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="font-family: 'Cormorant Garamond', serif; color: var(--burgundy); margin: 0; font-size: 28px;">Erica Salon</h2>
+                <p style="font-size: 11px; color: #666; margin: 5px 0;">Your journey to Elegance and Beauty</p>
+                <p style="font-size: 10px; color: #999;">Blk 20 Lot 12 Phase 3 Golden Hills Panorama, Marilao</p>
+            </div>
+
+            <div style="border-top: 2px dashed #ccc; border-bottom: 2px dashed #ccc; padding: 10px 0; margin-bottom: 15px; font-size: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span>Receipt No:</span><strong>#${receiptNo}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                    <span>Date:</span><strong>${dateObj.toLocaleDateString('en-PH')}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Customer:</span><strong>${appt.customerId?.name || 'Customer'}</strong>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                ${servicesList.length > 0 ? servicesList : '<p style="text-align:center; color:#999; font-size:12px;">No services listed</p>'}
+            </div>
+
+            <div style="border-top: 2px dashed #ccc; padding-top: 10px; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>Total Amount:</span>
+                    <strong>₱${(appt.totalAmount || 0).toFixed(2)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px; color: #28a745;">
+                    <span>Paid:</span>
+                    <strong>₱${paid.toFixed(2)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 16px; font-weight: bold; margin-top: 10px; color: var(--burgundy);">
+                    <span>Balance:</span>
+                    <span>₱${(appt.remainingBalance || 0).toFixed(2)}</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 25px; font-size: 11px; color: #888;">
+                <p>Thank you for choosing Erica Salon!</p>
+                <p>Please come again ✨</p>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="document.getElementById('receiptModal').classList.remove('show')" 
+                    style="flex: 1; padding: 12px; border: none; border-radius: 8px; background: #eee; color: #333; font-weight: bold; cursor: pointer;">
+                Close
+            </button>
+            <button onclick="printReceipt()" 
+                    style="flex: 1; padding: 12px; border: none; border-radius: 8px; background: var(--burgundy); color: white; font-weight: bold; cursor: pointer;">
+                <i class="fa-solid fa-print"></i> Print
+            </button>
+        </div>
+    `;
+
+    modal.classList.add('show');
+}
+
+function printReceipt() {
+    const printContent = document.getElementById('printableReceipt').innerHTML;
+    const originalContent = document.body.innerHTML;
+
+    document.body.innerHTML = `
+        <div style="width: 100%; max-width: 350px; margin: 0 auto; padding: 20px;">
+            ${printContent}
+        </div>
+    `;
+
+    window.print();
+    document.body.innerHTML = originalContent;
+    window.location.reload();
+}
 
 // ============================================
 // INIT
