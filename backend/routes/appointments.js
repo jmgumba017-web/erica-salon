@@ -316,8 +316,8 @@ router.get('/my', auth, async (req, res) => {
       });
     }
 
-    const appointments = await Appointment.find({ customerId: customer._id })
-      .sort({ appointmentDate: -1, appointmentTime: -1 });
+        const appointments = await Appointment.find({ customerId: customer._id })
+      .sort({ createdAt: -1 }); 
 
     const appointmentsWithServices = await Promise.all(
       appointments.map(async (appt) => {
