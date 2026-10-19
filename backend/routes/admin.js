@@ -227,6 +227,38 @@ router.put('/appointments/:id/cancel', async (req, res) => {
 });
 
 // ============================================
+// PUT /api/admin/appointments/:id/verify-payment
+// Admin: I-verify ang resibo
+// ============================================
+router.put('/appointments/:id/verify-payment', auth, async (req, res) => {
+  try {
+    const appointment = await Appointment.findById(req.params.id);
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+
+    appointment.paymentStatus = 'Verified';
+    
+    // Option: Kung gusto mong automatic na ma-confirm ang appointment pag verified ang bayad
+    // appointment.status = 'Confirmed'; 
+
+    await appointment.save();
+
+    // I-log sa history (optional)
+    await AppointmentHistory.create({
+      appointmentId: appointment._id,
+      action: 'Payment Verified',
+      newStatus: appointment.status,
+      changedBy: req.user.id,
+      reason: 'Down payment verified by admin'
+    });
+
+    res.json({ success: true, message: 'Payment verified successfully', appointment });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+// ============================================
 // PUT /api/admin/appointments/:id/complete
 // Mark as completed
 // ============================================

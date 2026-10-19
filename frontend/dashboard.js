@@ -120,6 +120,29 @@ function renderCard(appt) {
 
   const paid = appt.totalAmount - appt.remainingBalance;
 
+  // ✅ ADMIN VIEW NG RECEIPT (Nasa loob na ng function)
+  let receiptSection = '';
+  if (appt.proofOfPayment) {
+      receiptSection = `
+        <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px;">
+            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #333;"><i class="fa-solid fa-receipt"></i> Proof of Payment</h4>
+            <a href="${appt.proofOfPayment}" target="_blank">
+                <img src="${appt.proofOfPayment}" style="max-width: 200px; border-radius: 8px; border: 1px solid #ccc; cursor: pointer;">
+            </a>
+            <div style="margin-top: 10px;">
+                <span style="font-size: 12px; font-weight: bold; color: ${appt.paymentStatus === 'Verified' ? '#28a745' : '#ffc107'};">
+                    Status: ${appt.paymentStatus}
+                </span>
+            </div>
+            ${appt.paymentStatus === 'Pending Verification' ? `
+                <button onclick="verifyPayment('${appt._id}')" class="action-btn btn-complete" style="margin-top: 10px;">
+                    <i class="fa-solid fa-check"></i> Verify Payment
+                </button>
+            ` : ''}
+        </div>
+      `;
+  }
+
   let actions = '';
 
   if (appt.status === 'Pending') {
@@ -169,6 +192,8 @@ function renderCard(appt) {
       <ul class="appt-services">
         ${servicesHTML}
       </ul>
+      
+      ${receiptSection}
 
       ${appt.notes ? `<div style="font-size:13px; color:#666; font-style:italic; margin-bottom:12px;">📝 "${appt.notes}"</div>` : ''}
       ${appt.cancelReason ? `<div style="font-size:13px; color:#dc3545; margin-bottom:12px;">❌ Cancelled: ${appt.cancelReason}</div>` : ''}
@@ -325,6 +350,38 @@ async function completeAppt(id) {
     console.error('❌ Complete error:', err);
     Toast.error('Network error. Please try again.');
   }
+}
+
+// ============================================
+// ACTIONS — VERIFY PAYMENT
+// ============================================
+async function verifyPayment(id) {
+    const result = await Confirm.show({
+        title: 'Verify Payment?',
+        message: 'Are you sure the receipt is valid and the payment is correct?',
+        confirmText: 'Yes, Verify',
+        type: 'success'
+    });
+
+    if (!result) return;
+
+    try {
+        const res = await fetch(`${API_URL}/api/admin/appointments/${id}/verify-payment`, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            Toast.success('Payment verified!');
+            loadStats();
+            loadAppointments();
+        } else {
+            Toast.error(data.message);
+        }
+    } catch (err) {
+        Toast.error('Network error. Please try again.');
+    }
 }
 
 // ============================================

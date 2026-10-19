@@ -493,36 +493,32 @@ async function loadAppointments() {
             // - May balance pa (remainingBalance > 0)
             // - Hindi Cancelled
             // - Naka-Completed na OR requireDownPayment (first-time)
+                  // ✅ UPLOAD RECEIPT LOGIC
             let payButton = '';
             if (appt.remainingBalance > 0 && appt.status !== 'Cancelled') {
-                // Regular customer — optional ang payment (after service)
-                if (appt.status === 'Completed') {
-                    payButton = `
-                        <a href="pay.html?id=${appt._id}" class="button login-btn" style="margin-top: 15px; text-decoration: none; font-size: 14px; padding: 12px;">
-                            <i class="fa-solid fa-credit-card"></i> Pay Now (₱${appt.remainingBalance.toFixed(2)})
-                        </a>
-                    `;
-                }
-                // First-time customer — required ang down payment (before service)
-                else if (appt.requireDownPayment) {
-                    payButton = `
-                        <a href="pay.html?id=${appt._id}" class="button login-btn" style="margin-top: 15px; text-decoration: none; font-size: 14px; padding: 12px;">
-                            <i class="fa-solid fa-credit-card"></i> Pay Down Payment (₱${appt.remainingBalance.toFixed(2)})
-                        </a>
-                    `;
-                }
-                // Regular customer, Pending/Confirmed — optional lang (bayad after service)
-                else {
-                    payButton = `
-                        <div style="margin-top: 15px; padding: 12px; background: #f8f9fa; border: 1px dashed #dee2e6; border-radius: 10px; text-align: center; font-size: 13px; color: #666;">
-                            <i class="fa-solid fa-info-circle"></i>
-                            Optional: Pwede kang mag-bayad ngayon o pagkatapos ng service.
-                            <br>
-                            <a href="pay.html?id=${appt._id}" style="color: #b8941f; font-weight: 700; text-decoration: underline; margin-top: 5px; display: inline-block;">
-                                Pay Now (₱${appt.remainingBalance.toFixed(2)})
-                            </a>
-                        </div>
-                    `;
+                if (appt.requireDownPayment || appt.status === 'Completed') {
+                    
+                    if (!appt.proofOfPayment) {
+                        // Wala pang resibo, ipakita ang upload button
+                        payButton = `
+                            <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 10px; text-align: center;">
+                                <p style="margin-bottom: 10px; font-size: 14px; color: #856404;">
+                                    <strong>Down Payment Required (₱${appt.remainingBalance.toFixed(2)})</strong>
+                                </p>
+                                <input type="file" id="receiptInput-${appt._id}" accept="image/*" style="display: none;" onchange="uploadReceipt('${appt._id}')">
+                                <button onclick="document.getElementById('receiptInput-${appt._id}').click()" class="button login-btn" style="background: #ffc107; color: #333; font-size: 14px; padding: 10px;">
+                                    <i class="fa-solid fa-upload"></i> Upload GCash Receipt
+                                </button>
+                            </div>
+                        `;
+                    } else if (appt.paymentStatus === 'Pending Verification') {
+                        // May resibo na, naghihintay ng verify
+                        payButton = `
+                            <div style="margin-top: 15px; padding: 12px; background: #d1ecf1; border-radius: 10px; text-align: center; font-size: 13px; color: #0c5460;">
+                                <i class="fa-solid fa-clock"></i> Receipt uploaded. Waiting for admin verification.
+                            </div>
+                        `;
+                    }
                 }
             }
 
@@ -667,7 +663,47 @@ if (logoutBtn) {
             window.location.href = 'login.html';
         }
     });
+    
 } 
+// ✅ Function para mag-upload ng image
+async function uploadReceipt(appointmentId) {
+    const fileInput = document.getElementById(`receiptInput-${appointmentId}`);
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    // I-check kung image
+    if (!file.type.startsWith('image/')) {
+        return alert('Please upload an image file (JPG, PNG).');
+    }
+
+    const formData = new FormData();
+    formData.append('receipt', file);
+
+    // Loading state (pwede mong gamitin ang Toast kung meron)
+    alert('Uploading receipt, please wait...');
+
+    try {
+        const res = await fetch(`${API_URL}/api/appointments/${appointmentId}/upload-receipt`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${token}` 
+                // ❌ HUWAG LAGYAN NG 'Content-Type': 'application/json' kapag FormData
+            },
+            body: formData
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            alert('✅ Receipt uploaded successfully!');
+            loadAppointments(); // I-refresh ang listahan para lumabas ang "Pending Verification"
+        } else {
+            alert('❌ ' + data.message);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('⚠️ Upload failed. Please try again.');
+    }
+}
  </script>
     <script src="ui.js"></script>
 </body>

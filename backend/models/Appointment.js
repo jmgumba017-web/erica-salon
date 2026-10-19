@@ -54,7 +54,16 @@ const appointmentSchema = new mongoose.Schema({
   cancelReason: {
     type: String,
     default: ''
-  }
+  },
+    proofOfPayment: {
+    type: String, 
+    default: null // Dito ise-save ang image URL
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['Unpaid', 'Pending Verification', 'Verified'],
+    default: 'Unpaid'
+  },
 }, {
   timestamps: true,
   collection: 'appointments'

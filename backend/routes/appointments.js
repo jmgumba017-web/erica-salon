@@ -3,6 +3,19 @@ const { Appointment, AppointmentService, Customer, Staff, Service, AppointmentHi
 const auth = require('../middleware/auth');
 const { sendBookingConfirmation } = require('../utils/emailService');
 
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+
+// Cloudinary Config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 // ============================================
 // HELPER: Compute end time
 // ============================================
@@ -457,6 +470,43 @@ router.put('/:id/cancel', auth, async (req, res) => {
       success: false,
       message: err.message
     });
+  }
+});
+
+// ============================================
+// POST /api/appointments/:id/upload-receipt
+// Customer: Mag-upload ng GCash receipt
+// ============================================
+router.post('/:id/upload-receipt', auth, upload.single('receipt'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
+
+    // 1. I-upload sa Cloudinary
+    const result = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: 'erica_salon_receipts' },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      uploadStream.end(req.file.buffer);
+    });
+
+    // 2. I-save ang link sa Appointment
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { 
+        proofOfPayment: result.secure_url,
+        paymentStatus: 'Pending Verification'
+      },
+      { new: true }
+    );
+
+    res.json({ success: true, message: 'Receipt uploaded successfully', appointment });
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 
