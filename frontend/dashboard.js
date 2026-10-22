@@ -742,10 +742,8 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
     .map(o => o.value)
     .filter(v => v);
 
-  const specializationInput = document.getElementById('staffSpecialization').value.trim();
-  const specialization = specializationInput
-    ? specializationInput.split(',').map(s => s.trim()).filter(Boolean)
-    : [];
+    const specializationValue = document.getElementById('staffSpecialization').value;
+  const specialization = specializationValue ? [specializationValue] : [];
 
   const data = {
     name: document.getElementById('staffName').value.trim(),
@@ -773,14 +771,35 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
   try {
     const url = id ? `${API_URL}/api/staff/${id}` : `${API_URL}/api/staff`;
     const method = id ? 'PUT' : 'POST';
+    // ✅ GAGAMITIN NATIN ANG FormData PARA SA FILE UPLOAD
+    const formData = new FormData();
+    
+    // ✅ UNAHIN ANG MGA TEXT FIELDS
+    formData.append('name', document.getElementById('staffName').value.trim());
+    formData.append('email', document.getElementById('staffEmail').value.trim());
+    formData.append('contactNumber', document.getElementById('staffContact').value.trim());
+    formData.append('bio', document.getElementById('staffBio').value.trim());
+    formData.append('status', document.getElementById('staffStatus').value);
+    formData.append('specialization', JSON.stringify(specialization)); 
+    formData.append('services', JSON.stringify(selectedServices)); 
+    
+    if (!id) {
+        formData.append('password', document.getElementById('staffPassword').value);
+    }
+
+    // ✅ IDAGDAG ANG PHOTO SA HULI (Mahalaga ito para sa Multer)
+    const photoInput = document.getElementById('staffPhoto');
+    if (photoInput && photoInput.files[0]) {
+        formData.append('photo', photoInput.files[0]);
+    }
 
     const res = await fetch(url, {
       method,
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        // ❌ HUWAG LAGYAN NG 'Content-Type': 'application/json' kapag FormData
+        'Authorization': `Bearer ${token}` 
       },
-      body: JSON.stringify(data)
+      body: formData
     });
 
     const result = await res.json();
@@ -862,7 +881,7 @@ async function loadReports(range = 'all', btn = null) {
 }
 
 function renderReports(data) {
-  // ✅ IDAGDAG ITO PARA MAGBAGO YUNG TITLE
+
   const titleMap = {
     'all': 'All Time',
     'today': 'Today',

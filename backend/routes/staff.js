@@ -1,11 +1,28 @@
 const router = require('express').Router();
-const { Staff, User, Service, AppointmentService, Appointment, AppointmentHistory, Customer } = require('../models');  // ✅ TAMA
-const auth = require('../middleware/auth');                                                                              // ✅ TAMA
-const adminOnly = require('../middleware/adminOnly');                                                                    // ✅ TAMA
+const { Staff, User, Service, AppointmentService, Appointment, AppointmentHistory, Customer } = require('../models');  
+const auth = require('../middleware/auth');                                                                             
+const adminOnly = require('../middleware/adminOnly');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+
+// ============================================
+// CLOUDINARY CONFIG & MULTER SETUP
+// ============================================
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 // ============================================
 // GET /api/staff
-// Get all available staff (public)
+// Get all available staff
 // ============================================
 router.get('/', async (req, res) => {
   try {
@@ -228,13 +245,16 @@ router.put('/appointments/:id/complete', auth, async (req, res) => {
 
 // ============================================
 // POST /api/staff (Admin)
+// ✅ MAY PHOTO UPLOAD NA VIA CLOUDINARY
 // ============================================
-router.post('/', auth, adminOnly, async (req, res) => {
+router.post('/', auth, adminOnly, upload.single('photo'), async (req, res) => {
   try {
     const {
       name, email, password, contactNumber,
-      specialization, services, photo, bio, status
+      specialization, services, bio, status
     } = req.body;
+    
+    console.log('📥 Received Data:', req.body); // ✅ IDAGDAG ITO PARA MAKITA NATIN ANG DUMARATING
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -242,6 +262,7 @@ router.post('/', auth, adminOnly, async (req, res) => {
         message: 'Name, email, and password are required'
       });
     }
+    // ... (tuloy-tuloy na)
 
     if (password.length < 6) {
       return res.status(400).json({
@@ -258,6 +279,35 @@ router.post('/', auth, adminOnly, async (req, res) => {
       });
     }
 
+    let photoUrl = 'image/erica.jpg'; // Default image
+    
+    // ✅ KUNG MAY IN-UPLOAD NA PHOTO, I-UPLOAD SA CLOUDINARY
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: 'erica_salon_staff' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        uploadStream.end(req.file.buffer);
+      });
+      photoUrl = result.secure_url;
+    }
+
+    // ✅ I-PARSE ANG JSON STRINGS MULA SA FORMDATA
+    let parsedSpecialization = [];
+    let parsedServices = [];
+    try {
+      if (specialization) parsedSpecialization = JSON.parse(specialization);
+      if (services) parsedServices = JSON.parse(services);
+    } catch (e) {
+      // Fallback kung sakaling normal string lang ang pinadala
+      parsedSpecialization = specialization ? [specialization] : [];
+      parsedServices = services ? [services] : [];
+    }
+
     const user = await User.create({
       name: name.trim(),
       email: email.toLowerCase().trim(),
@@ -271,9 +321,9 @@ router.post('/', auth, adminOnly, async (req, res) => {
       userId: user._id,
       name: user.name,
       contactNumber: user.contactNumber,
-      specialization: Array.isArray(specialization) ? specialization : [specialization].filter(Boolean),
-      services: Array.isArray(services) ? services : [],
-      photo: photo || '',
+      specialization: parsedSpecialization,
+      services: parsedServices,
+      photo: photoUrl,
       bio: bio || '',
       status: status || 'Available'
     });
@@ -294,22 +344,47 @@ router.post('/', auth, adminOnly, async (req, res) => {
 
 // ============================================
 // PUT /api/staff/:id (Admin)
-// ⚠️ ITO AY GENERIC — DAPAT SA DULO
+// ✅ MAY PHOTO UPLOAD UPDATE DIN
 // ============================================
-router.put('/:id', auth, adminOnly, async (req, res) => {
+router.put('/:id', auth, adminOnly, upload.single('photo'), async (req, res) => {
   try {
-    const { name, contactNumber, specialization, services, photo, bio, status } = req.body;
+    const { name, contactNumber, specialization, services, bio, status } = req.body;
 
     const staff = await Staff.findById(req.params.id);
     if (!staff) {
       return res.status(404).json({ success: false, message: 'Staff not found' });
     }
 
+    // ✅ KUNG MAY BAGONG UPLOAD NA PHOTO, PALITAN
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: 'erica_salon_staff' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        uploadStream.end(req.file.buffer);
+      });
+      staff.photo = result.secure_url;
+    }
+
+    // ✅ I-PARSE ANG JSON STRINGS
+    let parsedSpecialization = staff.specialization;
+    let parsedServices = staff.services;
+    try {
+      if (specialization) parsedSpecialization = JSON.parse(specialization);
+      if (services) parsedServices = JSON.parse(services);
+    } catch (e) {
+      if (specialization) parsedSpecialization = [specialization];
+      if (services) parsedServices = [services];
+    }
+
     if (name) staff.name = name.trim();
     if (contactNumber !== undefined) staff.contactNumber = contactNumber.trim();
-    if (specialization) staff.specialization = Array.isArray(specialization) ? specialization : [specialization];
-    if (services) staff.services = Array.isArray(services) ? services : [];
-    if (photo !== undefined) staff.photo = photo;
+    staff.specialization = parsedSpecialization;
+    staff.services = parsedServices;
     if (bio !== undefined) staff.bio = bio;
     if (status) staff.status = status;
 
@@ -338,7 +413,6 @@ router.put('/:id', auth, adminOnly, async (req, res) => {
 
 // ============================================
 // DELETE /api/staff/:id (Admin)
-// ⚠️ DAPAT SA DULO
 // ============================================
 router.delete('/:id', auth, adminOnly, async (req, res) => {
   try {
@@ -366,7 +440,7 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
 
 // ============================================
 // GET /api/staff/:id
-// ⚠️ ITO AY PINAKA-GENERIC — DAPAT SA PINAKA-DULO
+// ⚠️ DAPAT SA PINAKA-DULO
 // ============================================
 router.get('/:id', async (req, res) => {
   try {

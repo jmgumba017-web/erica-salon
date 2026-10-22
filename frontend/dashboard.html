@@ -353,7 +353,26 @@
                 <div class="input-group"><label for="staffEmail"><i class="fa-solid fa-envelope"></i> Email</label><input type="email" id="staffEmail" placeholder="staff@erica.com" required></div>
                 <div class="input-group" id="passwordField"><label for="staffPassword"><i class="fa-solid fa-lock"></i> Password</label><input type="password" id="staffPassword" placeholder="Min 6 characters" minlength="6"></div>
                 <div class="input-group"><label for="staffContact"><i class="fa-solid fa-phone"></i> Contact Number</label><input type="tel" id="staffContact" placeholder="09171234567"></div>
-                <div class="input-group"><label for="staffSpecialization"><i class="fa-solid fa-star"></i> Specialization</label><input type="text" id="staffSpecialization" placeholder="e.g. Hair Stylist, Nail Technician"></div>
+
+                <div class="input-group">
+    <label for="staffPhoto"><i class="fa-solid fa-camera"></i> Staff Photo</label>
+    <input type="file" id="staffPhoto" accept="image/*" style="padding: 10px; background: #fff; border-radius: 8px; border: 1px solid #e6d6d8; width: 100%;">
+    <small style="color:#999; font-size:11px; display:block; margin-top:4px;">Iwanang blangko kung gusto ng default picture.</small>
+</div>
+
+               <div class="input-group">
+    <label for="staffSpecialization"><i class="fa-solid fa-star"></i> Specialization</label>
+    <select id="staffSpecialization" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #e6d6d8; font-family: inherit; font-size: 14px; background: white;">
+        <option value="">Select Specialization...</option>
+        <option value="Hair Stylist">💇 Hair Stylist</option>
+        <option value="Nail Technician">💅 Nail Technician</option>
+        <option value="Skin Specialist">✨ Skin Specialist</option>
+        <option value="Makeup Artist">💄 Makeup Artist</option>
+        <option value="Lash & Brow Expert">👁️ Lash & Brow Expert</option>
+        <option value="Spa Therapist">💆 Spa Therapist</option>
+        <option value="Salon Manager">👑 Salon Manager</option>
+    </select>
+</div>
                 <div class="input-group">
                     <label for="staffServices"><i class="fa-solid fa-spa"></i> Services (Ctrl+Click para sa multiple)</label>
                     <select id="staffServices" multiple style="min-height: 120px;"><option value="">Loading services...</option></select>
