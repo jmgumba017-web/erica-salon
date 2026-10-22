@@ -4,18 +4,15 @@ const feedbackSchema = new mongoose.Schema({
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Customer',
-    required: false // Pwede anonymous
+    default: null 
   },
   name: {
     type: String,
-    required: true,
-    trim: true
+    required: true
   },
   email: {
     type: String,
-    required: false,
-    trim: true,
-    lowercase: true
+    default: ''
   },
   rating: {
     type: Number,
@@ -25,24 +22,17 @@ const feedbackSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: ['Service', 'Staff', 'Cleanliness', 'Website', 'Other'],
     default: 'Other'
   },
   message: {
     type: String,
-    required: true,
-    trim: true,
-    maxlength: 1000
+    required: true
   },
   status: {
     type: String,
-    enum: ['Pending', 'Published', 'Hidden'],
-    default: 'Published'
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
+    enum: ['Pending', 'Published'],
+    default: 'Published' // Agad na lumalabas sa public page
   }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Feedback', feedbackSchema);

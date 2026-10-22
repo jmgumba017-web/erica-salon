@@ -120,7 +120,7 @@ function renderCard(appt) {
 
   const paid = appt.totalAmount - appt.remainingBalance;
 
-  // ✅ ADMIN VIEW NG RECEIPT (Nasa loob na ng function)
+  // ✅ ADMIN VIEW NG RECEIPT
   let receiptSection = '';
   if (appt.proofOfPayment) {
       receiptSection = `
@@ -316,7 +316,6 @@ async function completeAppt(id) {
   if (!result) return;
 
   try {
-    // 1. I-complete ang appointment
     const res = await fetch(`${API_URL}/api/admin/appointments/${id}/complete`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${token}` }
@@ -326,21 +325,18 @@ async function completeAppt(id) {
     if (data.success) {
       Toast.success('Appointment completed!');
       
-      // 2. Kunin ang buong detalye ng appointment (para sigurado at kumpleto para sa resibo)
       const apptRes = await fetch(`${API_URL}/api/admin/appointments?search=`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const apptData = await apptRes.json();
       
       if (apptData.success) {
-        // Hanapin yung specific appointment na kaka-complete lang
         const completedAppt = apptData.appointments.find(a => a._id === id);
         if (completedAppt) {
-            showReceipt(completedAppt); // Ipakita ang resibo
+            showReceipt(completedAppt);
         }
       }
 
-      // 3. I-refresh ang stats at listahan
       loadStats();
       loadAppointments();
     } else {
@@ -402,6 +398,8 @@ function switchTab(tabName) {
     loadReports('all', document.querySelector('#tab-reports .filter-btn:last-child'));
   } else if (tabName === 'schedules') {
     loadScheduleStaffDropdown();
+  } else if (tabName === 'feedbacks') {
+    loadFeedbacks();
   }
 }
 
@@ -961,6 +959,70 @@ function renderReports(data) {
 }
 
 // ============================================
+// FEEDBACKS MANAGEMENT
+// ============================================
+async function loadFeedbacks() {
+  const list = document.getElementById('feedbacksList');
+  if (!list) return;
+
+  list.innerHTML = `
+    <div class="loading">
+      <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+      <p>Loading feedbacks...</p>
+    </div>
+  `;
+
+  try {
+    const res = await fetch(`${API_URL}/api/admin/feedbacks`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+
+    if (!data.success || data.feedbacks.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <i class="fa-solid fa-comment-slash"></i>
+          <h3>Wala Pang Feedback</h3>
+          <p>Walang feedback na naka-record.</p>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = data.feedbacks.map(fb => {
+      const stars = '⭐'.repeat(fb.rating || 5);
+      const dateObj = new Date(fb.createdAt);
+      
+      return `
+        <div class="appointment-card" style="border-left-color: #ffc107;">
+          <div class="appt-header">
+            <div>
+              <div class="appt-customer">👤 ${fb.name || 'Anonymous'}</div>
+              <div class="appt-contact">📧 ${fb.email || 'No email'}</div>
+            </div>
+            <span class="appt-status status-Confirmed">
+              ${stars}
+            </span>
+          </div>
+
+          <div style="margin-top: 10px; padding: 15px; background: #f9f9f9; border-radius: 8px; font-size: 14px; color: #555; font-style: italic;">
+            "${fb.message || 'No message provided'}"
+          </div>
+
+          <div style="margin-top: 10px; font-size: 12px; color: #999; text-align: right;">
+            📅 ${dateObj.toLocaleDateString('en-PH')} at ${dateObj.toLocaleTimeString('en-PH')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } catch (err) {
+    console.error('❌ Load feedbacks error:', err);
+    list.innerHTML = `<div class="empty-state"><p>Error: ${err.message}</p></div>`;
+  }
+}
+
+// ============================================
 // PROFILE DROPDOWN + LOGOUT
 // ============================================
 const profileBtn = document.getElementById('profileBtn');
@@ -1422,28 +1484,6 @@ async function deleteBlocked(id) {
 }
 
 // ============================================
-// UPDATE switchTab PARA SA SCHEDULES
-// ============================================
-const originalSwitchTabSched = window.switchTab;
-window.switchTab = function(tabName) {
-  document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.dash-tab-content').forEach(c => c.classList.remove('active'));
-
-  document.querySelector(`.dash-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
-  document.getElementById(`tab-${tabName}`).classList.add('active');
-
-  if (tabName === 'services') {
-    loadServices();
-  } else if (tabName === 'staff') {
-    loadStaff();
-  } else if (tabName === 'reports') {
-    loadReports('all', document.querySelector('#tab-reports .filter-btn:last-child'));
-  } else if (tabName === 'schedules') {
-    loadScheduleStaffDropdown();
-  }
-};
-
-// ============================================
 // RECEIPT FUNCTIONS
 // ============================================
 function showReceipt(appt) {
@@ -1457,7 +1497,6 @@ function showReceipt(appt) {
 
     const paid = appt.totalAmount - (appt.remainingBalance || 0);
     
-    // ✅ SAFE CHECK: Para hindi mag-crash kung walang services array
     const services = appt.services || [];
     const servicesList = services.map(s => `
         <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px;">
