@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Staff, User, Service, AppointmentService, Appointment, AppointmentHistory, Customer } = require('../models');  
+const { Staff, User, Service, AppointmentService, Appointment, AppointmentHistory, Customer, StaffSchedule, BlockedSchedule } = require('../models');
 const auth = require('../middleware/auth');                                                                             
 const adminOnly = require('../middleware/adminOnly');
 const multer = require('multer');
@@ -182,6 +182,31 @@ router.get('/my-stats', auth, async (req, res) => {
 });
 
 // ============================================
+// GET /api/staff/my-schedules
+// ✅ INILIPAT DITO PARA HINDI MAG-CONFLICT SA /:id
+// ============================================
+router.get('/my-schedules', auth, async (req, res) => {
+  try {
+    const staff = await Staff.findOne({ userId: req.user.id });
+    if (!staff) {
+      return res.status(404).json({ success: false, message: 'Staff profile not found' });
+    }
+
+    const schedules = await StaffSchedule.find({ staffId: staff._id }).sort({ date: 1 });
+    const blocked = await BlockedSchedule.find({ staffId: staff._id }).sort({ date: 1 });
+
+    res.json({
+      success: true,
+      schedules,
+      blocked
+    });
+  } catch (err) {
+    console.error('❌ Get my schedules error:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ============================================
 // PUT /api/staff/appointments/:id/complete
 // ⚠️ DAPAT BAGO ANG /:id
 // ============================================
@@ -254,7 +279,7 @@ router.post('/', auth, adminOnly, upload.single('photo'), async (req, res) => {
       specialization, services, bio, status
     } = req.body;
     
-    console.log('📥 Received Data:', req.body); // ✅ IDAGDAG ITO PARA MAKITA NATIN ANG DUMARATING
+    console.log('📥 Received Data:', req.body);
 
     if (!name || !email || !password) {
       return res.status(400).json({
@@ -262,7 +287,6 @@ router.post('/', auth, adminOnly, upload.single('photo'), async (req, res) => {
         message: 'Name, email, and password are required'
       });
     }
-    // ... (tuloy-tuloy na)
 
     if (password.length < 6) {
       return res.status(400).json({
@@ -279,9 +303,8 @@ router.post('/', auth, adminOnly, upload.single('photo'), async (req, res) => {
       });
     }
 
-    let photoUrl = 'image/erica.jpg'; // Default image
+    let photoUrl = 'image/erica.jpg'; 
     
-    // ✅ KUNG MAY IN-UPLOAD NA PHOTO, I-UPLOAD SA CLOUDINARY
     if (req.file) {
       const result = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
@@ -296,14 +319,12 @@ router.post('/', auth, adminOnly, upload.single('photo'), async (req, res) => {
       photoUrl = result.secure_url;
     }
 
-    // ✅ I-PARSE ANG JSON STRINGS MULA SA FORMDATA
     let parsedSpecialization = [];
     let parsedServices = [];
     try {
       if (specialization) parsedSpecialization = JSON.parse(specialization);
       if (services) parsedServices = JSON.parse(services);
     } catch (e) {
-      // Fallback kung sakaling normal string lang ang pinadala
       parsedSpecialization = specialization ? [specialization] : [];
       parsedServices = services ? [services] : [];
     }
@@ -355,7 +376,6 @@ router.put('/:id', auth, adminOnly, upload.single('photo'), async (req, res) => 
       return res.status(404).json({ success: false, message: 'Staff not found' });
     }
 
-    // ✅ KUNG MAY BAGONG UPLOAD NA PHOTO, PALITAN
     if (req.file) {
       const result = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
@@ -370,7 +390,6 @@ router.put('/:id', auth, adminOnly, upload.single('photo'), async (req, res) => 
       staff.photo = result.secure_url;
     }
 
-    // ✅ I-PARSE ANG JSON STRINGS
     let parsedSpecialization = staff.specialization;
     let parsedServices = staff.services;
     try {
@@ -440,7 +459,7 @@ router.delete('/:id', auth, adminOnly, async (req, res) => {
 
 // ============================================
 // GET /api/staff/:id
-// ⚠️ DAPAT SA PINAKA-DULO
+// ⚠️ DAPAT ITO ANG PINAKA-HULI
 // ============================================
 router.get('/:id', async (req, res) => {
   try {

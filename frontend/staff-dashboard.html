@@ -276,7 +276,6 @@
             </button>
         </div>
     </header>
-
     <main class="dashboard-container">
 
         <div class="dashboard-header">
@@ -323,11 +322,15 @@
                     <button class="staff-tab" onclick="switchStaffTab('all')">
                         <i class="fa-solid fa-list"></i> All Appointments
                     </button>
+                    <button class="staff-tab" onclick="switchStaffTab('schedule')">
+                        <i class="fa-solid fa-calendar-days"></i> My Schedule
+                    </button>
                 </div>
             </aside>
 
             <!-- MAIN CONTENT (Listahan) -->
             <section class="dashboard-main">
+                
                 <!-- TAB: UPCOMING -->
                 <div id="stafftab-upcoming" class="staff-tab-content active">
                     <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--burgundy); margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid #f0e0e2; padding-bottom: 10px;">Upcoming Appointments</h3>
@@ -360,6 +363,18 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- TAB: MY SCHEDULE -->
+                <div id="stafftab-schedule" class="staff-tab-content">
+                    <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 24px; color: var(--burgundy); margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid #f0e0e2; padding-bottom: 10px;">My Schedule</h3>
+                    <div id="staffScheduleList">
+                        <div class="loading">
+                            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+                            <p>Loading schedule...</p>
+                        </div>
+                    </div>
+                </div>
+
             </section>
 
         </div>

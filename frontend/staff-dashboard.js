@@ -199,12 +199,17 @@ if (!result) return;
 // ============================================
 // TAB SWITCHER
 // ============================================
-function switchStaffTab(tabName) {
+function switchStaffTab(tabName ) {
   document.querySelectorAll('.staff-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.staff-tab-content').forEach(c => c.classList.remove('active'));
 
   document.querySelector(`.staff-tab[onclick="switchStaffTab('${tabName}')"]`).classList.add('active');
   document.getElementById(`stafftab-${tabName}`).classList.add('active');
+
+      if (tabName === 'schedule') {
+    loadMySchedule()
+      }
+  
 }
 
 // ============================================
@@ -236,6 +241,93 @@ if (logoutBtn) {
       window.location.href = 'login.html';
     }
   });
+}
+
+// ============================================
+// LOAD MY SCHEDULE (STAFF)
+// ============================================
+async function loadMySchedule() {
+    const container = document.getElementById('staffScheduleList');
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="loading">
+            <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+            <p>Loading schedule...</p>
+        </div>
+    `;
+
+    try {
+        const res = await fetch(`${API_URL}/api/staff/my-schedules`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (!data.success || (data.schedules.length === 0 && data.blocked.length === 0)) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-calendar-xmark"></i>
+                    <h3>Wala Pang Schedule</h3>
+                    <p>Wala pang naka-set na schedule para sa'yo si Admin.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Buuin ang HTML para sa Schedules
+        let scheduleHTML = '';
+        if (data.schedules.length > 0) {
+            scheduleHTML += `<h4 style="color: var(--burgundy); margin-bottom: 15px;"><i class="fa-solid fa-calendar-check"></i> Working Hours</h4>`;
+            scheduleHTML += data.schedules.map(s => {
+                const date = new Date(s.date + 'T00:00:00');
+                const formatted = date.toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+                
+                // Kulay depende sa status
+                let badgeColor = s.status === 'Available' ? '#d4edda' : s.status === 'Day Off' ? '#e2e3e5' : '#fff3cd';
+                let textColor = s.status === 'Available' ? '#155724' : s.status === 'Day Off' ? '#383d41' : '#856404';
+
+                return `
+                    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid var(--burgundy); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; color: var(--dark);">${formatted}</div>
+                            <div style="font-size: 13px; color: #666; margin-top: 4px;">
+                                ${s.status === 'Day Off' ? '🏖️ Day Off' : `⏰ ${s.startTime} - ${s.endTime}`}
+                            </div>
+                        </div>
+                        <span style="background: ${badgeColor}; color: ${textColor}; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;">
+                            ${s.status}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Buuin ang HTML para sa Blocked Times
+        let blockedHTML = '';
+        if (data.blocked.length > 0) {
+            blockedHTML += `<h4 style="color: var(--burgundy); margin: 25px 0 15px 0;"><i class="fa-solid fa-ban"></i> Blocked Times</h4>`;
+            blockedHTML += data.blocked.map(b => {
+                const date = new Date(b.date + 'T00:00:00');
+                const formatted = date.toLocaleDateString('en-PH', { weekday: 'short', month: 'short', day: 'numeric' });
+                
+                return `
+                    <div style="background: #fff5f5; padding: 15px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid #dc3545;">
+                        <div style="font-weight: 700; color: var(--dark);">${formatted}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">
+                            ⏰ ${b.startTime} - ${b.endTime} <br>
+                            <span style="color: #dc3545; font-weight: bold;">Reason: ${b.reason}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        container.innerHTML = scheduleHTML + blockedHTML;
+
+    } catch (err) {
+        console.error('❌ Load my schedule error:', err);
+        container.innerHTML = `<div class="empty-state"><p>Error loading schedule</p></div>`;
+    }
 }
 
 // ============================================
