@@ -391,18 +391,45 @@ router.get('/reports', async (req, res) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
+    // ===== 4. REVENUE TREND (DYNAMIC) =====
     const revenueTrend = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      const dateStr = d.toISOString().split('T')[0];
+    const todayDate = new Date();
+    
+    // Magkano karaming araw ang ipapakita base sa pinindot
+    let daysToShow = 7; 
+    if (range === 'today') daysToShow = 1;
+    else if (range === 'week') daysToShow = 7;
+    else if (range === 'month') daysToShow = 30;
+    else if (range === 'all') {
+      const oldestAppt = await Appointment.findOne().sort({ appointmentDate: 1 });
+      if (oldestAppt && oldestAppt.appointmentDate) {
+         const diffTime = Math.abs(todayDate - new Date(oldestAppt.appointmentDate));
+         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+         daysToShow = Math.min(diffDays || 7, 30); // Limitahan sa 30 days max
+      } else {
+         daysToShow = 7;
+      }
+    }
+
+    for (let i = daysToShow - 1; i >= 0; i--) {
+      const d = new Date(todayDate);
+      d.setDate(todayDate.getDate() - i);
+      
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const dateStr = `${year}-${month}-${day}`;
 
       const dayAppts = completedAppointments.filter(a => a.appointmentDate === dateStr);
       const dayRevenue = dayAppts.reduce((sum, a) => sum + a.totalAmount, 0);
 
+      let label = d.toLocaleDateString('en-PH', { weekday: 'short' });
+      if (range === 'today') label = "Today";
+      if (daysToShow > 10) label = `${month}/${day}`; 
+
       revenueTrend.push({
         date: dateStr,
-        day: d.toLocaleDateString('en-PH', { weekday: 'short' }),
+        day: label,
         revenue: dayRevenue,
         appointments: dayAppts.length
       });

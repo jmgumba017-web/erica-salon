@@ -862,6 +862,17 @@ async function loadReports(range = 'all', btn = null) {
 }
 
 function renderReports(data) {
+  // ✅ IDAGDAG ITO PARA MAGBAGO YUNG TITLE
+  const titleMap = {
+    'all': 'All Time',
+    'today': 'Today',
+    'week': 'This Week',
+    'month': 'This Month'
+  };
+  const titleEl = document.getElementById('revenueTrendTitle');
+  if (titleEl) {
+    titleEl.textContent = titleMap[data.range] || 'Last 7 Days';
+  }
   const { summary, topServices, topStaff, revenueTrend, categoryBreakdown } = data;
 
   document.getElementById('repTotal').textContent = summary.totalAppointments;
