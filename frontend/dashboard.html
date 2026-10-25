@@ -429,6 +429,35 @@
         </div>
     </div>
 
+           <!-- ASSIGN STAFF MODAL -->
+    <div id="assignStaffModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Staff</h3>
+                <button class="modal-close" onclick="closeAssignStaffModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="assignStaffForm">
+                <input type="hidden" id="assignApptId">
+                <input type="hidden" id="assignServiceId">
+                
+                <p style="margin-bottom: 15px; color: #666;">
+                    Pumili ng staff para sa serbisyong <strong id="assignServiceName"></strong>.
+                </p>
+
+                <div class="input-group">
+                    <label for="newStaffId"><i class="fa-solid fa-users"></i> Select Staff</label>
+                    <select id="newStaffId" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #e6d6d8; font-family: inherit; font-size: 14px;">
+                        <option value="">Loading staff...</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="button login-btn" id="assignSubmitBtn">
+                    <i class="fa-solid fa-check"></i> Assign Staff
+                </button>
+            </form>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-logo">Erica Salon</div>
         <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>

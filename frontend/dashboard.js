@@ -112,9 +112,22 @@ async function loadAppointments() {
 // RENDER APPOINTMENT CARD
 // ============================================
 function renderCard(appt) {
-  const servicesHTML = appt.services.map(s => `
-    <li>💅 <strong>${s.serviceId?.serviceName || 'Service'}</strong> — 
-      <span style="color:#999;">👤 ${s.staffId?.name || 'Staff'}</span> — ₱${s.price}
+    const servicesHTML = appt.services.map(s => `
+    <li style="display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 10px 0; border-bottom: 1px dashed #eee; flex-wrap: wrap;">
+      
+      <span style="font-size: 14px;">
+        💅 <strong>${s.serviceId?.serviceName || 'Service'}</strong> — 
+        <span style="color:#666;">👤 ${s.staffId?.name || 'Staff'}</span> — ₱${s.price}
+      </span>
+      
+      <!-- ✅ PINALAKI AT MAS KITA NA BUTTON -->
+      <button onclick="openAssignStaffModal('${appt._id}', '${s._id}', '${s.serviceId?.serviceName}')" 
+              style="padding: 10px 20px; font-size: 13px; background: var(--burgundy); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(167, 13, 64, 0.2); transition: 0.2s;"
+              onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 15px rgba(167, 13, 64, 0.3)';"
+              onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 10px rgba(167, 13, 64, 0.2)';">
+        <i class="fa-solid fa-user-pen"></i> Assign Staff
+      </button>
+      
     </li>
   `).join('');
 
@@ -189,7 +202,7 @@ function renderCard(appt) {
         <div>⚠️ Balance: <strong style="color:${appt.remainingBalance > 0 ? '#dc3545' : '#28a745'};">₱${appt.remainingBalance.toFixed(2)}</strong></div>
       </div>
 
-      <ul class="appt-services">
+      <ul class="appt-services" style="list-style: none; padding: 0; margin-bottom: 15px;">
         ${servicesHTML}
       </ul>
       
@@ -742,26 +755,8 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
     .map(o => o.value)
     .filter(v => v);
 
-    const specializationValue = document.getElementById('staffSpecialization').value;
+  const specializationValue = document.getElementById('staffSpecialization').value;
   const specialization = specializationValue ? [specializationValue] : [];
-
-  const data = {
-    name: document.getElementById('staffName').value.trim(),
-    email: document.getElementById('staffEmail').value.trim(),
-    contactNumber: document.getElementById('staffContact').value.trim(),
-    specialization,
-    services: selectedServices,
-    bio: document.getElementById('staffBio').value.trim(),
-    status: document.getElementById('staffStatus').value
-  };
-
-  if (!id) {
-    const password = document.getElementById('staffPassword').value;
-    if (password.length < 6) {
-      return alert('Password must be at least 6 characters');
-    }
-    data.password = password;
-  }
 
   const btn = document.getElementById('staffSubmitBtn');
   const originalText = btn.innerHTML;
@@ -771,10 +766,8 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
   try {
     const url = id ? `${API_URL}/api/staff/${id}` : `${API_URL}/api/staff`;
     const method = id ? 'PUT' : 'POST';
-    // ✅ GAGAMITIN NATIN ANG FormData PARA SA FILE UPLOAD
-    const formData = new FormData();
     
-    // ✅ UNAHIN ANG MGA TEXT FIELDS
+    const formData = new FormData();
     formData.append('name', document.getElementById('staffName').value.trim());
     formData.append('email', document.getElementById('staffEmail').value.trim());
     formData.append('contactNumber', document.getElementById('staffContact').value.trim());
@@ -784,10 +777,16 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
     formData.append('services', JSON.stringify(selectedServices)); 
     
     if (!id) {
-        formData.append('password', document.getElementById('staffPassword').value);
+        const password = document.getElementById('staffPassword').value;
+        if (password.length < 6) {
+            alert('Password must be at least 6 characters');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+            return;
+        }
+        formData.append('password', password);
     }
 
-    // ✅ IDAGDAG ANG PHOTO SA HULI (Mahalaga ito para sa Multer)
     const photoInput = document.getElementById('staffPhoto');
     if (photoInput && photoInput.files[0]) {
         formData.append('photo', photoInput.files[0]);
@@ -795,10 +794,7 @@ document.getElementById('staffForm').addEventListener('submit', async (e) => {
 
     const res = await fetch(url, {
       method,
-      headers: {
-        // ❌ HUWAG LAGYAN NG 'Content-Type': 'application/json' kapag FormData
-        'Authorization': `Bearer ${token}` 
-      },
+      headers: { 'Authorization': `Bearer ${token}` },
       body: formData
     });
 
@@ -849,6 +845,81 @@ async function deleteStaff(id, name) {
 }
 
 // ============================================
+// ASSIGN STAFF LOGIC
+// ============================================
+async function openAssignStaffModal(apptId, serviceId, serviceName) {
+    document.getElementById('assignApptId').value = apptId;
+    document.getElementById('assignServiceId').value = serviceId;
+    document.getElementById('assignServiceName').textContent = serviceName;
+
+    const select = document.getElementById('newStaffId');
+    select.innerHTML = '<option value="">Loading staff...</option>';
+
+    try {
+        const res = await fetch(`${API_URL}/api/staff/all`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            select.innerHTML = '<option value="">Select Staff...</option>' + 
+                data.staff.map(s => `<option value="${s._id}">${s.name} (${s.specialization?.[0] || 'Staff'})</option>`).join('');
+        }
+    } catch (err) {
+        console.error('Error loading staff:', err);
+        select.innerHTML = '<option value="">Error loading staff</option>';
+    }
+
+    document.getElementById('assignStaffModal').classList.add('show');
+}
+
+function closeAssignStaffModal() {
+    const modal = document.getElementById('assignStaffModal');
+    if (modal) modal.classList.remove('show');
+}
+
+document.getElementById('assignStaffForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const apptId = document.getElementById('assignApptId').value;
+    const serviceId = document.getElementById('assignServiceId').value;
+    const staffId = document.getElementById('newStaffId').value;
+
+    if (!staffId) return alert('Please select a staff member');
+
+    const btn = document.getElementById('assignSubmitBtn');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Assigning...';
+
+    try {
+        const res = await fetch(`${API_URL}/api/admin/appointments/${apptId}/services/${serviceId}/assign`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ staffId })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert('✅ Staff assigned successfully!');
+            closeAssignStaffModal();
+            loadAppointments();
+        } else {
+            alert('❌ ' + data.message);
+        }
+    } catch (err) {
+        console.error('Assign error:', err);
+        alert('⚠️ Network error. Please try again.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+});
+
+// ============================================
 // REPORTS & ANALYTICS
 // ============================================
 async function loadReports(range = 'all', btn = null) {
@@ -881,7 +952,6 @@ async function loadReports(range = 'all', btn = null) {
 }
 
 function renderReports(data) {
-
   const titleMap = {
     'all': 'All Time',
     'today': 'Today',
@@ -892,6 +962,7 @@ function renderReports(data) {
   if (titleEl) {
     titleEl.textContent = titleMap[data.range] || 'Last 7 Days';
   }
+  
   const { summary, topServices, topStaff, revenueTrend, categoryBreakdown } = data;
 
   document.getElementById('repTotal').textContent = summary.totalAppointments;
@@ -1095,6 +1166,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     closeServiceModal();
     closeStaffModal();
+    closeAssignStaffModal();
   }
 });
 

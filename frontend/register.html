@@ -28,6 +28,83 @@
         .google-btn-container > div {
             width: 100% !important;
         }
+
+        /* ✅ TERMS MODAL STYLES */
+        .terms-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .terms-modal-overlay.show {
+            display: flex;
+        }
+
+        .terms-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 35px;
+            max-width: 550px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+            text-align: left;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .terms-modal-content h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            color: var(--burgundy, #a70d40);
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        .terms-modal-content ul {
+            padding-left: 20px;
+            color: #444;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .terms-modal-content li {
+            margin-bottom: 12px;
+        }
+
+        .terms-modal-content strong {
+            color: var(--dark, #2c1810);
+        }
+
+        .terms-close-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--burgundy, #a70d40);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .terms-close-btn:hover {
+            background: #8b0a34;
+        }
     </style>
 </head>
 <body class="login-page">
@@ -103,7 +180,8 @@
                 <div class="login-options">
                     <label class="remember">
                         <input type="checkbox" id="agree" required>
-                        <span>I agree to the <a href="#" class="forgot-link">Terms &amp; Conditions</a></span>
+                        <!-- ✅ IDINAGDAG ANG onclick PARA LUMABAS ANG MODAL -->
+                        <span>I agree to the <a href="#" class="forgot-link" onclick="openTermsModal(event)">Terms &amp; Conditions</a></span>
                     </label>
                 </div>
 
@@ -123,6 +201,20 @@
         <p>© 2026 Gorgeous Erica Nails &amp; Salon. All rights reserved.</p>
     </footer>
 
+    <!-- ===== TERMS & CONDITIONS MODAL ===== -->
+    <div id="termsModal" class="terms-modal-overlay">
+        <div class="terms-modal-content">
+            <h2>Terms & Conditions</h2>
+            <ul>
+                <li><strong>Advance Booking:</strong> Appointments must be booked at least <strong>3 days in advance</strong>.</li>
+                <li><strong>No Refund Policy:</strong> All payments are non-refundable. However, any amount paid will be credited and can be used for your next appointment.</li>
+                <li><strong>Late Arrival:</strong> A grace period of <strong>20 minutes</strong> is allowed. Clients arriving later than 20 minutes will be rescheduled.</li>
+                <li><strong>Rescheduling Limit:</strong> Appointments can only be rescheduled a maximum of <strong>3 times</strong>.</li>
+            </ul>
+            <button class="terms-close-btn" onclick="closeTermsModal()">I Understand & Agree</button>
+        </div>
+    </div>
+
     <script>
         const menuButton = document.getElementById("menuButton");
         const navLinks = document.getElementById("navLinks");
@@ -130,6 +222,16 @@
             menuButton.addEventListener("click", function () {
                 navLinks.classList.toggle("active");
             });
+        }
+
+        // ✅ LOGIC PARA SA TERMS MODAL
+        function openTermsModal(e) {
+            if (e) e.preventDefault();
+            document.getElementById('termsModal').classList.add('show');
+        }
+
+        function closeTermsModal() {
+            document.getElementById('termsModal').classList.remove('show');
         }
     </script>
 
@@ -176,6 +278,7 @@
     </div>
 
     <style>
+        /* (Existing OTP Styles mo dito, walang binago) */
         .otp-modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;

@@ -395,7 +395,6 @@ router.get('/reports', async (req, res) => {
     const revenueTrend = [];
     const todayDate = new Date();
     
-    // Magkano karaming araw ang ipapakita base sa pinindot
     let daysToShow = 7; 
     if (range === 'today') daysToShow = 1;
     else if (range === 'week') daysToShow = 7;
@@ -405,7 +404,7 @@ router.get('/reports', async (req, res) => {
       if (oldestAppt && oldestAppt.appointmentDate) {
          const diffTime = Math.abs(todayDate - new Date(oldestAppt.appointmentDate));
          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-         daysToShow = Math.min(diffDays || 7, 30); // Limitahan sa 30 days max
+         daysToShow = Math.min(diffDays || 7, 30);
       } else {
          daysToShow = 7;
       }
@@ -478,6 +477,35 @@ router.get('/reports', async (req, res) => {
       message: err.message
     });
   }
+});
+
+// ============================================
+// PUT /api/admin/appointments/:id/services/:serviceId/assign
+// Assign a new staff to an appointment service
+// ============================================
+router.put('/appointments/:appointmentId/services/:serviceId/assign', async (req, res) => {
+    try {
+        const { staffId } = req.body;
+        const { serviceId } = req.params;
+
+        const appointmentService = await AppointmentService.findById(serviceId);
+        if (!appointmentService) {
+            return res.status(404).json({ success: false, message: 'Appointment service not found' });
+        }
+
+        appointmentService.staffId = staffId;
+        await appointmentService.save();
+
+        res.json({ 
+            success: true, 
+            message: 'Staff assigned successfully!',
+            appointmentService
+        });
+
+    } catch (err) {
+        console.error('Assign staff error:', err);
+        res.status(500).json({ success: false, message: err.message });
+    }
 });
 
 module.exports = router;
